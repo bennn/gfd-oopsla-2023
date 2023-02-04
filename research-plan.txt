@@ -1,0 +1,337 @@
+This document describes the research plan for the project. It includes a
+discussion of relevant context, the research questions and sketches of the
+methods for answering them. As the proposal progresses, the document will
+be populated with information about (i) the status of each research
+question (answered/failed to answer); (ii) possible new questions and
+method adjustments; and (iii) discussion of problems that we encountered
+and how we solved them (or sidestep them).
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; CONTEXT  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+Sound gradual typing faces two significant challenges:
+
+ - the development cost of adding type annotations;
+ - the computational cost of runtime checking these annotations.
+
+Both stand in its way of developer adoption. 
+
+The combined effect of these two challenges manifests itself during the
+development of a mixed-typed code base. When a developer gets confronted with
+such a code base, it could be for at least two different reasons:
+
+ - someone started migrating pieces of code from the untyped to the typed world
+ - someone added a typed piece of code to the untyped code repository.
+
+How this mixed-typed code came about doesn't matter for the second challenge,
+however. The injection of type-untype boundaries causes the addition of runtime
+checks and thus impose a cost.  More precisely, after a potentially significant
+investment of time into adding type annotations, a developer may realize that
+the type annotations cause significant slow-downs to the code. Indeed, the
+slow-downs might be so bad that the program is no longer unusable. 
+
+Unless the developer reverts these annotations, the question becomes
+
+ - how to make the program fast (enough) again.
+
+Research confirms that a fully-typed program can run _faster_ than the
+originally untyped program (in some variants of gradual typing). But, equipping
+an entire code base with type annotations is likely to represent a huge effort,
+so going that far is too much work. Hence, the developer must contemplate
+
+ - which component to type-annotate next to reduce the number of dynamic checks
+   (and/or enable type-sensitive code optimizations).
+
+Unfortunately, empirical evidence indicate that in many scenarios there is no
+reliable strategy to find this next step. 
+
+In response to this conundrum, PL researchers have opted to change the rules of
+engagement. If the natural semantics is not viable, then some other semantics
+may offer a solution. Two such proposals have emerged. The transient/shallow
+semantics inlines strategic checks in typed code to avoid costly wrappers. The
+concrete/nominal semantics limits the space of type annotations (and with them
+the allowed interactions between typed and untyped code) to replace wrappers
+with tags, which can be checked efficiently.
+
+However, neither proposal has resulted in a
+satisfying solution. The nominal/concrete approach leads to lower
+performance slowdowns but hampers expressiveness significantly. The
+transient approach improves performance compared to natural but only for
+configurations with a small number of annotations. Specifically, while in
+natural developers should expect to face a steep rise of checking cost as
+they add annotations that drops steeply after a threshold (a bell shape),
+in transient the slope of cost is smooth but cost is roughly
+proportional to the number of type annotations and reaches its highest
+point when all possible annotations have been added.  
+
+Based on this latter observation, recently, Greenman [PLDI 2022] has
+suggested  a mixed semantics: developers should be able to combine deep
+and shallow checks (and no checks) to get the maximum type checking
+benefits with the minimum performance penalty. Greenman's proposal has
+been implemented for Typed Racket and initial empirical data is promising.
+In detail, developers can choose if the types of a Typed Racket module
+should be enforced deeply or shallowly when it interacts with untyped
+code. Hence, for a program with N modules developers can choose between
+3^N configurations of the modules of the program --- each module can be
+untyped, deeply typed or shallowly typed. Preliminary experiments with the
+GTP benchmarks show that the three-dimensional space allows developers to
+bypass the ``dead'' areas of the two-dimenantional spaces of deep and shallow
+semantics when considered separately. 
+
+However, the three-dimensional world poses an important research problem.
+The three-dimensional space is more complex that the two dimensional ones,
+and bound to impose a higher cognitive load for developers when they
+select which part of the code to type next. In other words, there is an
+open research question about the pragmatics of the three-dimensional
+world: how can developers navigate it?
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;; RESEARCH QUESTION ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+Q: How can developers navigate the three-dimensional space of type
+migration?
+
+Q': Can profiler data help developers navigate the
+three-dimensional space of type migration?
+
+Q'': What kind of profiler data can help developers
+navigate the three-dimensional space of type migration?
+
+[In the write up, we need here context about profiling techniques (in
+Racket) --- bring across strengths and weaknesses]
+
+Q''': Can a combination of feature and statistical profiler
+data help developers navigate the three-dimensional space of
+type migration?
+
+Q'''': Can developers interpret data from feature and statistical
+profilers to navigate the three-dimensional space of type migration?
+
+
+Q''''': How do different strategies of interpreting feature and
+statistical profiler data compare in terms of how they help developers
+navigate the three-dimensional space with a given amount
+of effort and a given performance threshold they can tolerate for the
+result of the migration?
+
+Q'''''': How do different strategies of interpreting feature and
+statistical profiler data compare in terms of how they help developers
+obtain a configuration of a given program where (i) a specific set of modules
+are typed; (ii) at most K components overall are typed; and (iii) the
+configuration has a slow down below a given threshold?
+
+
+
+Important definitions
+---------------------
+
+++ Navigation : A path of configurations in the lattice of a program where
+each configuration has more typed modules than the previous one.
+
+[[We need a term for the step/choice of the strategy]]
+
+++ Migration target: A set of components of a program that are typed. 
+A migration target is fulfilled if the components that consist the target
+are fulfilled in the configuration.
+
+++ Successful navigation: A navigation that reaches a
+configuration where (i) the migration target is fulfilled; 
+(ii) at most K components overall are typed; and (iii) the
+configuration has a slow down below a given threshold?
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; METHOD ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+The plan is to follow a rational program approach: 
+
+ 1) Construction of scenarios. We will use the GTP benchmarks.  The
+ potential placements of type annotations in the benchmarks induces  a
+ three-dimensional lattice for each benchmark. Each configuration of the
+ lattice that has higher slowdown than the threshold and where the
+ migration target is fulfilled but no other components are typed. 
+
+ Note: Starting form configurations where the migration target is
+ fulfilled and all other components are untyped is sufficient. If the
+ slowdown of this configuration is below the slowdown threshold then the
+ scenario is uninteresting. If the slowdown is above the threshold,
+ given that the target must be fulfilled eventually, the goal is to
+ determine what other components besides the typed one need to become
+ typed or untyped in order for the slowdown to fall below the threshold.
+ After all, the slowdown of a configuration does not depend on how the
+ configuration was constructed, it is an intrinsic characteristic of the
+ configuration. 
+
+ 2) Construction of modes: 
+      +++ We will use domain knowledge and the existing types of the modules
+      to encode the possible ways a developer can interact with a program
+      after a possible profiling round.
+      +++ We will construct one mode per strategy. Each mode's strategy
+      corresponds to a function that consumes profiling data and the
+      current configuration, and computes how the configuration should
+      change (or that there is no next configuration). Each mode uses its
+      strategy function to construct the next configuration, or to declare
+      success or failure. See dedicated Strategies section for details and
+      examples of strategies.
+      +++ Failure condition for all modes: A mode produces no
+      configuration that is below the accepted performance threshold
+      within the tolerated number of typing steps.
+      +++ Success condition for all modes: A mode produces a configuration
+      that is below the accepted performance threshold within the
+      tolerated number of typing steps.
+
+ 3) Mode comparison: 
+      ++ Success or Failure comparison
+      ++ Navigation length (maybe weighted by type annotation burden) for
+      scenarios where all modes succeed.
+
+ 4) Data collection:
+      (i) We construct the lattice for each benchmark and measure the
+      performance of each configuration for all the lattices without
+      producing profiler data. This acts as ground truth for the
+      performance of the different configurations.
+      - [quadT] is running on Cloudlab Utah using m510 nodes and the default
+        ubuntu OS. Each node has an Intel Xeon D-1548 CPU running at 2.0 GHz
+        and 64 GB RAM.
+      - [morsecode forth fsm fsmoo mbta sieve acquire jpeg kcfa lnm snake
+        suffixtree take5 tetris zombie synth] all ran on Cloudlab Wisconsin
+        using c220g1 nodes and the default ubuntu OS. Each node has two
+        Intel E5-2630 CPUs running at 2.40 GHz and 128GB RAM.
+      - [dungeon gregor quadU zordoz] have no data for various reasons:
+        dungeon was too slow because of a TR bug, gregor and quadU are large
+        with good overall performance, and zordoz cannot run some shallow/deep
+        mixes. Hope to fix dungeon and zordoz soon.
+
+      (ii) We construct the set of scenarios. [[We need more details here]]
+
+      (ii) Starting from the scenarios, we use the profiler data 
+      to construct the navigations.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; STRATEGIES ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+There are two pieces of information that the rational programmer can act
+on: 
+
+1) the feedback of the profiler(s), and
+2) the characteristics of the current scenario. 
+
+Hence, the space of strategies can be described as the set of functions
+from the profiler feedback and the current scenario to an action.
+Roughly, an action corresponds to the rational programmer's next step
+given the available information; it can be either a description of what
+component must change and how, or a declaration of failure if no change is
+possible under the given strategy.  Specifically, an action is either
+FAILURE,. or it consists of two pieces: a component name and the (new)
+type-checking semantics for the component (U,S or D).
+
+
+At a high level, each strategy function aims to improve how the current
+configuration fares against a specific metric of configuration
+``goodness''. Such metrics are (imperfect) proxies of how close is the
+current configuration to the  actual goal of reaching a configuration that
+has performance below the target threshold. In contrast though to the
+actual goal, these metrics can be expressed in terms of the available
+information/inputs to the strategy function and, thus, they can be the
+basis for the construction of feasible (but sub-optimal) actions. 
+
+Given that the boundary and the statistical profiler
+produce different feedback, the precise definition of the strategy function 
+changes depends on the profiler used. However, analogous
+strategy functions form groups of comparable strategies based on their metrics.  
+
+
+The following is a list of the working groups of strategies:
+
+1. Greedy typing strategies: 
+
+Metric: A configuration C has a higher score than a
+configuration D, if the most costly component of D according to the
+profiler has stricter checks by one level, where stricter means U<S<D.
+
+Intuitively, this strategy gives priority to the feedback of the profiler
+and aims to reduce the performance hit from the most costly component,
+presumably due to checks that are happening because the component
+interacts with other components with stricter checks. Hence, the strategy 
+aims to eliminate these checks by making the
+checks of the component stricter. 
+
+Details:*
+  - [bnd] find the slowest boundary:
+     + UD => SD
+     + US => SS
+     + SD => DD
+   - [prf] find the module with the highest total% time:
+     + U => S
+     + S => D
+   - [prf] with the highest self time
+     + U => S
+     + S => D
+
+
+* [bnd] indicates use of the feedback from the boundary profiler
+* [prf] indicates use of the feedback from the statistical profiler 
+
+2. Greedy boundary elimination strategies: 
+
+Metric: A configuration C has a higher score than a
+configuration D, if the most costly component of D according to the
+profiler has stricter checks to a level that matches that of an
+interacting component.
+
+Intuitively, this strategy gives priority to the feedback of the profiler
+and aims to reduce the performance hit from a costly boundary. Hence, the
+strategy aims to eliminate these checks by making the checks of the
+component stricter. 
+
+Details:
+  - [bnd] find the slowest boundary:
+     + UD => DD
+     + US => SS
+     + SD => DD
+   - [prf] find the module with the highest total% time:
+     + U/S => D, if the module requires or is required by a component with D
+     + U => S, if the module requires or is required by a component with S
+   - [prf] with the highest self time
+     + U/S => D, if the module requires or is required by a component with D
+     + U => S, if the module requires or is required by a component with S
+
+
+;;;;;;;;;;;;;; ????????? We need to discuss these ??????? ;;;;;;;;;;;;;
+2. Busy strategy (Lazy), add types as a last resort
+   - [bnd] sort boundaries by TT > UU, then by slowdown
+     + SD => DD
+     + UD => SD (S types are easier than D types, less work)
+     + US => UD
+   - [prf] find slowest typed module, then fall back to untyped:
+     + S => D
+     + U => S
+
+3. TwoShot strategy, always add types, jump between D and S twice
+  - [bnd]
+    - (allowed once) if any D modules and overhead >10x, change all D to S
+    - (allowed once, after prev jump) if any S modules and overhead >2x, change all S to D
+    - otherwise find slowest boundary:
+      + UD => DD
+      + US => SS
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;; THREATS TO VALIDITY ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 
+
+ 1) Selection of benchmarks.
+ 2) Selection of migration targets for the construction of scenarios.
+ 3) Unaccounted overhead due to profiling.
+ 4) Set of considered strategies is not exhaustive (for instance,
+ strategies that use metrics that use the whole history of the navigation
+ so far, or strategies that use a combination of metrics, or strategies
+ that back track).
