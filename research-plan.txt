@@ -297,16 +297,13 @@ D is improved in C.
 
 - [bnd] find the slowest boundary:
    + UD => DD
-   + US => SS
+   + US => DD
    + SD => DD
+   + SS => DD
 - [prf] find the slowest module (total% or self%):
-   + U => D if the module interacts with any D component
-   + U => S otherwise (no D interactions)
+   + U => D
    + S => D
-
-TODO beware, US => SS makes the boundary worse. No checks get
-removed and some checks get added --- because SS don't trust
-one another!
+   TODO ..
 
 Greedy-boundary tries to improve the most costly boundary.
 With boundary-profile information, it is obvious which boundary
@@ -346,15 +343,22 @@ from U to D:
    runtime
 
 
-4. TwoShot strategy, always add types, jump between D and S twice
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; MORE IDEAS ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-- [bnd]
-  - (allowed once) if any D modules and overhead >10x, change all D to S
-  - (allowed once, after prev jump) if any S modules and overhead >2x, change all S to D
-  - otherwise find slowest boundary:
-    + UD => DD
-    + US => SS
+Other strategy ideas:
 
+* Changing U to S is always a bad idea for performance, don't do it.
+  Changing D to S might be good. Add a strategy that explores D => S.
+
+* Ben thinks that some configurations can get a big boost at low effort
+  by changing all D modules to S (to remove heavy boundaries) or by
+  changing all S modules to D (to remove shallow cost).
+  Try these moves on every lattice point; how often do they succeed,
+  and by how much?
+
+* TBD
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
