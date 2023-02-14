@@ -94,12 +94,21 @@ Rational programmer~\cite{lgfd-icfp-2021}.
 \label{s:data}
 
 \begin{table}[t]
-  \caption{No-profile strategy: all-D or all-S}
+  \caption{Out of all configurations, how many improve to under 2x after switching all typed configs to D or to S?
+  Does not count no-ops.}
   \label{t:micros}
   \begin{tabular}{lrr}
     Benchmark & All-D & All-S \\\midrule
-    kcfa & 30.00\% & 58.02\% \\
+    sieve & 33.33\% & 11.11\% \\
+    forth & 13.58\% & 7.41\% \\
+    morsecode & & \\
     fsm & 45.68\% & 11.11\% \\
+    fsmoo & 45.68\% & 0.00\% \\
+    kcfa & 30.00\% & 58.02\% \\
+    jpeg & 43.21\% & 46.91\% \\
+    lnm & 72.15\% & 23.05\% \\
+    snake & 9.69\% & 0.26\% \\
+    take5 & 19.88\% & 2.56\% \\
     acquire & 20.13\% & 46.32\% \\
     tetris & 32.17\% & 7.60\% \\
     synth & 5.86\% & 21.84\% \\
