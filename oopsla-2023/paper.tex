@@ -93,6 +93,20 @@ Rational programmer~\cite{lgfd-icfp-2021}.
 \section{Results}
 \label{s:data}
 
+\begin{table}[t]
+  \caption{No-profile strategy: all-D or all-S}
+  \label{t:micros}
+  \begin{tabular}{lrr}
+    Benchmark & All-D & All-S \\\midrule
+    kcfa & 30.00\% & 58.02\% \\
+    fsm & 45.68\% & 11.11\% \\
+    acquire & 20.13\% & 46.32\% \\
+    tetris & 32.17\% & 7.60\% \\
+    synth & 5.86\% & 21.84\% \\
+  \end{tabular}
+
+\end{table}
+
 \begin{figure}[t]
   \includegraphics[width=\columnwidth]{img/sample.png}
   \caption{FSM outcomes}
