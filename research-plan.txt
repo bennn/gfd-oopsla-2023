@@ -260,105 +260,161 @@ basis for the construction of feasible (but sub-optimal) actions.
 
 Given that the boundary and the statistical profiler
 produce different feedback, the precise definition of the strategy function 
-changes depends on the profiler used. However, analogous
+changes depending on the profiler used. However, analogous
 strategy functions form groups of comparable strategies based on their metrics.  
 
 
 The following is a list of the working groups of strategies:
 
-1. Greedy module
-
-Metric: A configuration C has a higher score than a
-configuration D if the most expensive module from
-D is improved in C, where D > S > U.
-
-- [bnd] find the slowest boundary:
-  + UD => SD
-  + US => SS
-  + SD => DD
-- [prf] find the slowest module (with either the highest total%
-  or the highest self% time --- so there are 2 prf strategies):
-  + U => S
-  + S => D
-
-Intuitively, greedy-module gives priority to the feedback of the profiler
-and aims to reduce the performance hit from the most costly component,
-presumably due to checks that are happening because the component
-interacts with other components with stricter checks. Hence, the strategy 
-aims to eliminate these checks by making the
-checks of the component stricter.
-
-
-2. Greedy boundary
+1. Optimnistic boundary elimination
 
 Metric: A configuration C has a higher score than a
 configuration D if the most expensive boundary from
-D is improved in C.
+D is eliminated in C, where an eliminated boundary is of the 
+form DD. 
 
 - [bnd] find the slowest boundary:
    + UD => DD
    + US => DD
    + SD => DD
    + SS => DD
-- [prf] find the slowest module (total% or self%):
-   + U => D
-   + S => D
-   TODO ..
+- [prf] find the slowest module A that requires or provides to a B module with 
+stricter checks (total% or self%):
+   + A = U and B = D => A = D
+   + A = U and B = S => A = D and  B = D
+   + A = S and B = D => A = D
+   + A = S and B = S => A = D and  B = D
 
-Greedy-boundary tries to improve the most costly boundary.
+Intuition: Optimostic boundary-elimination tries to improve the most costly boundary.
 With boundary-profile information, it is obvious which boundary
-is most expensive; it simply needs to improve (usually to remove
-a XD connection). With statistical-profile info, we don't know
-which boundary is the worst; and so, we guess by looking for
-any D neighbor.
+is most expensive. With statistical-profile info, we don't know
+which boundary is the worst; and so, we guess by improving the interaction 
+with a stricter neighbor B of the identified component A. The strategy
+aims to turn the boundary into  DD to remove the cost of interaction
+between the two sides of the boundary entirely. The boundary change can
+though affect the interactions between A and other components.
+
+Note: An alternative for the statistical-profile version is to turn into D all
+the dependencies of A, but penalize that with a cost factor. 
+
+2. Conservative boundary elimination  
+
+Metric: A configuration C has a higher score than a
+configuration D if the most expensive boundary from
+D is eliminated in C, where an eliminated boundary is of the 
+form SS. 
 
 
-3. Busy strategy (Lazy), add types as a last resort
+- [bnd] find the slowest boundary:
+   + UD => SS
+   + US => SS
+   + SD => SS
+- [prf] find the slowest module A that requires or provides to a B module with 
+stricter checks (total% or self%):
+   + A = U and B = D => A = S and B = S
+   + A = U and B = S => A = S 
+   + A = S and B = D => B = S
+   + A = D and B = D => A = S and B = S
 
-Metric: A configuration C has a higher score than configuration D
-if the most-expensive and least-effort part of D is improved in C.
-(Cost and improvement are the same as for greedy.)
 
-- [bnd] sort boundaries by effort,* then by cost. Upgrade the top one:
-  1. SD => DD
-  2. UD => SD
-  3. US => UD
-- [prf] sort modules by number of types, then by cost. Upgrade via:
-  + S => D
-  + U => S
+Intuition: Conservative boundary-elimination tries to improve the most costly boundary.
+With boundary-profile information, it is obvious which boundary
+is most expensive. With statistical-profile info, we don't know
+which boundary is the worst; and so, we guess by improving the interaction 
+with a stricter neighbor B of the identified component A.  The strategy
+aims to turn the boundary into SS to remove the cost of boundary crossings
+between the two sides of the boundary. The cost of interactions between A
+and B is not removed entirely due to the inlined checks in both
+components. Similarly, these checks may inflict costs in the interaction
+between A, B and other components, but the rationale behind the strategy
+is that such interactions are less costly than the wrappers possibly
+created by converting the boundary into a DD. 
 
-* Effort order is: DD = SS = SD < US < UD.
 
-Effort is about the maintenance work of adding types to a module. A step from C
-to D is low effort if the number of typed modules does not change, medium
-effort if one module changes from U to S, and high effort if a module changes
-from U to D:
+Note: An alternative for statistical-profile version is to turn into S all
+the dependencies of A, but penalize that with a cost factor. 
 
-- low effort: S -> D, D -> S
-   because D and S use the same typechecker, switching is *usually* easy
-- medium effort: U -> S
-   because a programmer needs to add the types and deal with any runtime errors
-- high effort: U -> D
-   (slightly higher than medium) need to add types and deal with the stricter D
-   runtime
+
+
+3a,3b. Cost-aware [optimistic/conservative] boundary elimination
+Metric: Same as for boundary elimination but the metric takes into account
+the cost of adding types to a component. Hence, the strategy prioritizes
+boundaries where both sides are already typed. 
+
+
+- [bnd] split boundaries into two groups: SD and SS boundaries, and the
+  rest, then rank within the group based on profiling data, pick the
+  top ranked boundary in the first group, or the top ranked boundary in
+  the second group if the first group is empty,transform it according to
+  the corresponding [prf] boundary elimination strategy (optimistic or
+  conservative).
+
+- [prf] split components into typed with at least one typed dependency or
+  typed client, and the rest, rank within the two groups using profiler
+  information,  pick the top ranked component in the first group, or the top ranked component in
+  the second group if the first group is empty, transform it according to
+  the corresponding [prf] boundary elimination strategy (optimistic or
+  conservative).
+
+Note 1: The same alternative for the statistical profiler corresponding boundary
+elimination strategies is possible here.
+
+Note 2: It is possible to generalize the metric to take into account the
+variable cost of adding types. A proxy/metric for that could be the number
+of types need to be added into a module and the overall ranking could be
+determined based on a lexicographic sorting of boundaries/components
+according to (Cost-from-type-additions, profiler information).
+
+4a,4b. Configuration-aware [optimistic/conservative] boundary elimination
+Metric: Same as for boundary elimination but the metric takes into account
+the how many components in the current configuration are already typed.
+If this number is above a threshold then the chances of performance
+degradation due to a ``domino'' effect from D's wrappers is smaller than
+if the number is below the threshold. 
+
+- [bnd] behave same as [bnd] conservative boundary elimination if configuration
+  above threshold, and same as [bnd] optimistic if below.  
+
+- [prf] behave same as [prf] conservative boundary elimination if configuration
+  above threshold, and same as [prf] optimistic if below.  
+
+
+Note: The strategy can also be combined with cost-aware to form a
+configuration-aware, cost-aware boundary elimination.
+
+
+5a,b. Profiler-agnostic random boundary elimination
+Metric: A configuration A has a higher score if one of its components has
+stricter type checking semantics. 
+
+
+- [bnd] pick a boundary and adjust it [ optimistically/
+  conservatively] 
+
+- [prf] pick a component and adjust it [optimistically/
+   conservatively]  
+
+
+Intuition: These strategies act as baselines for the value of the profiler
+information for the corresponding boundary elimination strategies.
+
+
+Note: The selection of the boundary or component can also take into
+account cost.
+
+6. Profiler-agnostic all boundary flipping
+Metric: A configuration A has a higher score than configuration B if all
+components of B at S[D] are D[S] in  A. 
+
+- Flip the strictness for already typed components in a configuration. 
+
+Intuition: This strategy acts as a baseline for a comparison of profiler-based
+strategies with a very low effort ``blind'' adjustment.
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; MORE IDEAS ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-Other strategy ideas:
-
-* Changing U to S is always a bad idea for performance, don't do it.
-  Changing D to S might be good. Add a strategy that explores D => S.
-
-* Ben thinks that some configurations can get a big boost at low effort
-  by changing all D modules to S (to remove heavy boundaries) or by
-  changing all S modules to D (to remove shallow cost).
-  Try these moves on every lattice point; how often do they succeed,
-  and by how much?
-
-* TBD
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
