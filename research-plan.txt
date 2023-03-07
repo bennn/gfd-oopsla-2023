@@ -266,7 +266,7 @@ strategy functions form groups of comparable strategies based on their metrics.
 
 The following is a list of the working groups of strategies:
 
-1. Optimnistic boundary elimination
+1. Optimistic boundary elimination
 
 Metric: A configuration C has a higher score than a
 configuration D if the most expensive boundary from
@@ -279,7 +279,7 @@ form DD.
    + SD => DD
    + SS => DD
 - [prf] find the slowest module A that requires or provides to a B module with 
-stricter checks (total% or self%):
+stricter checks, then pick the slowest B (total% or self%):
    + A = U and B = D => A = D
    + A = U and B = S => A = D and  B = D
    + A = S and B = D => A = D
@@ -310,7 +310,7 @@ form SS.
    + US => SS
    + SD => SS
 - [prf] find the slowest module A that requires or provides to a B module with 
-stricter checks (total% or self%):
+stricter checks, then pick the slowest B (total% or self%):
    + A = U and B = D => A = S and B = S
    + A = U and B = S => A = S 
    + A = S and B = D => B = S
@@ -351,10 +351,10 @@ boundaries where both sides are already typed.
 
 - [prf] split components into typed with at least one typed dependency or
   typed client, and the rest, rank within the two groups using profiler
-  information,  pick the top ranked component in the first group, or the top ranked component in
-  the second group if the first group is empty, transform it according to
-  the corresponding [prf] boundary elimination strategy (optimistic or
-  conservative).
+  information,  pick the top ranked component in the first group, or the top
+  ranked component in the second group if the first group is empty, transform
+  it according to the corresponding [prf] boundary elimination strategy
+  (optimistic or conservative).
 
 Note 1: The same alternative for the statistical profiler corresponding boundary
 elimination strategies is possible here.
