@@ -1,0 +1,361 @@
+mws = mean win steps = on average, how many steps to reach success?
+mlo = mean loss overhead = on average, how slow at a stuck state?
+
+benchmark  strategy          boundary         prf_self        prf_total N configs
+                                                                                 
+acquire    con                    78%              56%              56%     19683
+                        1.8mws 2.6mlo    2.8mws 2.9mlo    2.8mws 2.9mlo          
+           cost-con               78%              56%              56%     19683
+                        1.9mws 2.6mlo    2.8mws 2.9mlo    2.8mws 2.9mlo          
+           cost-opt               67%              43%              43%     19683
+                        2.2mws 2.4mlo    2.5mws 2.6mlo    2.4mws 2.6mlo          
+           limit-con              66%              43%              43%     19683
+                        2.1mws 2.4mlo    2.5mws 2.6mlo    2.4mws 2.7mlo          
+           limit-opt              76%              51%              50%     19683
+                        1.9mws 2.6mlo    2.8mws 3.0mlo    2.8mws 3.0mlo          
+           opt                    64%              43%              43%     19683
+                        2.1mws 2.4mlo    2.5mws 2.6mlo    2.4mws 2.6mlo          
+           randomD               100%             100%             100%     19683
+                        4.6mws N/Amlo    4.6mws N/Amlo    4.6mws N/Amlo          
+           randomS               100%             100%             100%     19683
+                        4.3mws N/Amlo    4.3mws N/Amlo    4.3mws N/Amlo          
+           toggleD                22%              22%              22%     19683
+                        1.0mws 3.2mlo    1.0mws 3.2mlo    1.0mws 3.2mlo          
+           toggleS                50%              50%              50%     19683
+                        1.0mws 3.1mlo    1.0mws 3.1mlo    1.0mws 3.1mlo          
+                                                                                 
+dungeon    con                    14%               6%               6%       243
+                        0.0mws 5.5mlo  0.0mws 156.0mlo  0.0mws 156.0mlo          
+           cost-con               14%               6%               6%       243
+                        0.0mws 5.5mlo  0.0mws 156.0mlo  0.0mws 156.0mlo          
+           cost-opt               72%              48%              48%       243
+                        1.3mws 3.4mlo  1.4mws 152.8mlo  1.3mws 152.8mlo          
+           limit-con              70%              44%              46%       243
+                        1.4mws 3.5mlo  1.3mws 165.1mlo  1.3mws 170.0mlo          
+           limit-opt              19%               8%               8%       243
+                        0.4mws 5.5mlo  0.2mws 153.5mlo  0.2mws 171.3mlo          
+           opt                    72%              48%              48%       243
+                        1.2mws 3.4mlo  1.4mws 152.8mlo  1.3mws 152.8mlo          
+           randomD               100%             100%             100%       243
+                        2.7mws N/Amlo    2.8mws N/Amlo    2.7mws N/Amlo          
+           randomS               100%             100%             100%       243
+                        3.2mws N/Amlo    3.2mws N/Amlo    3.2mws N/Amlo          
+           toggleD                41%              41%              41%       243
+                      0.9mws 372.4mlo  0.9mws 372.4mlo  0.9mws 372.4mlo          
+           toggleS                11%              11%              11%       243
+                      0.7mws 128.4mlo  0.7mws 128.4mlo  0.7mws 128.4mlo          
+                                                                                 
+forth      con                    16%              15%              15%        81
+                        0.1mws 8.1mlo 0.0mws 5358.1mlo 0.0mws 5358.1mlo          
+           cost-con               19%              15%              15%        81
+                        0.2mws 8.0mlo 0.0mws 5358.1mlo 0.0mws 5358.1mlo          
+           cost-opt               41%              23%              25%        81
+                        0.9mws 3.3mlo 0.4mws 9059.4mlo 0.4mws 9207.9mlo          
+           limit-con              37%              23%              25%        81
+                        0.7mws 3.6mlo 0.4mws 9322.4mlo 0.4mws 9475.2mlo          
+           limit-opt              16%              15%              15%        81
+                        0.1mws 8.1mlo 0.0mws 5352.9mlo 0.0mws 5352.9mlo          
+           opt                    41%              23%              25%        81
+                        0.8mws 3.3mlo 0.4mws 9059.4mlo 0.4mws 9207.9mlo          
+           randomD               100%             100%             100%        81
+                        2.4mws N/Amlo    2.4mws N/Amlo    2.4mws N/Amlo          
+           randomS               100%             100%             100%        81
+                        2.6mws N/Amlo    2.6mws N/Amlo    2.6mws N/Amlo          
+           toggleD                19%              19%              19%        81
+                     0.7mws 8759.9mlo 0.7mws 8759.9mlo 0.7mws 8759.9mlo          
+           toggleS                19%              19%              19%        81
+                     0.6mws 4408.1mlo 0.6mws 4408.1mlo 0.6mws 4408.1mlo          
+                                                                                 
+fsm        con                    42%              38%              41%        81
+                        0.9mws 7.6mlo    0.8mws 7.3mlo    0.8mws 7.3mlo          
+           cost-con               37%              38%              41%        81
+                        0.9mws 7.5mlo    0.8mws 7.3mlo    0.8mws 7.3mlo          
+           cost-opt               96%              80%              73%        81
+                        1.5mws 6.8mlo    1.3mws 6.4mlo    1.2mws 6.5mlo          
+           limit-con              96%              80%              73%        81
+                        1.5mws 6.8mlo    1.4mws 6.4mlo    1.3mws 6.5mlo          
+           limit-opt              44%              36%              38%        81
+                        1.0mws 7.6mlo    0.7mws 7.2mlo    0.7mws 7.2mlo          
+           opt                    96%              80%              73%        81
+                        1.4mws 6.8mlo    1.3mws 6.4mlo    1.2mws 6.5mlo          
+           randomD               100%             100%             100%        81
+                        2.2mws N/Amlo    2.2mws N/Amlo    2.1mws N/Amlo          
+           randomS               100%             100%             100%        81
+                        2.3mws N/Amlo    2.3mws N/Amlo    2.2mws N/Amlo          
+           toggleD                56%              56%              56%        81
+                        0.8mws 2.4mlo    0.8mws 2.4mlo    0.8mws 2.4mlo          
+           toggleS                26%              26%              26%        81
+                        0.7mws 7.2mlo    0.7mws 7.2mlo    0.7mws 7.2mlo          
+                                                                                 
+fsmoo      con                    10%              10%               7%        81
+                        0.3mws 9.5mlo  0.3mws 129.9mlo  0.0mws 126.7mlo          
+           cost-con               10%              10%               7%        81
+                        0.3mws 9.5mlo  0.3mws 129.9mlo  0.0mws 126.7mlo          
+           cost-opt               91%              48%              48%        81
+                        1.4mws 8.7mlo  0.9mws 339.7mlo  1.1mws 339.7mlo          
+           limit-con              88%              46%              46%        81
+                        1.2mws 9.0mlo  0.9mws 345.8mlo  1.0mws 346.0mlo          
+           limit-opt              10%              10%               7%        81
+                        0.3mws 9.5mlo  0.3mws 129.9mlo  0.0mws 126.7mlo          
+           opt                    91%              48%              48%        81
+                        1.2mws 8.7mlo  0.9mws 339.7mlo  1.1mws 339.7mlo          
+           randomD               100%             100%             100%        81
+                        2.1mws N/Amlo    2.2mws N/Amlo    2.1mws N/Amlo          
+           randomS               100%             100%             100%        81
+                        2.5mws N/Amlo    2.6mws N/Amlo    2.6mws N/Amlo          
+           toggleD                56%              56%              56%        81
+                      0.8mws 392.0mlo  0.8mws 392.0mlo  0.8mws 392.0mlo          
+           toggleS                11%              11%              11%        81
+                       0.6mws 86.5mlo   0.6mws 86.5mlo   0.6mws 86.5mlo          
+                                                                                 
+jpeg       con                   100%              67%              68%       243
+                        1.3mws N/Amlo   1.4mws 11.8mlo   1.7mws 12.0mlo          
+           cost-con              100%              67%              68%       243
+                        1.3mws N/Amlo   1.4mws 11.8mlo   1.7mws 12.0mlo          
+           cost-opt              100%              80%              80%       243
+                        1.2mws N/Amlo   1.2mws 21.3mlo   1.4mws 21.3mlo          
+           limit-con             100%              75%              78%       243
+                        1.1mws N/Amlo   1.3mws 18.9mlo   1.5mws 18.7mlo          
+           limit-opt             100%              71%              68%       243
+                        1.3mws N/Amlo   1.4mws 13.9mlo   1.7mws 14.5mlo          
+           opt                   100%              80%              80%       243
+                        1.0mws N/Amlo   1.2mws 21.3mlo   1.4mws 21.3mlo          
+           randomD               100%             100%             100%       243
+                        2.4mws N/Amlo    2.3mws N/Amlo    2.4mws N/Amlo          
+           randomS               100%             100%             100%       243
+                        2.4mws N/Amlo    2.6mws N/Amlo    2.5mws N/Amlo          
+           toggleD                48%              48%              48%       243
+                       0.9mws 20.6mlo   0.9mws 20.6mlo   0.9mws 20.6mlo          
+           toggleS                63%              63%              63%       243
+                       0.9mws 16.0mlo   0.9mws 16.0mlo   0.9mws 16.0mlo          
+                                                                                 
+kcfa       con                   100%              89%              89%      2187
+                        1.3mws N/Amlo    2.0mws 2.9mlo    2.0mws 2.9mlo          
+           cost-con              100%              89%              89%      2187
+                        1.3mws N/Amlo    2.0mws 2.9mlo    2.0mws 2.9mlo          
+           cost-opt              100%              94%              93%      2187
+                        1.8mws N/Amlo    2.2mws 3.1mlo    2.2mws 3.2mlo          
+           limit-con             100%              92%              93%      2187
+                        1.6mws N/Amlo    2.0mws 3.2mlo    2.2mws 3.3mlo          
+           limit-opt             100%              86%              80%      2187
+                        1.4mws N/Amlo    2.2mws 2.8mlo    2.1mws 2.8mlo          
+           opt                   100%              94%              93%      2187
+                        1.6mws N/Amlo    2.2mws 3.1mlo    2.2mws 3.2mlo          
+           randomD               100%             100%             100%      2187
+                        3.3mws N/Amlo    3.4mws N/Amlo    3.4mws N/Amlo          
+           randomS               100%             100%             100%      2187
+                        2.9mws N/Amlo    3.0mws N/Amlo    3.0mws N/Amlo          
+           toggleD                33%              33%              33%      2187
+                        1.0mws 2.8mlo    1.0mws 2.8mlo    1.0mws 2.8mlo          
+           toggleS                70%              70%              70%      2187
+                        0.9mws 3.6mlo    0.9mws 3.6mlo    0.9mws 3.6mlo          
+                                                                                 
+lnm        con                   100%             100%             100%       729
+                        0.3mws N/Amlo    0.9mws N/Amlo    0.9mws N/Amlo          
+           cost-con              100%             100%             100%       729
+                        0.3mws N/Amlo    0.9mws N/Amlo    0.9mws N/Amlo          
+           cost-opt              100%             100%             100%       729
+                        0.3mws N/Amlo    0.9mws N/Amlo    0.9mws N/Amlo          
+           limit-con             100%             100%             100%       729
+                        0.3mws N/Amlo    0.9mws N/Amlo    0.9mws N/Amlo          
+           limit-opt             100%             100%             100%       729
+                        0.3mws N/Amlo    0.9mws N/Amlo    0.9mws N/Amlo          
+           opt                   100%             100%             100%       729
+                        0.3mws N/Amlo    0.9mws N/Amlo    0.9mws N/Amlo          
+           randomD               100%             100%             100%       729
+                        1.0mws N/Amlo    1.0mws N/Amlo    1.0mws N/Amlo          
+           randomS               100%             100%             100%       729
+                        1.0mws N/Amlo    1.0mws N/Amlo    1.0mws N/Amlo          
+           toggleD               100%             100%             100%       729
+                        0.9mws N/Amlo    0.9mws N/Amlo    0.9mws N/Amlo          
+           toggleS               100%             100%             100%       729
+                        0.9mws N/Amlo    0.9mws N/Amlo    0.9mws N/Amlo          
+                                                                                 
+mbta       con                   100%             100%             100%        81
+                        0.7mws N/Amlo    0.6mws N/Amlo    0.6mws N/Amlo          
+           cost-con              100%             100%             100%        81
+                        0.7mws N/Amlo    0.6mws N/Amlo    0.6mws N/Amlo          
+           cost-opt              100%             100%             100%        81
+                        0.7mws N/Amlo    0.7mws N/Amlo    0.7mws N/Amlo          
+           limit-con             100%             100%             100%        81
+                        0.7mws N/Amlo    0.7mws N/Amlo    0.7mws N/Amlo          
+           limit-opt             100%             100%             100%        81
+                        0.7mws N/Amlo    0.7mws N/Amlo    0.7mws N/Amlo          
+           opt                   100%             100%             100%        81
+                        0.7mws N/Amlo    0.7mws N/Amlo    0.7mws N/Amlo          
+           randomD               100%             100%             100%        81
+                        1.2mws N/Amlo    1.2mws N/Amlo    1.2mws N/Amlo          
+           randomS               100%             100%             100%        81
+                        1.2mws N/Amlo    1.2mws N/Amlo    1.3mws N/Amlo          
+           toggleD               100%             100%             100%        81
+                        0.8mws N/Amlo    0.8mws N/Amlo    0.8mws N/Amlo          
+           toggleS               100%             100%             100%        81
+                        0.8mws N/Amlo    0.8mws N/Amlo    0.8mws N/Amlo          
+                                                                                 
+morsecode  con                    67%              57%              52%        81
+                       0.0mws 10.4mlo   0.7mws 10.3mlo   0.7mws 10.3mlo          
+           cost-con               67%              57%              52%        81
+                       0.0mws 10.4mlo   0.7mws 10.3mlo   0.7mws 10.3mlo          
+           cost-opt               77%              78%              78%        81
+                       0.1mws 10.3mlo   0.8mws 10.1mlo   0.8mws 10.1mlo          
+           limit-con              77%              75%              75%        81
+                       0.1mws 10.3mlo   0.8mws 10.1mlo   0.8mws 10.1mlo          
+           limit-opt              67%              59%              54%        81
+                       0.0mws 10.4mlo   0.7mws 10.3mlo   0.7mws 10.3mlo          
+           opt                    77%              78%              78%        81
+                       0.1mws 10.3mlo   0.8mws 10.1mlo   0.8mws 10.1mlo          
+           randomD               100%             100%             100%        81
+                        1.4mws N/Amlo    1.6mws N/Amlo    1.5mws N/Amlo          
+           randomS                42%             100%             100%        81
+                        1.1mws 9.7mlo    1.9mws N/Amlo    2.0mws N/Amlo          
+           toggleD               100%             100%             100%        81
+                        0.8mws N/Amlo    0.8mws N/Amlo    0.8mws N/Amlo          
+           toggleS                33%              33%              33%        81
+                       0.7mws 10.1mlo   0.7mws 10.1mlo   0.7mws 10.1mlo          
+                                                                                 
+sieve      con                    33%              22%              22%         9
+                        0.0mws 2.7mlo    0.0mws 6.3mlo    0.0mws 6.3mlo          
+           cost-con               33%              22%              22%         9
+                        0.0mws 2.7mlo    0.0mws 6.3mlo    0.0mws 6.3mlo          
+           cost-opt               89%              56%              56%         9
+                        0.6mws 2.7mlo    0.6mws 9.0mlo    0.6mws 9.0mlo          
+           limit-con              89%              56%              56%         9
+                        0.6mws 2.7mlo    0.6mws 9.0mlo    0.6mws 9.0mlo          
+           limit-opt              33%              22%              22%         9
+                        0.0mws 2.7mlo    0.0mws 6.3mlo    0.0mws 6.3mlo          
+           opt                    89%              56%              56%         9
+                        0.6mws 2.7mlo    0.6mws 9.0mlo    0.6mws 9.0mlo          
+           randomD               100%             100%             100%         9
+                        1.3mws N/Amlo    1.3mws N/Amlo    1.3mws N/Amlo          
+           randomS               100%             100%             100%         9
+                        1.3mws N/Amlo    1.3mws N/Amlo    1.3mws N/Amlo          
+           toggleD                56%              56%              56%         9
+                        0.6mws 9.6mlo    0.6mws 9.6mlo    0.6mws 9.6mlo          
+           toggleS                33%              33%              33%         9
+                        0.3mws 4.1mlo    0.3mws 4.1mlo    0.3mws 4.1mlo          
+                                                                                 
+snake      con                     0%               0%               0%      6561
+                        0.0mws 4.7mlo   0.0mws 16.2mlo   0.0mws 16.1mlo          
+           cost-con                0%               0%               0%      6561
+                        0.0mws 4.7mlo   0.0mws 16.2mlo   0.0mws 16.1mlo          
+           cost-opt               98%              51%              53%      6561
+                        4.1mws 4.0mlo   3.7mws 13.8mlo   3.6mws 14.0mlo          
+           limit-con              94%              51%              53%      6561
+                        3.8mws 3.7mlo   3.8mws 14.6mlo   3.7mws 14.6mlo          
+           limit-opt               0%               0%               0%      6561
+                        0.0mws 4.8mlo   0.0mws 15.8mlo   0.0mws 15.8mlo          
+           opt                    98%              51%              53%      6561
+                        3.8mws 4.0mlo   3.7mws 13.8mlo   3.6mws 14.0mlo          
+           randomD               100%             100%             100%      6561
+                        5.0mws N/Amlo    5.0mws N/Amlo    5.0mws N/Amlo          
+           randomS               100%             100%             100%      6561
+                        5.3mws N/Amlo    5.3mws N/Amlo    5.3mws N/Amlo          
+           toggleD                10%              10%              10%      6561
+                        1.0mws 6.9mlo    1.0mws 6.9mlo    1.0mws 6.9mlo          
+           toggleS                 0%               0%               0%      6561
+                       0.7mws 12.9mlo   0.7mws 12.9mlo   0.7mws 12.9mlo          
+                                                                                 
+suffixtree con                    33%              15%              16%       729
+                        1.4mws 2.3mlo   1.5mws 11.7mlo   1.7mws 11.8mlo          
+           cost-con               33%              15%              16%       729
+                        1.6mws 2.3mlo   1.5mws 11.7mlo   1.7mws 11.8mlo          
+           cost-opt               99%              46%              47%       729
+                        2.4mws 2.3mlo   2.0mws 11.8mlo   2.8mws 12.4mlo          
+           limit-con              99%              46%              47%       729
+                        2.1mws 2.3mlo   2.0mws 12.1mlo   2.8mws 12.6mlo          
+           limit-opt              33%              15%              16%       729
+                        1.7mws 2.3mlo   1.5mws 11.6mlo   1.8mws 11.7mlo          
+           opt                    99%              46%              47%       729
+                        2.0mws 2.3mlo   2.0mws 11.8mlo   2.8mws 12.4mlo          
+           randomD               100%             100%             100%       729
+                        3.4mws N/Amlo    3.4mws N/Amlo    3.4mws N/Amlo          
+           randomS               100%             100%             100%       729
+                        3.7mws N/Amlo    3.7mws N/Amlo    3.7mws N/Amlo          
+           toggleD                31%              31%              31%       729
+                       0.9mws 10.1mlo   0.9mws 10.1mlo   0.9mws 10.1mlo          
+           toggleS                18%              18%              18%       729
+                       0.9mws 13.0mlo   0.9mws 13.0mlo   0.9mws 13.0mlo          
+                                                                                 
+synth      con                    86%              23%              21%     59049
+                        3.8mws 2.1mlo   4.7mws 29.6mlo   4.5mws 29.1mlo          
+           cost-con               88%              23%              21%     59049
+                        4.3mws 2.1mlo   4.7mws 29.6mlo   4.5mws 29.1mlo          
+           cost-opt              100%              16%              18%     59049
+                        5.5mws 2.1mlo   3.5mws 23.1mlo   4.0mws 23.1mlo          
+           limit-con             100%              16%              18%     59049
+                        4.6mws 2.1mlo   3.5mws 23.5mlo   4.0mws 23.2mlo          
+           limit-opt              87%              22%              21%     59049
+                        4.1mws 2.1mlo   4.7mws 29.6mlo   4.5mws 29.0mlo          
+           opt                   100%              16%              18%     59049
+                        4.6mws 2.1mlo   3.5mws 23.1mlo   4.0mws 23.1mlo          
+           randomD               100%             100%             100%     59049
+                        6.3mws N/Amlo    6.3mws N/Amlo    6.3mws N/Amlo          
+           randomS               100%             100%             100%     59049
+                        6.2mws N/Amlo    6.2mws N/Amlo    6.2mws N/Amlo          
+           toggleD                 6%               6%               6%     59049
+                       1.0mws 22.8mlo   1.0mws 22.8mlo   1.0mws 22.8mlo          
+           toggleS                22%              22%              22%     59049
+                       1.0mws 25.3mlo   1.0mws 25.3mlo   1.0mws 25.3mlo          
+                                                                                 
+take5      con                     3%               3%               3%      6561
+                       0.0mws 33.4mlo   0.0mws 34.2mlo   0.0mws 34.2mlo          
+           cost-con                3%               3%               3%      6561
+                       0.0mws 33.4mlo   0.0mws 34.2mlo   0.0mws 34.2mlo          
+           cost-opt                3%               3%               3%      6561
+                       0.1mws 33.9mlo   0.0mws 34.2mlo   0.0mws 34.2mlo          
+           limit-con               3%               3%               3%      6561
+                       0.1mws 33.9mlo   0.0mws 34.2mlo   0.0mws 34.2mlo          
+           limit-opt               3%               3%               3%      6561
+                       0.0mws 33.5mlo   0.0mws 34.2mlo   0.0mws 34.2mlo          
+           opt                     3%               3%               3%      6561
+                       0.1mws 33.9mlo   0.0mws 34.2mlo   0.0mws 34.2mlo          
+           randomD               100%             100%             100%      6561
+                        4.6mws N/Amlo    4.6mws N/Amlo    4.6mws N/Amlo          
+           randomS               100%             100%             100%      6561
+                        5.3mws N/Amlo    5.3mws N/Amlo    5.3mws N/Amlo          
+           toggleD                21%              21%              21%      6561
+                       1.0mws 31.1mlo   1.0mws 31.1mlo   1.0mws 31.1mlo          
+           toggleS                 3%               3%               3%      6561
+                       0.9mws 14.9mlo   0.9mws 14.9mlo   0.9mws 14.9mlo          
+                                                                                 
+tetris     con                     3%               1%              12%     19683
+                        0.7mws 5.7mlo   0.8mws 15.4mlo   1.2mws 16.8mlo          
+           cost-con                6%               1%              12%     19683
+                        1.0mws 6.1mlo   0.8mws 15.4mlo   1.2mws 16.8mlo          
+           cost-opt               98%              36%              41%     19683
+                        2.9mws 9.4mlo   1.4mws 13.3mlo   2.5mws 15.5mlo          
+           limit-con              92%              33%              40%     19683
+                        2.3mws 8.6mlo   1.4mws 14.3mlo   2.4mws 16.1mlo          
+           limit-opt               6%               3%              11%     19683
+                        1.5mws 5.5mlo   1.2mws 15.5mlo   1.2mws 16.6mlo          
+           opt                    98%              36%              41%     19683
+                        2.3mws 9.4mlo   1.4mws 13.3mlo   2.5mws 15.5mlo          
+           randomD               100%             100%             100%     19683
+                        4.3mws N/Amlo    4.3mws N/Amlo    4.3mws N/Amlo          
+           randomS                 8%             100%               8%     19683
+                        1.2mws 4.2mlo    5.5mws N/Amlo    1.2mws 4.1mlo          
+           toggleD                33%              33%              33%     19683
+                        1.0mws 9.5mlo    1.0mws 9.5mlo    1.0mws 9.5mlo          
+           toggleS                11%              11%              11%     19683
+                       0.9mws 16.1mlo   0.9mws 16.1mlo   0.9mws 16.1mlo          
+                                                                                 
+zombie     con                    16%              10%              10%        81
+                       0.0mws 16.5mlo   0.0mws 29.4mlo   0.0mws 29.4mlo          
+           cost-con               16%              10%              10%        81
+                       0.0mws 16.5mlo   0.0mws 29.4mlo   0.0mws 29.4mlo          
+           cost-opt               83%              70%              70%        81
+                       1.1mws 16.6mlo   1.3mws 18.9mlo   1.2mws 18.9mlo          
+           limit-con              78%              65%              65%        81
+                       1.1mws 16.6mlo   1.2mws 17.6mlo   1.2mws 17.6mlo          
+           limit-opt              20%              12%              12%        81
+                       0.2mws 16.5mlo   0.2mws 29.8mlo   0.2mws 29.8mlo          
+           opt                    83%              70%              70%        81
+                       1.1mws 16.6mlo   1.3mws 18.9mlo   1.2mws 18.9mlo          
+           randomD               100%             100%             100%        81
+                        2.3mws N/Amlo    2.3mws N/Amlo    2.3mws N/Amlo          
+           randomS               100%             100%             100%        81
+                        2.6mws N/Amlo    2.7mws N/Amlo    2.6mws N/Amlo          
+           toggleD                56%              56%              56%        81
+                       0.8mws 41.5mlo   0.8mws 41.5mlo   0.8mws 41.5mlo          
+           toggleS                11%              11%              11%        81
+                       0.6mws 21.4mlo   0.6mws 21.4mlo   0.6mws 21.4mlo          
