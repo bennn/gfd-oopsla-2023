@@ -1,6 +1,7 @@
 #lang racket
 
 (require
+  "base.rkt"
   math/statistics
   file/glob text-table)
 
@@ -17,28 +18,11 @@
   (newline)
   (displayln (simple-table->string xx #:align '(left left right))))
 
-(struct rktd [name path bm strat mode] #:prefab)
-(struct row [cfg end ms ns ss] #:prefab)
-(struct trail [success configs mstep mfail] #:prefab)
-
 (define (all-rktd dd)
   (for/list ((pp (in-list (glob (build-path dd "*rktd")))))
     (define name (fname pp))
     (define-values [bm strat mode] (split-filename name))
     (rktd name pp bm strat mode)))
-
-(define (hyphen-split str)
-  (string-split str "-"))
-
-(define (hyphen-join str*)
-  (string-join str* "-"))
-
-(define (split-filename str)
-  (define elem* (hyphen-split (car (string-split str "."))))
-  (define bm (first elem*))
-  (define mode (last elem*))
-  (define strat (hyphen-join (drop-right (cdr elem*) 1)))
-  (values bm strat mode))
 
 (define (pct a b)
   (format "~a%" (exact-round (* 100 (/ a b)))))

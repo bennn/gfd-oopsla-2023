@@ -27,7 +27,7 @@
 
 \begin{document}
 
-\title{Exploring the Deeps and Shallows: A Rational Programmer Study of How Various Profilers Can Guide 3D Type Migration}
+\title{How Profilers Can Help Navigate Type Migration}
 
 \author{Ben Greenman}
 \orcid{0000-0001-7078-9287}
@@ -89,6 +89,8 @@
 \section{Introduction}
 \label{s:introduction}
 
+Navigate, deep, shallow
+
 Rational programmer~\cite{lgfd-icfp-2021}.
 
 
@@ -145,7 +147,6 @@ Only \bmname{fsm} and \bmname{lnm} have low percentages: 8\% and 44\%.
 
 \begin{table}[t]
   \caption{How many of the $3^N$ configurations need help to reach $T=1$?}
-
   \label{t:baseline-trouble}
   \begin{tabular}{lrr}
     Benchmark  & Count & Pct \\\midrule
@@ -170,7 +171,49 @@ Only \bmname{fsm} and \bmname{lnm} have low percentages: 8\% and 44\%.
 
 \end{table}
 
+\begin{figure}[t]
+  \caption{Distribution of trouble configurations by size of the migration target.}
+  \label{f:where-trouble}
+  \includegraphics{data/where-trouble.pdf}
+\end{figure}
 
+\begin{figure}[t]
+  \includegraphics[width=\textwidth]{data/cdf-overhead_boundary.pdf}
+  \caption{f:overhead-bnd}
+  \label{f:overhead-bnd}
+\end{figure}
+
+\begin{figure}[t]
+  \includegraphics[width=\textwidth]{data/cdf-overhead_prf_self.pdf}
+  \caption{f:overhead-self}
+  \label{f:overhead-self}
+\end{figure}
+
+\begin{figure}[t]
+  \includegraphics[width=\textwidth]{data/cdf-overhead_prf_total.pdf}
+  \caption{f:overhead-total}
+  \label{f:overhead-total}
+\end{figure}
+
+\begin{figure}[t]
+  \includegraphics[width=\textwidth]{data/cdf-steps_boundary.pdf}
+  \caption{f:steps-bnd}
+  \label{f:steps-bnd}
+\end{figure}
+
+\begin{figure}[t]
+  \includegraphics[width=\textwidth]{data/cdf-steps_prf_self.pdf}
+  \caption{f:steps-self}
+  \label{f:steps-self}
+\end{figure}
+
+\begin{figure}[t]
+  \includegraphics[width=\textwidth]{data/cdf-steps_prf_total.pdf}
+  \caption{f:steps-total}
+  \label{f:steps-total}
+\end{figure}
+
+\clearpage
 
 \section{Discussion}
 \label{s:conclusion}
