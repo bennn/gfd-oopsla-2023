@@ -1,0 +1,117 @@
+
+runtime from one cluster and one racket.
+exceptions: dungeon, quadT, morsecode (todo)
+
+boundary from another cluster, same racket
+exceptions: dungeon, morsecode
+profile, ditto
+
+
+A benchmark is a family of programs.
+There are $3^N$ program configurations (\emph{configurations} for short)
+in each family, where $N$ is the number of \emph{migratable} modules.
+These modules can depend on any number of additional \emph{contextual} modules.
+
+A migration target (\emph{target}) is a set of modules that should be equipped
+with types.
+There are $2^N$ targets per benchmark.
+
+For our experiments, we consider every configuration as a starting point.
+From the starting point, the goal is to reach a fast configuration without
+removing types from a module.
+(In other words, the \emph{target} is the set of typed modules in the start
+configuration.)
+A fast configuration runs at least as quickly as the untyped code.
+Using the established terminology~\cite{vss-popl-2017,bbst-oopsla-2017},
+we instatiate the Takikawa constant to 1x ($T=1$).
+
+A very simple way to try improving performance is to toggle between
+Deep and Shallow.
+\citet{g-pldi-2022} provides justification.
+Any configuration can reach 0, 1, or 2 other configurations by
+toggling, that is, by changing all its typed modules to Deep or
+changing all to Shallow.
+(Only the untyped configuration can reach 0 others.)
+
+First question: for how many configurations does $T=1$ present a debugging challenge?
+More precisely, how many cannot reach $T=1$ by toggling?
+
+(The untyped configuration can trivially reach $T=1$.
+The fully-typed configuration can usually reach $T=1$, unless there are heavy
+boundaries to untyped contextual modules.)
+
+\Cref{t:baseline-trouble} shows that many benchmarks need help,
+over 100k configurations in total.
+The median \% that need help is 82\%.
+Only \bmname{fsm} and \bmname{lnm} have low percentages: 8\% and 44\%.
+
+\begin{table}[t]
+  \caption{How many of the $3^N$ configurations need help to reach $T=1$?}
+  \label{t:baseline-trouble}
+  \begin{tabular}{lrr}
+    Benchmark  & Count & Pct \\\midrule
+    sieve      & 8     & 88.89\% \\
+    morsecode  & 55    & 67.90\% \\
+    forth      & 74    & 91.36\% \\
+    fsm        & 36    & 44.44\% \\
+    fsmoo      & 50    & 61.73\% \\
+    mbta       & 72    & 88.89\% \\
+    zombie     & 64    & 79.01\% \\
+    dungeon    & 242   & 99.59\% \\
+    jpeg       & 168   & 69.14\% \\
+    lnm        & 57    &  7.82\% \\
+    suffixtree & 584   & 80.11\% \\
+    kcfa       & 1799  & 82.26\% \\
+    snake      & 6560  & 99.98\% \\
+    take5      & 6558  & 99.95\% \\
+    acquire    & 19495 & 99.04\% \\
+    tetris     & 14879 & 75.59\% \\
+    synth      & 58022 & 98.26\% \\
+  \end{tabular}
+
+\end{table}
+
+\begin{figure}[t]
+  \caption{Distribution of trouble configurations by size of the migration target.}
+  \label{f:where-trouble}
+  \includegraphics{data/where-trouble.pdf}
+\end{figure}
+
+\begin{figure}[t]
+  \includegraphics[width=\textwidth]{data/cdf-overhead_boundary.pdf}
+  \caption{f:overhead-bnd}
+  \label{f:overhead-bnd}
+\end{figure}
+
+\begin{figure}[t]
+  \includegraphics[width=\textwidth]{data/cdf-overhead_prf_self.pdf}
+  \caption{f:overhead-self}
+  \label{f:overhead-self}
+\end{figure}
+
+\begin{figure}[t]
+  \includegraphics[width=\textwidth]{data/cdf-overhead_prf_total.pdf}
+  \caption{f:overhead-total}
+  \label{f:overhead-total}
+\end{figure}
+
+\begin{figure}[t]
+  \includegraphics[width=\textwidth]{data/cdf-steps_boundary.pdf}
+  \caption{f:steps-bnd}
+  \label{f:steps-bnd}
+\end{figure}
+
+\begin{figure}[t]
+  \includegraphics[width=\textwidth]{data/cdf-steps_prf_self.pdf}
+  \caption{f:steps-self}
+  \label{f:steps-self}
+\end{figure}
+
+\begin{figure}[t]
+  \includegraphics[width=\textwidth]{data/cdf-steps_prf_total.pdf}
+  \caption{f:steps-total}
+  \label{f:steps-total}
+\end{figure}
+
+\clearpage
+
