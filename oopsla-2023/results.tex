@@ -1,21 +1,3 @@
-
-runtime from one cluster and one racket.
-exceptions: dungeon, quadT, morsecode (todo)
-
-boundary from another cluster, same racket
-exceptions: dungeon, morsecode
-profile, ditto
-
-
-A benchmark is a family of programs.
-There are $3^N$ program configurations (\emph{configurations} for short)
-in each family, where $N$ is the number of \emph{migratable} modules.
-These modules can depend on any number of additional \emph{contextual} modules.
-
-A migration target (\emph{target}) is a set of modules that should be equipped
-with types.
-There are $2^N$ targets per benchmark.
-
 For our experiments, we consider every configuration as a starting point.
 From the starting point, the goal is to reach a fast configuration without
 removing types from a module.
@@ -44,6 +26,7 @@ boundaries to untyped contextual modules.)
 over 100k configurations in total.
 The median \% that need help is 82\%.
 Only \bmname{fsm} and \bmname{lnm} have low percentages: 8\% and 44\%.
+FILL say more
 
 \begin{table}[t]
   \caption{How many of the $3^N$ configurations need help to reach $T=1$?}
@@ -76,6 +59,10 @@ Only \bmname{fsm} and \bmname{lnm} have low percentages: 8\% and 44\%.
   \label{f:where-trouble}
   \includegraphics{data/where-trouble.pdf}
 \end{figure}
+
+FILL \cref{f:where-trouble}
+... delete this figure?
+
 
 \begin{figure}[t]
   \includegraphics[width=\textwidth]{data/cdf-overhead_boundary.pdf}

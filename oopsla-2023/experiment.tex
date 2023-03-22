@@ -1,0 +1,64 @@
+
+\subsection{tmp: definitions}
+
+A benchmark is a family of programs.
+There are $3^N$ program configurations (\emph{configurations} for short)
+in each family, where $N$ is the number of \emph{migratable} modules.
+These modules can depend on any number of additional \emph{contextual} modules.
+
+A migration target (\emph{target}) is a set of modules that should be equipped
+with types.
+There are $2^N$ targets per benchmark.
+
+
+\subsection{Data Collection}
+
+% https://www.cloudlab.us/
+
+Our experiments call for three kinds of data for every configuration across the benchmarks:
+\begin{enumerate}
+  \item Running time
+  \item Boundary-profile output
+  \item Statistical-profile output
+\end{enumerate}
+
+To collect one running time, we used nine runs of the configuration:
+one throwaway run to warm up the Racket JIT and eight other runs to compute an average.
+To collect boundary and statistical output, we ran each configuration once.
+Thus we took $11 * \totalnumconfigs{} = \totalnummeasurements{}$ measurements in total.
+
+We collected all the data on CloudLab~[CITE].
+For running times, we used the Wisconsin cluster c220g1 
+FILL: exception for morsecode.
+
+%% 2023-03-22 bg: quadT ran on m510 nodes
+
+boundary from another cluster, same racket
+exceptions: dungeon, morsecode
+profile, ditto
+
+\begin{table}[t]
+  \caption{Datasets}
+  \label{t:data-collection}
+
+  \begin{tabular}{ll}
+    Dataset & Where from \\\midrule
+    dungeon runtime & \machinename{c220g2} Racket FILL TR \commitname{29ea3c10}{29ea3c105e0bd60b88c1fd195b54fa716863f690} \\
+    dungeon b + s?? & TBD \\
+    morsecode ? & \machinename{TBD} Racket FILL TR cherry-pick TBD \\
+    %% quadT runtime & \machinename{m510}, standard Racket \\
+    other runtime & \machinename{c220g1} Racket FILL TR FILL \\
+    other boundary & \machinename{m510}, Racket FILL \\
+    other statistical & \machinename{m510}, Racket FILL
+  \end{tabular}
+
+  \bigskip
+
+  \begin{tabular}{ll}
+    Machine Type & Location, RAM, CPU speed, ... \\\midrule
+    \machinename{c220g1} & FILL \\
+    \machinename{c220g2} & FILL \\
+    \machinename{m510} & FILL
+  \end{tabular}
+\end{table}
+
