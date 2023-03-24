@@ -1,13 +1,13 @@
  Sound gradual typing promises to support developers while they migrate a
  codebase from an untyped language to a sister typed one.  This promise
- hinges on two points. First, developers pay the labor cost of 
- adding annotations to their code  gradually.  Second, until the
+ hinges on two points. First, developers  gradually pay the labor cost of 
+ adding annotations to their code.  Second, until the
  migration is fully complete, the gradual type system turns some of the
  annotations into checks that monitor for impedance mismatches between the
  annotations and the code's behavior.
 
- Problem is the run-time type checks are far from cheap.  And gradual type
- systems (and their ecosystems) do not provide any guidance about where
+ Problem is the run-time type checks are expensive.  And gradual type
+ systems and their ecosystems do not provide any guidance about where
  developers should invest their effort to avoid paying unacceptable
  performance penalties. Hence, developers face a
  conundrum that leads to a natural research question:
@@ -27,7 +27,7 @@
  optimizations may kick in and offset the cost of  contracts elsewhere.  
  But, in general, the addition of just a few type annotations
  at the early stages of migration can lead to a steep slowdown,
- before performance improves eventually with the addition of further
+ before performance eventually improves  with the addition of further
  annotations. 
 
  An alternative to deep checks are shallow
@@ -38,7 +38,7 @@
  the more profound their impact on performance. In essence, shallow checks
  trade a smooth performance cost at the initial steps of migration for a
  an increasing accumulated cost further down the
- road~\cite{gm-pepm-2018,rmhn-ecoop-2019}.  In other words, the
+ migration path~\cite{gm-pepm-2018,rmhn-ecoop-2019}.  In other words, the
  performance profile of shallow checks seems to have complementary
  strengths and weaknesses to those of deep checks.  
 
@@ -57,12 +57,12 @@
  --- and chart a migration path with acceptable performance along the way
  that leads to a configuration with the desirable amount of type checking.
  In Typed Racket with mixed checks, the size of the space of
- configurations shoots up to $3^N$! 
+ configurations shoots up to $3^N$.
 
 The key insight of this paper is that profilers can provide the needed guidance to
-developers that attempt to navigate the type migration of their code.
+developers that attempt to navigate type migration.
 But to do so, developers still have to strategically 
-translate the feedback from profilers, to migration actions. 
+translate the feedback from profiler, to migration actions. 
 Hence, this paper aims to answer the following: 
 \begin{itemize}
   \item    
@@ -74,28 +74,28 @@ Hence, this paper aims to answer the following:
 \end{itemize}   
 
 These questions call for an empirical investigation. To that end, the paper
-leverages and adapts the \emph{Rational Programmer}
+leverages and adapts the \emph{rational programmer}
 method~\cite{lksfd-popl-2020,lgfd-icfp-2021}.
-While~\citet{lgfd-icfp-2021} have applied successfully the Rational
-Programmer to compare the usefulness of shallow and deep checks for
+While~\citet{lgfd-icfp-2021} have applied successfully the method
+to invstigate the usefulness of shallow and deep checks for
 debugging, the context of navigating type migration introduces unique
 challenges. First, the method asks for a collection of algorithmic
 abstractions, dubbed the rational programmers, that each reifies a
-falsifiable hypothesis about a different strategy of interpreting profiler
+falsifiable hypothesis about a different strategy for interpreting profiler
 feedback.  Second, the method relies on the construction of a diverse
 population of scenarios that are the starting points for a large-scale
 simulation experiment that sets the rational programmers against each
-other.    
+other.   
 
 To sum up, this paper makes two contributions:
 
 \begin{itemize}
   \item At the object level, the results of the rational programmer
-    experiment provide guidance to developers about how to use profilers
+    experiment provide guidance to developers about how to benefit from profilers
     during type migration.  
-  \item At the meta level, the application of the rational programmer to
-    the navigation of type migration provides one more piece of evidence evidence 
-    about the extent of the method. 
+  \item At the meta level, the application of the rational programmer
+    method to type migration provides one more piece of evidence 
+    about the extent of this investigative approach. 
 \end{itemize}    
 
 The remainder of the paper is organized as follows.
@@ -104,13 +104,14 @@ and shallow checks can cause performance bottlenecks during type migration, and 
 profiler feedback
 can help developers indentify and mitigate them.  
 Section~\ref{sec:ideas} explains how the rational programmer method 
-makes it possible to evaluate systematically the effectiveness of
-different strategies of interpreting profiler feedback in 
-navigating type migration. Section~\ref{sec:experiment} turns these
-ideas into a large-scale quantitative experiment. 
+makes it possible to systematically evaluate  the effectiveness of
+different strategies for interpreting profiler feedback in 
+navigating type migration. Section~\ref{sec:experiment} lays out the
+details of how these
+ideas translate to a large-scale quantitative experiment. 
 Section~\ref{sec:results} presents the results of the experiment, and 
-section~\ref{sec:discussion} extracts from these results lessons for PL
-researchers and developers. 
+section~\ref{sec:discussion} extracts from these results lessons for
+ developers and developers. 
 Section~\ref{sec:related} places this work in the context of prior
 research, and section~\ref{sec:conclusion} puts this work in perspective
 with respect to future research on gradual typing. 
