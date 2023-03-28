@@ -4,6 +4,9 @@
   all-benchmark-name*
   all-strategy-name*
   all-mode-name*
+  take-some
+  row-trail-success?
+  row-trail-failure?
   bm->num-configs
   ensure-dir
   (struct-out rktd)
@@ -85,4 +88,13 @@
 
 (define (all-mode-name*)
   '("boundary" "prf_total" "prf_self"))
+
+(define (take-some x*)
+  (take x* 2))
+
+(define (row-trail-success? rr)
+  (eq? 'success (car (row-end rr))))
+
+(define (row-trail-failure? rr)
+  (eq? 'error (car (row-end rr))))
 

@@ -17,6 +17,7 @@
 % \usepackage{amssymb}
 \usepackage{calc}
 \usepackage{cleveref}
+\usepackage{colortbl}
 \usepackage{listings}
 \usepackage{mathpartir}
 \usepackage{pifont}
@@ -84,6 +85,12 @@
 %% 2023-03-22 bg: configs + runs ignoring quadT
 \newcommand{\machinename}[1]{\texttt{#1}}
 \newcommand{\commitname}[2]{\texttt{#1}}
+\newcommand{\gcell}[1]{\cellcolor{green!20}#1}
+\newcommand{\wcell}[1]{\cellcolor{black!05}#1}
+\newcommand{\ycell}[1]{\cellcolor{yellow!18}#1}
+\newcommand{\ocell}[1]{\cellcolor{orange!29}#1}
+\newcommand{\rcell}[1]{\cellcolor{red!30}#1}
+\newcommand{\tcell}[1]{\cellcolor{black!10}#1}
 
 \keywords{complete monitoring, blame soundness, blame completeness}
 
