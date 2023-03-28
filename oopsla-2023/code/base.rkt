@@ -3,6 +3,9 @@
 (provide
   all-benchmark-name*
   all-strategy-name*
+  all-mode-name*
+  bm->num-configs
+  ensure-dir
   (struct-out rktd)
   (struct-out row)
   (struct-out trail)
@@ -55,8 +58,31 @@
 (define (hash-add1 h k)
   (hash-update h k add1 fzero))
 
+(define (ensure-dir str)
+  (unless (directory-exists? str)
+    (make-directory str)))
+
+(define bm->num-configs
+  (let ((cache (box #f)))
+    (lambda (-name)
+      (define bm-name (if (string? -name) (string->symbol -name) -name))
+      (define data* (or (unbox cache)
+                        (let ((vv (file->value "data/good-cfgs.rktd")))
+                          (set-box! cache vv)
+                          vv)))
+      (for/first ((row (in-list data*))
+                  #:when (eq? bm-name (first row)))
+        (third row)))))
+
 (define (all-strategy-name*)
   ;; TODO compute from directory
-  '("con" "cost-con" "cost-opt" "limit-con" "limit-opt" "opt" "randomD"
-    "randomS" "toggleD" "toggleS"))
+  '("con"
+    "cost-con" "cost-opt"
+    "limit-con" "limit-opt"
+    "opt"
+    "randomD" "randomS"
+    "toggleD" "toggleS"))
+
+(define (all-mode-name*)
+  '("boundary" "prf_total" "prf_self"))
 

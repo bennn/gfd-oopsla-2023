@@ -112,7 +112,7 @@
           (or (string-contains? str "toggle")
               (string-contains? str "random")))
         all*)))
-  (for ((pmode (in-list '("boundary" "prf_total" "prf_self"))))
+  (for ((pmode (in-list (all-mode-name*))))
     (define pict*
       (for/list ((bm (in-list bm*))
                  (-dd* (in-list data**)))
