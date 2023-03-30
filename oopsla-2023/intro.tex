@@ -19,23 +19,23 @@ shallow checks come with complementary strengths and weaknesses. Deep checking
 imposes a steep cost yet enables type-driven optimizations that off-set
 some---and sometimes more than all---of the cost as more type annotations are
 added. By contrast, shallow checking is a pay-as-you-go scheme; a developer pays
-only for the type annotations added and the overall cost seems to be capped at
-an order-of-magnitude. Hence, Greenman argues that developers should, in
+only for the type annotations added and the worst-case cost seems to be capped
+at an order-of-magnitude. Hence, Greenman argues that developers should, in
 principle, be able to mix and match deep and shallow checking to get the
 best-possible type checking benefits with a tolerable performance penalty.
 Greenman has implemented this idea for Typed Racket and initial empirical data
 is promising: with a mixture of checks developers can avoid migration paths that
 result in unacceptable slowdowns with either deep or shallow checks alone.
 However, the mixture of deep and shallow checks makes it even more difficult to
-find a smooth migration path. With a purely shallow or purely deep type checking scheme,
-developers have to pick from $2^N$ configurations of a program with $N$
+find a smooth migration path. With a purely shallow or purely deep type checking
+scheme, developers have to pick from $2^N$ configurations of a program with $N$
 components that can be typed or untyped. In a context with both deep and shallow
 checking, the size of the configurations space goes to $3^N$.
 
 This situation raises the question 
 \begin{quote} \em
- how developers can navigate the migration of a code base while keeping the
- performance penalty from run-time checks at acceptable levels.
+ how developers can navigate the migration lattice of a code base while keeping
+ the performance penalty from run-time checks at acceptable levels.
 \end{quote}  
 Obviously, such a situation calls for the use of profiling tools. But, this
 response merely refines the above question in two ways, namely, 
@@ -43,22 +43,22 @@ response merely refines the above question in two ways, namely,
 
 \item how a developer should react to feedback from profiling tools; and 
 
-\item how well feedback helps developers navigate the migration lattice from a
- bad configuration to one with acceptable performance.
+\item how well feedback helps find a path from a bad configuration to one with
+ tolerable performance.
 
 \end{itemize}   
 
 These questions call for an empirical investigation, though using human
 developers for a large number of performance problems is too costly and too
 error-prone. Instead, this paper reports on the results of a \emph{rational
-programmer} experiment~\cite{,lgfd-icfp-2021}. The method employs an algorithmic
-abstractions, dubbed rational programmers, that reify a falsifiable
-hypothesis about various ways of using profiling tools and interpreting their
-feedback.  These algorithmic abstractions are then applied to a diverse
-population of problematic performance scenarios. In essence, the
-rational-programmer method simulates the satisficing behavior of developers in
-a large quantity of performance-debugging situations and thus enables an
-apples-to-apples comparison of different rational programmers. 
+programmer} experiment~\cite{,lgfd-icfp-2021}. The method employs algorithmic
+abstractions, dubbed rational programmers, that reify a falsifiable hypothesis
+about various ways of using profiling tools and interpreting their feedback.
+These algorithmic abstractions are then applied to a diverse population of
+problematic performance scenarios. A rational-programmer experiment simulates the
+satisficing behavior of developers in a large number of performance-debugging
+situations and thus enables a systematic comparison of different rational
+programmers.
 
 In short, this paper makes two contributions:
 \begin{itemize}
