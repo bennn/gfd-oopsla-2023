@@ -41,24 +41,25 @@ profile, ditto
   \caption{Datasets}
   \label{t:data-collection}
 
-  \begin{tabular}{ll}
-    Dataset & Where from \\\midrule
-    dungeon runtime & \machinename{c220g2} Racket FILL TR \commitname{29ea3c10}{29ea3c105e0bd60b88c1fd195b54fa716863f690} \\
-    dungeon b + s?? & TBD \\
-    morsecode ? & \machinename{TBD} Racket FILL TR cherry-pick TBD \\
-    %% quadT runtime & \machinename{m510}, standard Racket \\
-    other runtime & \machinename{c220g1} Racket FILL TR FILL \\
-    other boundary & \machinename{m510}, Racket FILL \\
-    other statistical & \machinename{m510}, Racket FILL
+  \begin{tabular}{llll}
+    Dataset           & Server & Racket & Typed Racket \\\midrule
+    dungeon runtime   & \machinename{c220g2} & \stdrkt{} &  \commitname{29ea3c10}{29ea3c105e0bd60b88c1fd195b54fa716863f690} \\
+    dungeon b + s??   & TBD \\
+    morsecode ?       & \machinename{m510}   & same & \commitname{700506ca}{700506ca01393f211229101c47d8420f6d535de9} (cherry pick) \\
+    %% quadT runtime  & \machinename{m510}   & same & default \\
+    other runtime     & \machinename{c220g1} & same & same \\
+    other boundary    & \machinename{m510}   & same & same \\
+    other statistical & \machinename{m510}   & same & same
   \end{tabular}
 
   \bigskip
 
-  \begin{tabular}{ll}
-    Machine Type & Location, RAM, CPU speed, ... \\\midrule
-    \machinename{c220g1} & FILL \\
-    \machinename{c220g2} & FILL \\
-    \machinename{m510} & FILL
+  \begin{tabular}{llrrr}
+    %% multi-cpu, multi-core machines .. but we didn't use that, right?
+    Server & Site & CPU Speed & RAM & Disk \\\midrule
+    \machinename{c220g1} & Wisconsin & 2.4GHz & 128GB & 480GB SSD \\
+    \machinename{c220g2} & Wisconsin & 2.6GHz & 160GB & 480GB SSD \\
+    \machinename{m510}   & Utah      & 2.0GHz &  64GB & 256GB SSD
   \end{tabular}
 \end{table}
 
