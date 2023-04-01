@@ -37,19 +37,23 @@ boundary from another cluster, same racket
 exceptions: dungeon, morsecode
 profile, ditto
 
+Tried two modes for statistical profiler: total time and self time.
+Comparable, but total succeeds in a greater number of configurations.
+There do exist configs where total fails and self succeeds.
+Focus on total for most of paper (TODO where?)
+
+
 \begin{table}[t]
   \caption{Datasets}
   \label{t:data-collection}
 
   \begin{tabular}{llll}
     Dataset           & Server & Racket & Typed Racket \\\midrule
-    dungeon runtime   & \machinename{c220g2} & \stdrkt{} &  \commitname{29ea3c10}{29ea3c105e0bd60b88c1fd195b54fa716863f690} \\
-    dungeon b + s??   & TBD \\
-    morsecode ?       & \machinename{m510}   & same & \commitname{700506ca}{700506ca01393f211229101c47d8420f6d535de9} (cherry pick) \\
+    dungeon           & \machinename{c220g2} & \stdrkt{} &  \commitname{29ea3c10}{29ea3c105e0bd60b88c1fd195b54fa716863f690} \\
+    morsecode         & \machinename{m510}   & same & \commitname{700506ca}{700506ca01393f211229101c47d8420f6d535de9} (cherry pick) \\
     %% quadT runtime  & \machinename{m510}   & same & default \\
     other runtime     & \machinename{c220g1} & same & same \\
-    other boundary    & \machinename{m510}   & same & same \\
-    other statistical & \machinename{m510}   & same & same
+    profilers         & \machinename{m510}   & same & same
   \end{tabular}
 
   \bigskip
@@ -62,4 +66,5 @@ profile, ditto
     \machinename{m510}   & Utah      & 2.0GHz &  64GB & 256GB SSD
   \end{tabular}
 \end{table}
+
 
