@@ -68,9 +68,6 @@
                          #:when (eq? 'success (car (row-end row))))
                 (row-cfg row)))))))
 
-(define (pct aa bb)
-  (exact-round (* 100 (/ aa bb))))
-
 (define (tex-table data** mode*)
   (define all-data
       (cons
@@ -149,8 +146,8 @@
   (void))
 
 (define (go)
-  #;(t:mode-coverage (all-mode-name*))
-  (t:strategy-coverage '("opt" "cost-opt" "limit-opt"))
+  (t:mode-coverage (cdr (all-mode-name*)))
+  #;(t:strategy-coverage '("opt" "cost-opt" "limit-opt"))
   (void))
 
 (module+ main

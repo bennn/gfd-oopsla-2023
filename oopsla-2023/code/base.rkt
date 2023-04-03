@@ -8,17 +8,20 @@
   row-trail-success?
   row-trail-failure?
   bm->num-configs
+  pct
   ensure-dir
   (struct-out rktd)
   (struct-out row)
   (struct-out trail)
   hyphen-split
   hyphen-join
+  tex-row-join
   split-filename
   hash-add1
   hash-add1!)
 
 (require
+  racket/math
   racket/list
   racket/string
   racket/file)
@@ -38,6 +41,9 @@
 
 (define (hyphen-join str*)
   (string-join str* "-"))
+
+(define (tex-row-join str*)
+  (string-join str* " & "))
 
 (define (split-filename str)
   (define elem* (hyphen-split (car (string-split (path-string->string str) "."))))
@@ -97,4 +103,7 @@
 
 (define (row-trail-failure? rr)
   (eq? 'error (car (row-end rr))))
+
+(define (pct aa bb)
+  (exact-round (* 100 (/ aa bb))))
 
