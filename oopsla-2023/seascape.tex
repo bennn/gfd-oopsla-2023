@@ -1,4 +1,19 @@
-\begin{figure}[t]
+%% -----------------------------------------------------------------------------
+
+Over the years, developers have created many large systems in untyped languages.
+In the meantime, language implementers have created gradually typed siblings.
+Since developers tend to enjoy the benefits of IDE support via types and prefer
+type checking, they can, and likely will, add new components in the typed
+sibling language. Alternatively, when a developer is confronted with debugging
+an untyped component, the mental effort of reconstructing the informal types of
+methods and functions will have an even larger payoff if the component is
+annotated with types. The result is a mixed-typed software system, with a
+typed-untyped boundary that imposes a performance penalty---and possibly a
+prohibitive one. Regardless of how the boundary came about, the developer now
+faces a performace-debugging scenario. 
+
+%% -----------------------------------------------------------------------------
+\begin{figure}[htb]
 
     \bmname{fsm} basics:
     \begin{tabular}{llll}
@@ -23,6 +38,7 @@
   \caption{FILL}
   \label{f:fsm-seascape}
 \end{figure}
+%% -----------------------------------------------------------------------------
 
 fsm simple benchmark,
 benefits from collapsible, better off than object-oriented counterpart fsmoo
