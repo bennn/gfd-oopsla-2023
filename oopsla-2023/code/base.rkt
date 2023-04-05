@@ -4,7 +4,9 @@
   all-benchmark-name*
   all-strategy-name*
   all-mode-name*
+  point-sym*
   take-some
+  row*->get-overhead
   row-trail-success?
   row-trail-failure?
   bm->num-configs
@@ -98,12 +100,34 @@
 (define (take-some x*)
   (take x* 2))
 
+(define (row*->get-overhead rr*)
+  (define urow (car rr*))
+  (define utime (row-ms urow))
+  (lambda (xx) (/ xx utime)))
+
 (define (row-trail-success? rr)
   (eq? 'success (car (row-end rr))))
 
-(define (row-trail-failure? rr)
-  (eq? 'error (car (row-end rr))))
+(define (row-trail-failure? rr ovr)
+  #;(eq? 'error (car (row-end rr)))
+  (< 1 (ovr (row-ms rr))))
 
 (define (pct aa bb)
   (exact-round (* 100 (/ aa bb))))
+
+(define point-sym* '(
+  plus
+  triangle triangledown
+  5asterisk 8star
+  circle
+  square
+  diamond
+  times
+  6star
+  bullet
+  asterisk
+  pixel
+  circle7
+  ))
+
 

@@ -1,5 +1,12 @@
 #lang racket
 
+;; - start, x-axis
+;; - end, y-axis
+;; ... 
+
+;; ./sve = filtered
+;; ./data/start-vs-end = not filtered
+
 ;; 31 self win       27 total win   9 mixed    69 tie
 ;; 78 boundary win   11 total win   24 mixed   23 tie
 
@@ -131,30 +138,113 @@
 (define (hash-int-list h#)
   (sort (hash->list h#) < #:key car))
 
-(define (f:start-vs-end bm*)
-  (define pp (error 'die))
-  (save-pict (format "data/start-vs-end.~a" out-kind) pp)
+(define (f:start-vs-end bm**)
+  (parameterize ((plot-font-size 15))
+    (sve-deathplot bm**)))
+
+(define (fn->strategy-name xx)
+  (define-values [_a ss _b] (split-filename (file-name-from-path xx)))
+  ss)
+
+(define (sve-deathplot -bm**)
+  (define out-name
+    (format "data/start-vs-end.~a" out-kind))
+  (define bm* (flatten -bm**))
+  (define bm** (group-by fn->strategy-name bm*))
+  (define pict*
+   (sort-by-strategy
+    (for/list ((bm* (in-list bm**)))
+(define-values [_aa ss _bb] (split-filename (file-name-from-path (car bm*))))
+      (printf "plottt ~s~n" ss)
+      (list ss
+      (plot-pict
+        (list
+          (function values #:width 1 #:color "purple")
+          (for/list ((bm (in-list bm*)))
+            (define-values [_bm _ss mm] (split-filename (file-name-from-path bm)))
+            (define ii (index-of (all-mode-name*) mm))
+            (define ps (list-ref point-sym* ii))
+            (points
+              (overhead-points (file->value bm))
+              #:color ii
+              #:alpha 0.2
+              #:size (if (string-contains? mm "boundary") 10 8)
+              #:line-width (if (string-contains? mm "boundary") 4 2)
+              #:sym ps
+              #:label (if (string-contains? _bm "zombie") (format "~a" mm) #f))))
+        #:legend-anchor 'outside-right-top
+        #:title (format "~a, all" ss)
+        #:x-label "start overhead"
+        #:y-label "end overhead"
+        #:x-min 0
+        #:x-max 30
+        #:y-min 0
+        #:y-max 30 #;1
+        #:width 800
+        #:height 600)))))
+  (save-pict
+    out-name
+    (ptable pict*
+            #:ncol 3
+            #:row-sep 10 #:col-sep 10))
   (void))
 
-(define (all-data-file*)
-  (for/list ((bm (in-list (all-benchmark-name*))))
-    (filter yes-care? (glob (build-path "data" "start-vs-end" (format "~a-*.rktd.hash" bm))))))
+(define sort-strat* '(
+  "con" "cost-con" "limit-opt"
+  "opt" "cost-opt" "limit-con"))
+
+(define (sort-by-strategy xx)
+  (define (strategy-index pp)
+    (index-of sort-strat* (first pp)))
+  (define yy (sort xx < #:key strategy-index))
+  (map second yy))
+
+(define (overhead-points vv*)
+  (define utime (caar vv*))
+  (define (ovr nn) (/ nn utime))
+  (for/list ((vv (in-list vv*)))
+    (vector (ovr (first vv)) (ovr (second vv)))))
+
+(define (all-hash-file*)
+  (all-_-file* "hash"))
+
+(define (all-xy-file*)
+  (all-_-file* "xy"))
+
+(define (all-_-file* suffix)
+  (filter-not null?
+    (for/list ((bm (in-list (all-benchmark-name*))))
+      (filter yes-care?
+              (glob
+                (build-path ;; "data" "start-vs-end"
+                            "sve"
+                            (format "~a-*.rktd.~a" bm suffix)))))))
 
 (define (yes-care? ps)
-  (not (dont-care ps)))
+  (define-values [bm ss mm] (split-filename (file-name-from-path ps)))
+  (and (not (dont-care ps))
+       #;(string-contains? bm "zombie")
+       #;(string=? ss "cost-con")
+       ))
 
 (define (dont-care ps)
   (define-values [bm ss mm] (split-filename (file-name-from-path ps)))
   (or (string-prefix? ss "toggle")
+      (string-prefix? ss "random")
+      #;(string-prefix? mm "prf")
       #;(string-prefix? mm "boundary")
-      (string-prefix? mm "prf_self")
+      #;(string-prefix? mm "prf_self")
+      #;(string-prefix? ss "cost")
+      #;(string-prefix? ss "cost-con")
+      #;(string-prefix? ss "limit-opt")
+      #;(string-prefix? ss "con")
+      #;(string-prefix? mm "prf_self")
       #;(and (string-prefix? ss "random")
            (string-prefix? mm "prf"))))
 
 (define (go)
-  (define bm* (all-data-file*))
-  (t:start-vs-end bm*)
-  #;(f:start-vs-end bm*)
+  #;(t:start-vs-end (all-hash-file*))
+  (f:start-vs-end (all-xy-file*))
   (void))
 
 (module+ main
