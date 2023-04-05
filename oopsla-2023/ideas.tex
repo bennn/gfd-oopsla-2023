@@ -1,13 +1,12 @@
 %% -----------------------------------------------------------------------------
 
-When a developer confronts a newly created performance-debugging situation, one
+When a developer confronts a newly created performance-debugging scenario, one
 possible response is to erase the types and to return to the {\em status quo
 ante\/}.  Another one is to use a profiling tool to reduce the overhead. If the
 second alternative is chosen, the question arises 
-
 \begin{quote} \em
 
- how the developer should modify the system to obtain a version with tolerable
+ how the developer should modify the program to obtain a version with tolerable
  performance.
  
 \end{quote}   
@@ -20,50 +19,52 @@ to eliminate any performance bottlenecks sooner or later.
 
 Deciding which of the alternatives to pursue in a given situation poses the
 follow-up question 
-
 \begin{quote} \em
 
 \item how a developer should interpret feedback from a profiling tool. 
 
 \end{quote}   
-Operationally, this question asks how the feedback is turned into a a
-modifications at each step of the debugging process.
+Operationally, this question asks how the feedback is turned into a
+modification at each step of the debugging process.
 
 In contrast to the first question, the second one does not have a
-straightforward answer.  At each step, the developer has to choose a specific
-component to modify.  The sequence of choices should result in a migratory path
-along which performance monotonically improves. Assuming that the chosen
-profiling tool identifies components that contribute to the performance
-degradation, it is rational for the programmer to rely on its feedback to narrow
-down the set of candidate components.  Obtaining profiler feedback is just the
-first step, however. Next the developer must use the feedback information to
-rank the components and to identify the highest-priority one for adding type or
-toggling its type protection. 
-
-Abstracting from these answers, the experiment must choose a profiling
-tool---statistical or feature-specific---and a modification strategy. The answer
-is a systematic examination of the (relative) success of different
-\emph{profiling strategies} in guiding a developer who toggles or adds types to
-resolve a performance-debugging scenario.
+straightforward answer.  At each step, the developer has to choose a
+specific component to modify.  The sequence of choices should result in a
+migratory path along which performance monotonically improves. Assuming
+that the chosen profiling tool identifies components that contribute to
+a performance bottleneck, it is rational for the programmer to rely on
+its feedback to narrow down the set of candidate components.  Obtaining
+profiler feedback is just the first step, however. Next the developer must
+use the feedback information to rank the components and to identify the
+highest-priority one for adding new types or toggling its existing types.
+Abstracting from these answers, the programmer must choose a
+\emph{profiling strategy}, that is a tool---statistical or
+feature-specific---and an interpretation of its feedback that leads to a
+program  modification. In this light, the answer to the question 
+is a systematic examination of the
+(relative) success of different profiling strategies in guiding a
+developer who toggles or adds types to resolve a performance-debugging
+scenario.
 
 The rational programmer method provides a framework for conducting such a
 systematic examination. The method is inspired by the well-established idea of
 rationality in economics~\cite{mill1874essays, henrich2001search}.  In more
 detail, a (bounded) rational agent is a mathematical model of an economic
-actor. Essentially, it abstracts an actual economic actor to an entity that, in
+actor. Essentially, it abstracts an actual economic actor to a formal entity that, in
 any given transaction-scenario, acts strategically to maximize some kind of
 benefit.  Of course, the strategy cannot be fully rational given the bounded
 nature of human beings and the limits in available information. Hence,
 investigations in modern times use rational agents that are bounded: they do not
 make maximally optimal choices and settle
-for\emph{satisficing}~\cite{hs:satisfice} their goal.
+for \emph{satisficing}~\cite{hs:satisfice} their goal.
 
 Analogously, a rational programmer is a model of a developer who aims to resolve
-a work-scenario, such as performance debugging, with bounded resources. In
+a scenario in a work-context, such as performance debugging, with bounded resources. In
 specific terms, it is an algorithm that implements a developer's bounded
 strategy for \emph{satisficing} its goal.  Hence, the successes and failures of
-rational programmer can inform human programmers about the relative success of
-each strategy in given sets of work scenarios.
+a rational programmer can inform human programmers about the success of
+its strategy in the given work-context, i.e., the pragmatic value of the
+strategy.
 
 
 
@@ -73,29 +74,36 @@ each strategy in given sets of work scenarios.
 %% -----------------------------------------------------------------------------
 \noindent\textbf{An Experiment Sketch.} In the context of profiler-guided
 type migration, a rational programmer consists of two interacting pieces.
-The first is strategy-agnostic; it runs a performance-debugging scenario,
-measures its running time, and if the performance is below an acceptable
-level, it asks for guidance from the second piece that is
+The first is strategy-agnostic; it consumes a performance-debugging
+scenario, measures its running time, and if the performance is below an
+acceptable level, asks for guidance from the second piece that is
 strategy-specific. The strategy-specific piece uses either the feature or
 the statistical profiler, obtains profiling feedback about the scenario,
-and analyzes it using a specific strategy. Then it makes a recommendation
-to the strategy-agnostic piece about how to modify the types of a
-component of the scenario. The strategy-agnostic piece performs the
-modification, and that either resolves the scenario, or produces a new,
-hopefully improved performance-wise, scenario for the rational programmer
-to investigate further. 
+and analyzes it. Then it makes a recommendation to the strategy-agnostic
+piece about how to modify the scenario. The modification either resolves
+the scenario's bottleneck, or produces a new, hopefully improved performance-wise,
+scenario for the rational programmer to investigate further. 
 
-In fact, as the discussion implies, 
-there are numerous versions of  the rational programmer: 
-one for each different profiling strategy. Each version, dubbed a
-\emph{mode}, can run on a large set of realistic scenarios and produce
-data about how often and when it is succesful in resolving performance
-bottlenecks. The resulting data sheds light into the usefulnesss
-of one strategy compared to another. Intuitively, the success rate of a mode of the
-rational programmer (in)validates the hypothesis that its
-strategy has pragmatic value. Simlarly, the comparison of the  success
-rates of two different modes on the same scenaria provides evidence in
-support of one strategy versus an other.
+In fact, as the discussion implies, there are numerous versions of  the
+rational programmer that differ in their strategy-specific piece. Each
+version, dubbed a \emph{mode}, can run on realistic performance-debugging
+scenarios and apply its specific strategy to resolve their bottlenecks.
+For any given scenario, after possibly multiple steps of modification, the
+mode (and its strategy) either succeeds in eliminating the bottleneck, or
+fails because the strategy makes the bottleneck worse or does not produce
+any modification guidance. 
+
+Data about successes and failures for different modes of the rational
+programmer can shed light into the usefulness of one profiling strategy
+compared to another.  Intuitively, the success rate of a mode of the
+rational programmer (in)validates the hypothesis that its strategy has
+pragmatic value. Similarly, the comparison of the  success rates of two
+different modes on the same scenaria clarifies the relative pragmatic
+value of their two strategies. Collecting the data necessary for drawing
+reliable conclusions calls for an experiment that pits a spread
+of strategies against each other on a large and diverse set of
+performance-debugging scenaria.
+
 
 
 
