@@ -16,37 +16,84 @@ developer faces a performance-debugging scenario.
 %% -----------------------------------------------------------------------------
 \begin{figure}[htb]
 
-    \bmname{fsm} basics:
-    \begin{tabular}{llll}
-      81 configurations (cfgs) &
-      18 fast &
-      5x avg. slowdown &
-      3x median slowdown
-    \end{tabular}
+  \bmname{fsm} basics:
+  \begin{tabular}{llll}
+    81 configurations (cfgs) &
+    18 fast &
+    5x avg. slowdown &
+    3x median slowdown
+  \end{tabular}
 
-    \bigskip
+  \bigskip
 
-    \includegraphics[width=0.9\textwidth]{data/fsm-lattice.pdf}
+  \includegraphics[width=0.9\textwidth]{data/fsm-lattice.pdf}
 
-    after \emph{either-or}~\cite{g-deep-shallow} navigation:
-    \begin{tabular}{llll}
-      %% 81 - 36
-      45 fast cfgs &
-      4x avg. slowdown &
-      3x median slowdown
-    \end{tabular}
+  after \emph{either-or}~\cite{g-deep-shallow} navigation:
+  \begin{tabular}{llll}
+    %% 81 - 36
+    45 fast cfgs &
+    4x avg. slowdown &
+    3x median slowdown
+  \end{tabular}
 
-  \caption{FILL}
+  \caption{Performance lattices for \bmname{fsm}, before and after a simple navigation.}
   \label{f:fsm-seascape}
 \end{figure}
 %% -----------------------------------------------------------------------------
 
-fsm simple benchmark,
-benefits from collapsible, better off than object-oriented counterpart fsmoo
+FILL various approaches to GT,
+erasure unsound,
+concrete inflexible (even with Static Python's transient mix),
+transient not a complete monitor.
+
+For gradual type systems that provide deep type guarantees,
+performance is a major challenge.
+Despite recent advances~(\cref{sec:related}), adding types to part of a program
+is likely to add significant run-time costs.
+These costs might be as low as 2x slower than the untyped code, but, depending
+on the system at hand, could be 10x or much more~[CITE].
+
+FILL deep, shallow, untyped world
+
+In this paper, we take the position that \emph{any overhead} is unacceptable.
+Unless gradually typed code runs at least as fast as the untyped code
+(i.e., a 1x slowdown), it is too slow.
+
+The challenge, then, is to \emph{navigate} from an arbitrary starting point
+to a fast partially-typed program.
+Navigation cannot remove types.
+If removal was allowed, then the problem would have a trivial solution: revert
+to the untyped code.
+Instead, navigation proceeds in one of four ways:
+\begin{enumerate}
+  \item
+    Add Deep types to an untyped component.
+  \item
+    Add Shallow types to an untyped component.
+  \item
+    Strengthen the types in a Shallow-typed component.
+  \item
+    Weaken the types in a Deep-typed component.
+\end{enumerate}
+
+Finding a fast configuration is easier said than done.
+The space of gradually-typed configurations is huge, even for
+small programs, and the fast configurations may be hard to find.
+\Cref{f:fsm-seascape} illustrates the problem for one
+rather small and fast program from the GTP benchmark suite~[CITE].
+This program, \bmname{fsm}, has four modules and thus 81 configurations.
+
+FILL
 
 
+In practice, a programming team can always remove types to recover performance.
+For example: experiment with gradual types on a side branch, outside the main
+development, and keep them out until the gradually-typed variant runs as fast
+as the main branch.
+The question still remains as to when or if the gradually-typed code will be
+fast enough.
+This paper investigates strategies to reduce the effort.
 
-TODO x start, y end, per strat, death plot
 
 \begin{itemize}
   \item This section should present a mix-typed example. It would be good
