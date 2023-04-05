@@ -1,16 +1,17 @@
 %% -----------------------------------------------------------------------------
 
 Over the years, developers have created many large systems in untyped languages.
-In the meantime, language implementers have created gradually typed siblings.
-Since developers tend to enjoy the benefits of IDE support via types and prefer
-type checking, they can, and likely will, add new components in the typed
-sibling language. Alternatively, when a developer is confronted with debugging
-an untyped component, the mental effort of reconstructing the informal types of
-methods and functions will have an even larger payoff if the component is
-annotated with types. The result is a mixed-typed software system, with a
-typed-untyped boundary that imposes a performance penalty---and possibly a
-prohibitive one. Regardless of how the boundary came about, the developer now
-faces a performace-debugging scenario. 
+In the meantime, language implementers have created gradually typed siblings of
+these languages.  Since developers tend to enjoy the benefits of type-based IDE
+support and like to type check their code, they are likely to add new components
+in the typed sibling language. Alternatively, when a developer is confronted
+with debugging an untyped component, it takes a large mental effort to
+reconstruct the informal types of its methods, and to make this effort pay off,
+it is best to turn the informal types into formal annotations. In either case,
+the result is a mixed-typed software system with boundaries between typed and
+untyped components. In a sound gradually typed language, these boundaries impose
+a performance penalty, possibly a prohibitive one. In the latter case, the
+developer faces a performance-debugging scenario.
 
 %% -----------------------------------------------------------------------------
 \begin{figure}[htb]
