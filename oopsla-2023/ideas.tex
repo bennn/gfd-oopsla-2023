@@ -1,0 +1,63 @@
+Section~\ref{sec:seascape} provides the vocabulary for further refining the research
+questions from section~\ref{sec:intro}:
+\begin{itemize} \em
+
+\item how should a developer iteratively modify a performance-debugging
+  scenario to obtain a program with improved performance; and 
+    
+\item how should a developer interpret feedback from a statistical or a
+  feature profiler to decide where to apply the modifications at each
+    step.
+\end{itemize}   
+
+In the context of type migration, the first question has a straightforward
+rational answer. It takes significant effort to add types to a code base,
+and hence, a developer should not throw away hard work by removing existing types.
+Instead, the developer should double down on migration either (i) by adding
+types to untyped components, or (ii) by experimenting with toggling existing
+types from deep to shallow and vice versa.   After all, the ultimate
+destination of migration is the fully typed program, which is at least as
+performant as its untyped counterpart.  Hence, sooner or later,   migration
+is guaranteed to eliminate any performance bottlenecks due to run-time type
+checks.
+
+
+In contrast to the first question, the second one does not have a
+straight-forward rational answer.  At each migratory step, the developer
+has to   choose a specific component to work on.  Hopefully,
+the choices result in a migratory path along which performance constantly
+improves, or in the worst case, occasionally remains the same. For that, assuming
+that profiling tools identify components that contribute to performance
+degradation, it is rational for the programmer to rely on profilers to
+narrow down the set of candidate components.  But obtaining profiler
+feedback is just the first step. The developer has to then decide whether
+to prioritize  feedback from a  statistical or a feature profiler, and after that,
+how to rank the information in the feedback to identify a component whose
+types (or lack of) have a substantial negative performance impact. In
+other words, the developer must strategize about which profiler's feedback
+to trust and  how to interpret it. Hence, a answer to the second
+question asks for the systematic examination of the (relative) success of
+different \emph{profiling strategies} in guiding a developer who toggles
+or adds types to resolve a  performance-debugging scenario.
+
+The rational programmer method provides a framework suitable for such a
+systematic examination. The method is inspired by the well-established
+idea of rationality in economics~\cite{mill1874essays, henrich2001search}.
+In more detail, a (bounded) rational agent is a mathematical model of an
+economic actor. Essentially, it abstracts an actual economic actor to an
+entity that, in any given transaction-scenario, acts strategically to
+maximize some kind of benefit.  Of course, the strategy cannot be fully
+rational given the bounded nature of human beings and the limits in
+available information. Hence, modern rational agents are bounded: they do
+not make maximally optimal choices and settle for
+\emph{satisficing}~\cite{hs:satisfice} their goal. Analogously, a rational
+programmer is a model of a developer who aims to resolve a work-scenario,
+such as debugging. In specific terms, it is an algorithm that implements a
+developer's (bounded) strategy for \emph{satisficing} its goal.  Hence,
+the successes and failures of rational programmer can teach human
+programmers which strategies are successful in which scenaria of a work
+context.
+
+
+
+
