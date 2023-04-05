@@ -13,6 +13,46 @@ untyped components. In a sound gradually typed language, these boundaries impose
 a performance penalty, possibly a prohibitive one. In the latter case, the
 developer faces a performance-debugging scenario.
 
+CITE snapl
+
+NEXT UP: config, add one type, profiler data what to do?
+ boundary non-boundary
+ WHAT PROFILE DO YOU ACTUALLY GET
+ 2 profiler options, for each get several
+
+\begin{itemize}
+  \item This section should present a mix-typed example. It would be good
+    if the example is straight from the benchmarks, but, if this is not
+    manageable, it can also be a distilled or altered version.  The basic
+    requirement is that it runs and exhibits slowdown over the untyped
+    version with its currrent types. In addition, some of its types should
+    be shallow and some deep to set up the discussion about the
+    semantics.
+  \item Following the description of the example,  
+    the section should explain how the program evaluates and connect that with the
+    semantics of shallow and deep types. 
+  \item Next, the section should describe the feedback from the statistical
+    profiler, introduce the boundary profiler  and 
+    describe its feedback too. 
+  \item As the feedback of each profiler is shown, the section should 
+    explain that it provides hints about where to look for
+    possible improvements. It would be great, if the section shows how
+    actin on two hints plays out.  
+  \item As a final piece, the section should discuss that the
+    interpretation
+    of the feedback to hints is two dimentional (identify component and
+    identify change to component), and that how a developer can itnerepret
+    it reliably needs a careful and systematic look.
+\end{itemize}
+
+
+The section does not need to talk about whether this or that strategy is
+succesful, nor it needs to bring accross the specifics of one or more
+strategies. It's goal is to provide background, build some intuition about
+profilers and the usefulnes of the their feedbacks, and give a concrete view of
+ the complexity of interpreting hints.
+
+
 %% -----------------------------------------------------------------------------
 \begin{figure}[htb]
 
@@ -94,36 +134,4 @@ The question still remains as to when or if the gradually-typed code will be
 fast enough.
 This paper investigates strategies to reduce the effort.
 
-
-\begin{itemize}
-  \item This section should present a mix-typed example. It would be good
-    if the example is straight from the benchmarks, but, if this is not
-    manageable, it can also be a distilled or altered version.  The basic
-    requirement is that it runs and exhibits slowdown over the untyped
-    version with its currrent types. In addition, some of its types should
-    be shallow and some deep to set up the discussion about the
-    semantics.
-  \item Following the description of the example,  
-    the section should explain how the program evaluates and connect that with the
-    semantics of shallow and deep types. 
-  \item Next, the section should describe the feedback from the statistical
-    profiler, introduce the boundary profiler  and 
-    describe its feedback too. 
-  \item As the feedback of each profiler is shown, the section should 
-    explain that it provides hints about where to look for
-    possible improvements. It would be great, if the section shows how
-    actin on two hints plays out.  
-  \item As a final piece, the section should discuss that the
-    interpretation
-    of the feedback to hints is two dimentional (identify component and
-    identify change to component), and that how a developer can itnerepret
-    it reliably needs a careful and systematic look.
-\end{itemize}
-
-
-The section does not need to talk about whether this or that strategy is
-succesful, nor it needs to bring accross the specifics of one or more
-strategies. It's goal is to provide background, build some intuition about
-profilers and the usefulnes of the their feedbacks, and give a concrete view of
- the complexity of interpreting hints.
 
