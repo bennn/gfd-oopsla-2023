@@ -21,42 +21,46 @@ Deciding which of the alternatives to pursue in a given situation poses the
 follow-up question 
 \begin{quote} \em
 
-\item how a developer should interpret feedback from a profiling tool. 
+how a developer should interpret the feedback from a profiling tool to
+choose a modification.
 
 \end{quote}   
 Operationally, this question asks how the feedback is turned into a
 modification at each step of the debugging process.
 
 In contrast to the first question, the second one does not have a
-straightforward answer.  At each step, the developer has to choose a
-specific component to modify.  The sequence of choices should result in a
-migratory path along which performance monotonically improves. Assuming
-that the chosen profiling tool identifies components that contribute to
-a performance bottleneck, it is rational for the programmer to rely on
-its feedback to narrow down the set of candidate components.  Obtaining
-profiler feedback is just the first step, however. Next the developer must
-use the feedback information to rank the components and to identify the
-highest-priority one for adding new types or toggling its existing types.
-Abstracting from these answers, the programmer must choose a
-\emph{profiling strategy}, that is a tool---statistical or
-feature-specific---and an interpretation of its feedback that leads to a
-program  modification. In this light, the answer to the question 
-is a systematic examination of the
-(relative) success of different profiling strategies in guiding a
-developer who toggles or adds types to resolve a performance-debugging
-scenario.
+straightforward answer.  At each step, the developer has to choose a specific
+component to modify.  The sequence of choices should result in a migratory path
+along which performance monotonically improves. Assuming that the chosen
+profiling tool identifies components that contribute to the performance
+degradation, it is rational for the programmer to rely on its feedback to narrow
+down the set of candidate components.  Obtaining profiler feedback is just the
+first step, however. Next the developer must use the feedback information to
+rank the components and to identify the highest-priority one for adding type or
+toggling its type protection. 
 
-The rational programmer method provides a framework for conducting such a
-systematic examination. The method is inspired by the well-established idea of
-rationality in economics~\cite{mill1874essays, henrich2001search}.  In more
-detail, a (bounded) rational agent is a mathematical model of an economic
-actor. Essentially, it abstracts an actual economic actor to a formal entity that, in
-any given transaction-scenario, acts strategically to maximize some kind of
-benefit.  Of course, the strategy cannot be fully rational given the bounded
-nature of human beings and the limits in available information. Hence,
-investigations in modern times use rational agents that are bounded: they do not
-make maximally optimal choices and settle
-for \emph{satisficing}~\cite{hs:satisfice} their goal.
+Stepping back, these two insights suggest an experiment to determine which
+profiling tool combined with which strategy helps developers make progress with
+performance debugging. For this experiment, the developer must choose a
+profiling tool---statistical or feature-specific---and a modification strategy.
+To determine the best combination(s) means to have developers work through a
+large number of performance-debugging scenarios. The result should help guide a
+developer with toggling or adding types to resolve performance-related
+problems during type migration.
+
+Since it is obviously impossible to ask a developer to work through thousands of
+performance-debugging scenarios, an alternative experimental method is needed.
+The rational-programmer method provides a framework for conducting such
+large-scale systematic examinations. The method is inspired by the
+well-established idea of rationality in economics~\cite{mill1874essays,
+henrich2001search}.  In more detail, a (bounded) rational agent is a
+mathematical model of an economic actor. Essentially, it abstracts an actual
+economic actor to an entity that, in any given transaction-scenario, acts
+strategically to maximize some kind of benefit.  Of course, the strategy cannot
+be fully rational given the bounded nature of human beings and the limits in
+available information. Hence, investigations in modern times use rational agents
+that are bounded: they do not make maximally optimal choices and settle
+for\emph{satisficing}~\cite{hs:satisfice} their goal.
 
 Analogously, a rational programmer is a model of a developer who aims to resolve
 a scenario in a work-context, such as performance debugging, with bounded resources. In
