@@ -68,3 +68,34 @@ each strategy in given sets of work scenarios.
 
 
 
+\bigskip
+
+%% -----------------------------------------------------------------------------
+\noindent\textbf{An Experiment Sketch.} In the context of profiler-guided
+type migration, a rational programmer consists of two interacting pieces.
+The first is strategy-agnostic; it runs a performance-debugging scenario,
+measures its running time, and if the performance is below an acceptable
+level, it asks for guidance from the second piece that is
+strategy-specific. The strategy-specific piece uses either the feature or
+the statistical profiler, obtains profiling feedback about the scenario,
+and analyzes it using a specific strategy. Then it makes a recommendation
+to the strategy-agnostic piece about how to modify the types of a
+component of the scenario. The strategy-agnostic piece performs the
+modification, and that either resolves the scenario, or produces a new,
+hopefully improved performance-wise, scenario for the rational programmer
+to investigate further. 
+
+In fact, as the discussion implies, 
+there are numerous versions of  the rational programmer: 
+one for each different profiling strategy. Each version, dubbed a
+\emph{mode}, can run on a large set of realistic scenarios and produce
+data about how often and when it is succesful in resolving performance
+bottlenecks. The resulting data sheds light into the usefulnesss
+of one strategy compared to another. Intuitively, the success rate of a mode of the
+rational programmer (in)validates the hypothesis that its
+strategy has pragmatic value. Simlarly, the comparison of the  success
+rates of two different modes on the same scenaria provides evidence in
+support of one strategy versus an other.
+
+
+
