@@ -24,26 +24,31 @@ through the program's migration lattice guided by its profiling strategy.
 As section~\ref{sec:ideas} describes, each profiling strategy interprets
 profiler feedback differently, and suggests a corresponding program
 modification. Hence, in addition to the common for all modes part that
-modifies a program, an automated experiment demands the implementation of
-the strategies it aims to compare. With the mode implementations in hand,
-the experiment runs all of them on the same large number of scenarios and
-compares their successes. The rest of the section provides precise
-definitions for all these elements of the experiment.
-Section~\ref{subsex:lattice}) defines the migration lattice of a program
-and characterizes performance-debugging scenarios.
-Section~\ref{subsec:strategies} presents the strategies that induce the
-modes of the rational programmer for the experiment together with the
-criteria for their success and failure. Finally,
+modifies a program, an automated experiment demands the implementation
+of the strategies it aims to compare. With the mode implementations in
+hand, the experiment runs all of them on the same large number of
+scenarios and compares their successes. The rest of the section provides
+precise definitions for all these elements of the experiment.
+Section~\ref{subsec:strategies} presents the profiling strategies that induce the
+modes of the rational programmer for the experiment.
+Section~\ref{subsec:lattice} defines the migration lattice of a program
+that the modes navigate, characterizes the performance-debugging
+scenarios that serve as starting navigation points, and lays out  the
+criteria for a successful or failed navigation. Finally,
 section~\ref{subsec:questions} leverages these definitions to formalize
-the experimental questions and the experimental procedure to answer
+the experimental questions and the experimental procedure that answers
 them.
 
-\subsection{Migration Lattices and Performance-Debugging Scenarios}
-\label{subsec:lattice}
-
-\subsection{The Rational-Programmer Strategies}
+\subsection{The Profiling Strategies}
 \label{subsec:strategies}
+\input{experiment-strategies.tex}
+
+
+\subsection{Migration Lattices and their Navigation}
+\label{subsec:lattice}
+\input{experiment-lattice.tex}
+
 
 \subsection{The Experimental Questions}
 \label{subsec:questions}
-
+\input{experiment-questions.tex}
