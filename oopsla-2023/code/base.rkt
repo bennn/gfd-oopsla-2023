@@ -17,6 +17,8 @@
   row-trail-failure?
   bm->num-configs
   good-overhead?
+  overhead<=?
+  pct2 pctstr2
   pct pctstr
   ensure-dir
   (struct-out rktd)
@@ -33,6 +35,7 @@
   racket/math
   racket/list
   racket/string
+  racket/format
   racket/file)
 
 ;; ===
@@ -114,12 +117,14 @@
 
 (define (all-strategy-name*)
   ;; TODO compute from directory
-  '("con"
-    "cost-con" "cost-opt"
-    "limit-con" "limit-opt"
-    "opt"
-    "randomD" "randomS"
-    "toggleD" "toggleS"))
+  '("opt"
+    "cost-opt"
+    "limit-con"
+    "con"
+    "cost-con"
+    "limit-opt"
+    "randomD"
+    "randomS"))
 
 (define (all-mode-name*)
   '("boundary" "prf_total" "prf_self"))
@@ -143,10 +148,16 @@
   (< 1 (ovr (row-ms rr))))
 
 (define (pct aa bb)
-  (exact-round (* 100 (/ aa bb))))
+  (exact-round (pct2 aa bb)))
 
 (define (pctstr aa bb)
   (format "~a%" (pct aa bb)))
+
+(define (pct2 aa bb)
+  (* 100 (/ aa bb)))
+
+(define (pctstr2 aa bb)
+  (format "~a%" (~r (pct2 aa bb) #:precision '(= 2))))
 
 (define point-sym* '(
   plus
@@ -167,8 +178,15 @@
   ;; TODO right order?
   (sort cfg* string<?))
 
-(define (good-overhead? n)
-  (<= n 1))
+(define (good-overhead? m/s)
+  (<= (apply - m/s) 1))
+
+(define (overhead<=? a b)
+  (not (overhead>? a b)))
+
+(define (overhead>? a b)
+  (> (apply - a)
+     (apply + b)))
 
 (define (config->deep str)
   (string-replace* str #\2 #\1))
