@@ -1,0 +1,137 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%           PREAMBLE       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{tcolorbox}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\def\set#1{\ensuremath{\bar{#1}}}
+
+\def\size#1{\ensuremath{\mid #1 \mid}}
+
+\def\setsize#1{\left|#1\right|}
+
+
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% for leaving margin notes in the paper write
+%% \yourinitials{...} 
+
+\def\notes#1{\expandafter\def\csname#1\endcsname##1{\marginpar{\textcolor{red}{\raggedright\tiny $\bullet$ #1 says: ##1}}}}
+\notes{mf}
+\notes{cd}
+\notes{bg}
+
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\def\set#1{\ensuremath{\bar{#1}}}
+
+\def\size#1{\ensuremath{\mid #1 \mid}}
+
+\def\setsize#1{\left|#1\right|}
+
+
+%% strategies
+
+\newcommand{\sfont}[1]{\textit{#1}}
+
+\newcommand{\featkw}{\sfont{feature\textsf{-}specific}}
+
+\newcommand{\statkw}{\sfont{statistical}}
+
+\newcommand{\totalkw}{\sfont{total}}
+
+\newcommand{\selfkw}{\sfont{self}}
+
+\newcommand{\stat}[1]{\sfont{\statkw(#1)}}
+
+\newcommand{\statself}{\sfont{\stat{\selfkw}}}
+\newcommand{\stattotal}{\sfont{\stat{\totalkw}}}
+
+\newcommand{\optkw}{\sfont{optimistic}}
+
+\newcommand{\conkw}{\sfont{conservative}}
+
+\newcommand{\costkw}{\sfont{cost\textsf{-}aware}}
+
+\newcommand{\confkw}{\sfont{configuration\textsf{-}aware}}
+
+\newcommand{\randkw}{\sfont{random}}
+
+\newcommand{\togglekw}{\sfont{toggling}}
+
+\newcommand{\agnostickw}{\sfont{profiler\textsf{-}agnostic}}
+
+\newcommand{\strategy}[2]{#1~#2}
+
+\newcommand{\strategyext}[3]{#1~\strategy{#2}{#3}}
+
+
+\newcommand{\featopt}{\strategy{\featkw}{\optkw}}
+\newcommand{\statselfopt}{\strategy{\statself}{\optkw}}
+\newcommand{\stattotalopt}{\strategy{\stattotal}{\optkw}}
+
+\newcommand{\featcon}{\strategy{\featkw}{\conkw}}
+\newcommand{\statselfcon}{\strategy{\statself}{\conkw}}
+\newcommand{\stattotalcon}{\strategy{\stattotal}{\conkw}}
+
+\newcommand{\featcostopt}{\strategyext{\featkw}{\costkw}{\optkw}}
+\newcommand{\statselfcostopt}{\strategyext{\statself}{\costkw}{\optkw}}
+\newcommand{\stattotalcostopt}{\strategyext{\stattotal}{\costkw}{\optkw}}
+
+
+\newcommand{\featcostcon}{\strategyext{\featkw}{\costkw}{\conkw}}
+\newcommand{\statselfcostcon}{\strategyext{\statself}{\costkw}{\conkw}}
+\newcommand{\stattotalcostcon}{\strategyext{\stattotal}{\costkw}{\conkw}}
+
+\newcommand{\featconf}{\strategy{\featkw}{\confkw}}
+\newcommand{\statselfconf}{\strategy{\statself}{\confkw}}
+\newcommand{\stattotalconf}{\strategy{\stattotal}{\confkw}}
+
+\newcommand{\randomopt}{\strategy{\randkw}{\optkw}}
+\newcommand{\randomcon}{\strategy{\randkw}{\conkw}}
+
+\newcommand{\toggle}{\togglekw}
+
+%% types
+
+\newcommand{\type}{\ensuremath{t}}
+
+\newcommand{\deep}{\ensuremath{D}}
+
+\newcommand{\shallow}{\ensuremath{S}}
+
+
+%% program and components
+
+\newcommand{\program}{\ensuremath{P}}
+
+
+\newcommand{\component}{\ensuremath{c}}
+
+
+
+%% lattice
+
+\newcommand{\latticeL}{\mathcal{L}}
+
+\newcommand{\lattice}[1]{\ensuremath{\latticeL\llbracket#1\rrbracket}}
+
+\newcommand{\standardlattice}{\lattice{\system}{\kmap}}
+
+\newcommand{\conf}{\ensuremath{k}}
+
+\newcommand{\metric}{\ensuremath{\leq_{\latticeL}^{X}}}
+
+
+\newcommand{\modem}{\ensuremath{M}}
+\newcommand{\mode}[1]{\ensuremath{\modem\llbracket#1\rrbracket}}
+
+
+
