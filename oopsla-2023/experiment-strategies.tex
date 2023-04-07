@@ -14,9 +14,9 @@ which may affect negatively the performance of \program{}.
  boundary in a program, hopefully the most costly one. In formal terms, a
  profiling strategy is a function that consumes a program \program{} and
  returns a set of pairs $(\component{}, \type{})$ where \type{} is either
- \deep{} or \shallow{} for deep and shallow respectively. Each pair
+ \deep{} or \shallow{}. Each pair
  prescribes a modification for \program{}. For instance, if a strategy
- returns the singleton set with the pair $(a,\deep)$, then the strategy
+ returns the singleton set with the pair $(a, \deep)$, then the strategy
  directs its rational-programmer mode to equip component $a$ with deep
  types, or to toggle to deep its existing types, if $a$ is already typed.
  Of course, if a component has already the prescribed kind of types, the
