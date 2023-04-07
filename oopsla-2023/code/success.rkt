@@ -52,6 +52,7 @@
   ;; forall benchmark, split configs into: immediate, hopeless, feasible
   ;; forall strategy + mode, forall feasible: 
   (define bm-name (trailfile-bb (car bm*)))
+  (printf "go-bm: ~a~n" bm-name)
   (define perf# (benchmark->perf# bm-name))
   (define ss (bm-seascape perf#))
   (define tt (bm-trails bm* perf# ss))
