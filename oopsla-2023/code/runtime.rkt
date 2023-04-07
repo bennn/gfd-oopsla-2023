@@ -27,3 +27,15 @@
     (define ss (stddev/mean mm o*))
     (values (car row) (map shortnum (list mm ss)))))
 
+(module+ main
+  (require racket/cmdline racket/pretty)
+  (command-line
+    #:args args
+    (if (null? args)
+      (printf "usage: racket runtime.rkt [bm] [cfg]~n")
+      (let* ((bm (car args))
+             (h (benchmark->perf# bm)))
+        (if (null? (cdr args))
+          (pretty-write h)
+          (displayln (hash-ref h (cadr args) #f)))))))
+
