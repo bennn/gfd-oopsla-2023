@@ -18,7 +18,9 @@ FILL collected between July 2022 and today (ongoing).
 quadT runtime between August 2022 and October 2022, since then, unable to get a huge
 block of machines for the profile and boundary data.
 
-TODO rerun snake profile, have "snake" not "usnake"!
+
+
+\subsection{Data Collection}
 
 du -h boundary
 113M	uacquire
@@ -80,10 +82,6 @@ ls -lh *out
 
 FILL explain "u" setup, appendix?
 
-
-
-
-\subsection{Data Collection}
 
 % https://www.cloudlab.us/
 
@@ -175,30 +173,40 @@ Only \bmname{fsm} and \bmname{lnm} have low percentages: 8\% and 44\%.
 FILL say more
 
 \begin{table}[t]
-  \caption{How many of the $3^N$ configurations need help to reach $T=1$?}
+  \caption{How many of the $3^N$ configurations have any overhead to begin with?}
   \label{t:baseline-trouble}
-  \begin{tabular}{lrr}
-    Benchmark  & Count & Pct \\\midrule
-    sieve      & 8     & 88.89\% \\
-    morsecode  & \ycell{55}    & \ycell{67.90\%} \\
-    forth      & 74    & 91.36\% \\
-    fsm        & \ycell{36}    & \ycell{44.44\%} \\
-    fsmoo      & \ycell{50}    & \ycell{61.73\%} \\
-    mbta       & 72    & 88.89\% \\
-    zombie     & 64    & 79.01\% \\
-    dungeon    & 242   & 99.59\% \\
-    jpeg       & \ycell{168}   & \ycell{69.14\%} \\
-    lnm        & \ycell{57}    &  \ycell{7.82\%} \\
-    suffixtree & 584   & 80.11\% \\
-    kcfa       & 1799  & 82.26\% \\
-    snake      & 6560  & 99.98\% \\
-    take5      & 6558  & 99.95\% \\
-    acquire    & 19495 & 99.04\% \\
-    tetris     & 14879 & 75.59\% \\
-    synth      & 58022 & 98.26\% \\
+  \begin{tabular}[t]{l@{\qquad}l}
+    \begin{tabular}[t]{lrr}
+      Benchmark           & $3^N$ & \% Slow \\\midrule
+      \bmname{sieve}      &     9 & 77.78\% \\
+      \bmname{morsecode}  &    81 & 82.72\% \\
+      \bmname{forth}      &    81 & 93.83\% \\
+      \bmname{fsm}        &    81 & \ycell{76.54\%} \\
+      \bmname{fsmoo}      &    81 & 83.95\% \\
+      \bmname{mbta}       &    81 & 88.89\% \\
+      \bmname{zombie}     &    81 & 91.36\% \\
+      \bmname{dungeon}    &   243 & 99.59\% \\
+      \bmname{jpeg}       &   243 & 94.65\% \\
+    \end{tabular}
+    \begin{tabular}[t]{lrr}
+      Benchmark           & $3^N$ & \% Slow \\\midrule
+      \bmname{lnm}        &   729 & \ycell{40.47\%} \\
+      \bmname{suffixtree} &   729 & 98.49\% \\
+      \bmname{kcfa}       &  2187 & 92.87\% \\
+      \bmname{snake}      &  6561 & 99.97\% \\
+      \bmname{take5}      &  6561 & 99.95\% \\
+      \bmname{acquire}    & 19683 & 99.23\% \\
+      \bmname{tetris}     & 19683 & 95.47\% \\
+      \bmname{synth}      & 59049 & 99.99\%
+    \end{tabular}
   \end{tabular}
-
 \end{table}
+
+\begin{figure}[t]
+  \includegraphics[width=\columnwidth]{data/strategy-overall.pdf}
+  \caption{Strategy head-to-head, mono only. Profiles on left. Agnostics on right.}
+  \label{f:strategy-overall}
+\end{figure}
 
 \clearpage
 
