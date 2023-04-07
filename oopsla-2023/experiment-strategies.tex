@@ -1,0 +1,210 @@
+
+From the perspective of the experiment, every program \program{} is a
+collection of interacting components $\component$. Specifically, some
+components have deep types, some  have shallow, and some  have no types at
+all. Independently of their types, a component $\component{}_1$, may import
+another component $\component{}_2$  which establishes a
+\emph{boundary} between them through which they exchange values at
+run-time. As section~\ref{sec:seascape} describes, depending on the kind of types at
+the two sides of the boundary, a value exchange can result in checks,
+which may affect negatively the performance of \program{}. 
+
+ Since boundaries are the source of performance degradation, a profiling
+ strategy aims to change the types of components in order to eliminate a
+ boundary in a program, hopefully the most costly one. In formal terms, a
+ profiling strategy is a function that consumes a program \program{} and
+ returns a set of pairs $(\component{}, \type{})$ where \type{} is either
+ \deep{} or \shallow{} for deep and shallow respectively. Each pair
+ prescribes a modification for \program{}. For instance, if a strategy
+ returns the singleton set with the pair $(a,\deep)$, then the strategy
+ directs its rational-programmer mode to equip component $a$ with deep
+ types, or to toggle to deep its existing types, if $a$ is already
+ typed. The strategy returns the empty set when it cannnot determine a
+ modification.
+
+ Overall, the experiment compares rational-programmer modes
+ derived from 9 different basic strategies. Figure~\ref{f:bstrategies}
+ lists them along with their descriptions.
+
+ At a first level, the strategies
+ differ in whether they produce their result by analyzing the feedback of
+ a \featkw{} or a \statkw{} profiler. Those that use the first kind of
+ profiler identify directly the most costly boundary in 
+ \program{}, and produce modifications of the components at either side.
+ Those that use the second cannot directly identify a boundary.  Instead
+ they detect the most costly \component{} in terms of either \selfkw{} or
+ \totalkw{} time.  Then, they pick  one of the boundaries that \component{} is
+ involved in, which they calculate based on the components that
+ \component{} imports or that import \component{}. Only after figuring out
+ their target boundary, \statkw{} strategies select how to modify the
+ components it involves.
+
+ At a second level, strategies also differ in how they modify the two sides of
+ their target boundary. Strategies that are \optkw{} turn the types at
+ either side of the boundary to deep. After all, when two components with
+ deep types interact, no checks take place. Hence, such a modification
+ eliminates the cost of the boundary entirely. However, there is a risk or
+ a ripple effect: the new deep types of the two components may increase
+ the cost of other boundaries that the two components are involved in. In
+ contrast to strategies that are \optkw{}, those that are \conkw{} turn
+ the types at either side of the target boundary to shallow. The rationale
+ behind this choice is that if both sides of a boundary have
+ shallow types, the interactions across the boundary cost less than if
+ only one is deep. At the same time, unlike the  \optkw{}
+ strategies,  there is no risk of a ripple effect. 
+
+ Besides the basic strategies, the experiment investigates 9 composite
+ strategies (fig. ~\ref{f:cstrategies}). The \costkw{} strategies rank the cost of boundaries 
+ not just in terms of performance, but also in terms of labor. 
+ Hence, they give priority to those
+ boundaries that involve typed components as modifying these components
+ boils down to toggling their types, which is cheap. The \confkw{}
+ strategies
+ decide whether to be \optkw{} or \conkw{} best on how many components of
+ a program are typed. When most components are untyped, the risk of a ripple effect
+ outweighs the benefits of 
+ the \optkw{} strategy. Therefore strategies favor a \conkw{} approach for
+ sparsely typed programs, and an \optkw{} strategy for densely typed ones.
+
+ Finally, the experiment includes 3 strategies that are \agnostickw{}
+ (fig. ~\ref{f:astrategies}). Those
+ play the role of baselines for rejecting the null-hypothesis: if 
+ profiling strategies are more successful than the
+ \agnostickw{} ones, then profiler feedback plays a meaningful role in
+ guiding type migration. There are two kinds of  \agnostickw{} strategies. 
+ First, the \randkw{} strategies pick a boundary without consulting a profiler
+ and modify it either in an \optkw{} or \conkw{} manner. Second, the
+ \togglekw{} strategy~\cite{g-dsgt} simply toggles all the typed components of a program
+ from deep to shallow and vice versa. 
+
+ %% -----------------------------------------------------------------------------
+\begin{figure}[htb]
+
+  \newcommand{\desc}[1]{\parbox[t]{26em}{#1}}
+
+  \def\desca{\desc{Uses the feature-specific profiler to identify the most
+  expensive boundary. Then it equips both of its sides with deep types.}}
+
+  \def\descb{\desc{Uses the feature-specific profiler to identify the most
+  expensive boundary. Then it equips both of its sides with shallow types.}}
+
+  \def\descc{\desc{Uses the statistical profiler to identify the component
+  $\component{}_1$ with the highest self time that shares a boundary with
+  a component $\component{}_2$ s.t.  $\component{}_2$ has the  the highest
+  self time among all components that share a boundary with
+  $\component{}_1$, and $\component{}_2$ and $\component{}_1$ do not have
+  both deep or shallow types. Then it equips both sides of the boundary
+  with deep types.}}
+
+  \def\descd{\desc{Uses the statistical profiler to identify the component
+  $\component{}_1$ with the highest total time that shares a boundary with
+  a component $\component{}_2$ s.t.  $\component{}_2$ has the  the highest
+  total time among all components that share a boundary with
+  $\component{}_1$, and $\component{}_2$ and $\component{}_1$ do not have
+  both deep or shallow types. Then it equips both sides of the boundary
+  with deep types.}}
+
+
+  \def\desce{\desc{Uses the statistical profiler to identify the component
+  $\component{}_1$ with the highest self time that shares a boundary with
+  a component $\component{}_2$ s.t.  $\component{}_2$ has the  the highest
+  self time among all components that share a boundary with
+  $\component{}_1$, and $\component{}_2$ and $\component{}_1$ do not have
+  both deep or shallow types. Then it equips both sides of the boundary
+  with shallow types.}}
+
+  \def\descf{\desc{Uses the statistical profiler to identify the component
+  $\component{}_1$ with the highest total time that shares a boundary with
+  a component $\component{}_2$ s.t.  $\component{}_2$ has the  the highest
+  total time among all components that share a boundary with
+  $\component{}_1$, and $\component{}_2$ and $\component{}_1$ do not have
+  both deep or shallow types. Then it equips both sides of the boundary
+  with shallow types.}}
+
+
+
+
+   \begin{tabular}{r|l}
+    {\bf Strategy Name} & {\bf Description} \\ \hline
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+     \featopt{}          &   \desca          \\ \hline
+    \featcon{}          &   \descb           \\ \hline
+
+    \statselfopt{}      &   \descc           \\ \hline
+    \stattotalopt{}     &   \descd           \\ \hline
+    \statselfcon{}      &   \desce           \\ \hline 
+    \stattotalcon{}     &   \descf           
+    \end{tabular}
+
+ 
+  \caption{The Basic Strategies of the Experiment and their Descriptions}
+  \label{f:bstrategies}
+\end{figure}
+%% -----------------------------------------------------------------------------
+
+ %% -----------------------------------------------------------------------------
+\begin{figure}[htb]
+ 
+  \newcommand{\desc}[1]{\parbox[t]{21em}{#1}}
+
+ 
+  \def\desca{\desc{Splits the boundaries in the given program to those
+  between typed components and the rest.
+  Uses the feature-specific profiler to identify the most
+  expensive boundary from the first group. 
+  Then it equips both of its sides with deep types.
+  If the first gorup is empty, it uses the second group.}}
+
+   \def\descb{\desc{Splits the boundaries in the given program to those
+  between typed components and the rest.
+  Uses the feature-specific profiler to identify the most
+  expensive boundary from the first group. 
+  Then it equips both of its sides with shallow types.
+  If the first gorup is empty, it uses the second group.}}
+
+
+
+ \begin{tabular}{r|l}
+    {\bf Strategy Name} & {\bf Description} \\\hline
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \featcostopt{}      &   \desca           \\\hline
+    \featcostcon{}      &   \descb           \\\hline
+  
+    \statselfcostopt{}  &                    \\\hline
+    \stattotalcostopt{} &                    \\\hline
+   \statselfcostcon{}   &                    \\\hline
+    \stattotalcostcon{} &                    \\\hline
+
+    \featconf{}         &                    \\\hline
+    \statselfconf{}     &                    \\\hline
+    \stattotalconf{}    &                    \\
+    \end{tabular}
+
+ 
+  \caption{The Composite Strategies of the Experiment and their Descriptions}
+  \label{f:cstrategies}
+\end{figure}
+
+ %% -----------------------------------------------------------------------------
+\begin{figure}[htb]
+
+  \newcommand{\desc}[1]{\parbox[t]{26em}{#1}}
+
+  \def\desca{\desc{Uses the feature-specific profiler to identify the most
+  expensive boundary. Then it equips both of its sides with deep types.}}
+
+
+ \begin{tabular}{r|l}
+    {\bf Strategy Name} & {\bf Description} \\\hline
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \randomopt{}        &                    \\\hline
+    \randomcon{}        &                    \\\hline
+    \toggle{}           &                    
+     \end{tabular}
+
+ 
+  \caption{The Profiler-Agnostic Strategies of the Experiment and their Descriptions}
+  \label{f:astrategies}
+\end{figure}
+
+
