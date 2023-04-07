@@ -1,5 +1,7 @@
 #lang racket
 
+;; TODO ... do the strategies give any improvement?
+
 (require
   "base.rkt"
   "runtime.rkt"

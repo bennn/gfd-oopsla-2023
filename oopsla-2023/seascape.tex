@@ -1,7 +1,7 @@
 %% -----------------------------------------------------------------------------
 
 Over the years, developers have created many large systems in untyped languages.
-In the meantime, language implementers have created gradually typed siblings of
+In the meantime, language implementors have created gradually typed siblings of
 these languages.  Since developers tend to enjoy the benefits of type-based IDE
 support and like to type check their code, they are likely to add new components
 in the typed sibling language. Alternatively, when a developer is confronted
@@ -13,125 +13,246 @@ untyped components. In a sound gradually typed language, these boundaries impose
 a performance penalty, possibly a prohibitive one. In the latter case, the
 developer faces a performance-debugging scenario.
 
-CITE snapl
+% \begin{itemize}
+%   \item Following the description of the example,  
+%     the section should explain how the program evaluates and connect that with the
+%     semantics of shallow and deep types. 
+%   \item Next, the section should describe the feedback from the statistical
+%     profiler, introduce the boundary profiler  and 
+%     describe its feedback too. 
+%   \item As the feedback of each profiler is shown, the section should 
+%     explain that it provides hints about where to look for
+%     possible improvements. It would be great, if the section shows how
+%     actin on two hints plays out.  
+%   \item As a final piece, the section should discuss that the
+%     interpretation
+%     of the feedback to hints is two dimentional (identify component and
+%     identify change to component), and that how a developer can itnerepret
+%     it reliably needs a careful and systematic look.
+% \end{itemize}
 
-NEXT UP: config, add one type, profiler data what to do?
- boundary non-boundary
- WHAT PROFILE DO YOU ACTUALLY GET
- 2 profiler options, for each get several
+As an example, consider the small program outlined in~\cref{f:fsm-code:a}.
+This program is named \bmname{fsm} and comes from the GTP benchmark suite~\cite{gtp-benchmarks}.
+Its overall purpose is to simulate an economy of agents, each of which behaves according to a
+deterministic strategy.
+In terms of the code, there are four modules:
+\code{auto} implements state machines,
+\code{pop} coordinates among machines,
+\code{main} drives the simulation, and
+\code{util} provides helper functions.
+Running the main module kicks off a simulation.
 
-\begin{itemize}
-  \item This section should present a mix-typed example. It would be good
-    if the example is straight from the benchmarks, but, if this is not
-    manageable, it can also be a distilled or altered version.  The basic
-    requirement is that it runs and exhibits slowdown over the untyped
-    version with its currrent types. In addition, some of its types should
-    be shallow and some deep to set up the discussion about the
-    semantics.
-  \item Following the description of the example,  
-    the section should explain how the program evaluates and connect that with the
-    semantics of shallow and deep types. 
-  \item Next, the section should describe the feedback from the statistical
-    profiler, introduce the boundary profiler  and 
-    describe its feedback too. 
-  \item As the feedback of each profiler is shown, the section should 
-    explain that it provides hints about where to look for
-    possible improvements. It would be great, if the section shows how
-    actin on two hints plays out.  
-  \item As a final piece, the section should discuss that the
-    interpretation
-    of the feedback to hints is two dimentional (identify component and
-    identify change to component), and that how a developer can itnerepret
-    it reliably needs a careful and systematic look.
-\end{itemize}
+Initially, the \bmname{fsm} codebase is untyped.
+Adding types to the \code{main} module is a reasonable next step,
+as it adds static checks for users who wish to customize the simulation
+without the effort of typing the library code.
+Typing \code{main}, however, significantly degrades performance:
+the gradually-typed code runs almost 3x slower than the untyped code.
+This slowdown is present even if \bmname{main} uses the weaker, Shallow
+semantics for types.
+Shallow often gives less of a performance hit in exchange for its weaker
+guarantees, but not in this case.
+
+{
+FILL shallow is slow because there's a Deep adaptor in the way!
+For this configuration, that looks like a flaw. But in general
+it's not at all clear how to manage adaptors. What to do for
+a config like \code{0120} that mixes deep and shallow?!
+}
+
+%% 3x not terrible compared to prior work [CITE popl], but still bad.
+%% Collapsible helps fsm but not in this particular config & not in fsmoo.
+
+At this point, the question is how to recover performance
+without throwing away the newly-added types.
+Adding types to a random module is one option, but doing so
+can easily make things worse.
+In \bmname{fsm}, if the next choice is the \code{auto} module
+with Shallow types then performance degrades further to a
+9x slowdown.
+Adding types to every module is another option.
+Doing so improves \bmname{fsm} performance relative to the untyped code,
+but requires a heavy migration effort.
+
+%% fsm next steps:
+%% 1100 => 2.87x
+%% 2100 => 9.04x
+%% 2200 => 9.06x
+%% 1200 => 2.88x
 
 
-The section does not need to talk about whether this or that strategy is
-succesful, nor it needs to bring accross the specifics of one or more
-strategies. It's goal is to provide background, build some intuition about
-profilers and the usefulnes of the their feedbacks, and give a concrete view of
- the complexity of interpreting hints.
+\begin{figure}[t]\centering
+  %% profiler output: data/example-output-fsm/*
 
+  \begin{subfigure}[t]{\columnwidth}\centering
+    \begin{tikzpicture}
+      \node (1) [draw=black!80] {\code{util}};
+      \node (1c) [draw=black!80,left=of 1.west,xshift=9mm] {\code{pop}};
+      \node (1b) [draw=black!80,left=of 1c.west,xshift=9mm] {\code{main}};
+      \node (1a) [draw=black!80,left=of 1b.west,xshift=9mm] {\code{auto}};
+      \node (0) [above of=1a,yshift=-2mm] {Program: \bmname{fsm}};
 
-%% -----------------------------------------------------------------------------
-\begin{figure}[htb]
+      \node (2) [above of=1,yshift=-3mm,xshift=3cm,draw=black!80] {\code{auto}};
+      \node (2a) [draw=black!80,right=of 2.east,xshift=-9mm] {t \code{main}};
+      \node (2b) [draw=black!80,right=of 2a.east,xshift=-9mm] {\code{pop}};
+      \node (2c) [draw=black!80,right=of 2b.east,xshift=-9mm] {\code{util}};
+      \node (22) [right=of 2c.east,xshift=-10mm] {\textbf{2.9x} slowdown};
+      \node (24) [above of = 22,yshift=-6mm] {Deep types};
 
-  \bmname{fsm} basics:
-  \begin{tabular}{llll}
-    81 configurations (cfgs) &
-    18 fast &
-    5x avg. slowdown &
-    3x median slowdown
-  \end{tabular}
+      \node (3) [below of=2,yshift=-2mm,draw=black!80] {\code{auto}};
+      \node (3a) [draw=black!80,right=of 3.east,xshift=-9mm] {t \code{main}};
+      \node (3b) [draw=black!80,right=of 3a.east,xshift=-9mm] {\code{pop}};
+      \node (3c) [draw=black!80,right=of 3b.east,xshift=-9mm] {\code{util}};
+      \node (33) [right=of 3c.east,xshift=-10mm] {\textbf{2.8x} slowdown};
+      \node (34) [above of = 33,yshift=-6mm] {Shallow types};
+
+      \draw[-{Stealth[length=2mm,width=2mm]}] (1.east) -- (2.west);
+      \draw[-{Stealth[length=2mm,width=2mm]}] (2a.south) -- (3a.north);
+
+    \end{tikzpicture}
+
+    \caption{Adding types to one \bmname{fsm} module degrades performance}
+    \label{f:fsm-code:a}
+  \end{subfigure}
 
   \bigskip
 
-  \includegraphics[width=0.9\textwidth]{data/fsm-lattice.pdf}
+  \begin{subfigure}[t]{0.50\columnwidth}
+%%-------------------------------------------------
+%% [1] 1192(100.0%)   0(0.0%)  body of ....
+%%                              body of ....
+%%-------------------------------------------------
+%%                              profile-thunk [5]
+%% [6] 1192(100.0%)   0(0.0%)  ??? profile-lib
+%%                              body of "main" [7]
+%%                              t [8]
+%%                              body of ....
+%%-------------------------------------------------
 
-  after \emph{either-or}~\cite{g-deep-shallow} navigation:
-  \begin{tabular}{llll}
-    %% 81 - 36
-    45 fast cfgs &
-    4x avg. slowdown &
-    3x median slowdown
-  \end{tabular}
+    \footnotesize
+    \begin{verbatim}
+Profiling results
+-----------------
+  Total cpu time observed: 1192ms (out of 1236ms)
+  Number of samples taken: 23 (once every 52ms)
 
-  \caption{Performance lattices for \bmname{fsm}, before and after a simple navigation.}
-  \label{f:fsm-seascape}
+=================================================
+                              Caller
+ Idx   Total       Self      Name+src
+       ms(pct)     ms(pct)    Callee
+=================================================
+                              ??? [12]
+                              evolve [17]
+[17]  818(68.6%)    0(0.0%)  evolve main
+                              evolve [17]
+                              shuffle-vector [19]
+                              death-birth [18]
+                              ??? [20]
+-------------------------------------------------
+                              match-up* [22]
+                              shuffle-vector [19]
+[24]  152(12.7%)  152(12.7%) contract-wrapper
+-------------------------------------------------
+    \end{verbatim}
+    \caption{Statistical profiler output, Deep types}
+    \label{f:fsm-code:statistical}
+  \end{subfigure}\qquad
+  \begin{subfigure}[t]{0.44\columnwidth}
+    \footnotesize
+    \begin{verbatim}
+Boundary profile (fork of contract-profile)
+
+cpu time: 984 real time: 984 gc time: 155
+Running time is 18.17% contracts
+253/1390 ms
+
+(interface:death-birth pop main)
+  142 ms
+  (->* ((cons/c (vectorof automaton?)
+                (vectorof automaton?))
+        any/c)
+       (#:random any/c)
+       (cons/c (vectorof automaton?)
+               (vectorof automaton?)))
+(interface:match-up* pop main)
+  81.5 ms
+  (-> ....)
+(interface:population-payoffs pop main)
+  29 ms
+  (-> ....)
+
+
+    \end{verbatim}
+
+    \caption{Boundary profiler output, Deep types}
+    \label{f:fsm-code:boundary}
+  \end{subfigure}
+  \caption{Gradual types, run-time costs, and profile results}
+  \label{f:fsm-code}
 \end{figure}
-%% -----------------------------------------------------------------------------
 
-FILL various approaches to GT,
-erasure unsound,
-concrete inflexible (even with Static Python's transient mix),
-transient not a complete monitor.
+Clearly, informed feedback is needed to recover performance.
+Profiling tools are the obvious solution, and fortunately Racket
+comes with two promising tools:
+\begin{itemize}
+  \item a traditional \emph{statistical profiler} that identifies the time spent
+    in different modules; and
+  \item a special-purpose \emph{boundary profiler} that records the cost of
+    contracts and attributes it to pairs of modules
+\end{itemize}
 
-For gradual type systems that provide deep type guarantees,
-performance is a major challenge.
-Despite recent advances~(\cref{sec:related}), adding types to part of a program
-is likely to add significant run-time costs.
-These costs might be as low as 2x slower than the untyped code, but, depending
-on the system at hand, could be 10x or much more~[CITE].
+Both tools are potentially useful due to the mechanics of Deep and Shallow types.
+Deep types compile to contracts at module boundaries~\cite{tf-popl-2008}, so
+the boundary profiler should pick them up.
+Shallow types avoid contracts and instead compile to assertions within typed
+code~\cite{glfd-pj-2022}.
+The statistical profiler may report higher times for modules affected by Shallow checks.
 
-FILL deep, shallow, untyped world
+The bottom half of \cref{f:fsm-code} shows a sample of the profiler output for
+\bmname{fsm} with Deep types in the \code{main} module and no types in the
+other modules.
 
-In this paper, we take the position that \emph{any overhead} is unacceptable.
-Unless gradually typed code runs at least as fast as the untyped code
-(i.e., a 1x slowdown), it is too slow.
+\paragraph{Statistical profiler}
 
-The challenge, then, is to \emph{navigate} from an arbitrary starting point
-to a fast partially-typed program.
-Navigation cannot remove types.
-If removal was allowed, then the problem would have a trivial solution: revert
-to the untyped code.
-Instead, navigation proceeds in one of four ways:
-\begin{enumerate}
-  \item
-    Add Deep types to an untyped component.
-  \item
-    Add Shallow types to an untyped component.
-  \item
-    Strengthen the types in a Shallow-typed component.
-  \item
-    Weaken the types in a Deep-typed component.
-\end{enumerate}
+\Cref{f:fsm-code:statistical} lists two rows from the statistical profiler
+(the full output has 28 rows).
+The first row, labeled \code{[17]}, covers a large percentage (\code{68\%})
+of the total running time but very little time itself.
+It refers to a function named \code{evolve} defined in the \code{main} module,
+which suggests that calls from \code{evolve} to other modules account for a
+high cost.
+The second row (\code{[24]}) says that a contract wrapper accounts for a
+significant chunk (\code{12.7\%}) of the running time.
+The caller of this contract (from row \code{[19]}, not pictured) is the
+function \code{shuffle-vector} from the \code{pop} module.
+Putting these clues together, a boundary between \code{main} and \code{pop}
+is expensive.
 
-Finding a fast configuration is easier said than done.
-The space of gradually-typed configurations is huge, even for
-small programs, and the fast configurations may be hard to find.
-\Cref{f:fsm-seascape} illustrates the problem for one
-rather small and fast program from the GTP benchmark suite~[CITE].
-This program, \bmname{fsm}, has four modules and thus 81 configurations.
+This conclusion, however, is one of many that could be drawn from the
+full statistical profiler output.
+The \code{util} module also appears in the output, and may be more
+of a bottleneck that the \code{pop} module.
+Equally unclear is whether \code{Total} time or \code{Self} time is the
+better lead to follow.
+High total times point to a context that dominates the expensive parts.
+High self times point specifically to expensive parts, but these costs
+might be from the actual computation rather than the checks added by types.
 
-FILL
+\paragraph{Boundary profiler}
 
+\Cref{f:fsm-code:boundary} shows nearly-complete output from the boundary
+profiler; only two contracts are omitted.
+This profile attributes \code{18.17\%} of the total running time to contracts,
+specifically, to the contracts on the three functions listed below.
+All three function names begin with the prefix \code{interface}, which indicates
+that the contracts are applied by Typed Racket on untyped functions that entered
+typed code.
+The modules involved are \code{main} and \code{pop}.
+Since \code{pop} is the untyped one, the hint is to type it.
 
-In practice, a programming team can always remove types to recover performance.
-For example: experiment with gradual types on a side branch, outside the main
-development, and keep them out until the gradually-typed variant runs as fast
-as the main branch.
-The question still remains as to when or if the gradually-typed code will be
-fast enough.
-This paper investigates strategies to reduce the effort.
+\paragraph{Next step}
+
+Adding types to \code{pop} does improve performance---but only to a 1.2x slowdown.
+If this overhead is unacceptable, then another round of profiling, searching, and typing is needed.
 
 
