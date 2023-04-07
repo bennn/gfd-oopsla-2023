@@ -2,12 +2,6 @@
 
 %\settopmatter{printfolios=true,printccs=false,printacmref=false}
 
-%% NOTES among authors 
-\def\notes#1{\expandafter\def\csname#1\endcsname##1{\marginpar{\par\noindent\hrulefill\par\raggedright\tiny\noindent #1: ##1}}}
-% \def\notes#1{\expandafter\def\csname#1\endcsname##1{\marginpar{\relax}}}
-\notes{bg}
-\notes{cd}
-\notes{mf}
 
 \overfullrule=1mm
 \citestyle{acmauthoryear}
@@ -26,6 +20,8 @@
 \usepackage{wrapfig}
 \usepackage{xcolor}
 \usetikzlibrary{shapes.geometric}
+
+\input{def.tex}
 
 \begin{document}
 
