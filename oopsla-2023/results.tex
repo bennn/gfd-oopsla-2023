@@ -10,6 +10,74 @@ A migration target (\emph{target}) is a set of modules that should be equipped
 with types.
 There are $2^N$ targets per benchmark.
 
+FILL collected between July 2022 and today (ongoing).
+quadT runtime between August 2022 and October 2022, since then, unable to get a huge
+block of machines for the profile and boundary data.
+
+TODO rerun snake profile, have "snake" not "usnake"!
+
+du -h boundary
+113M	uacquire
+8.7M	ukcfa
+17M	ulnm
+26M	usnake
+3.0M	usuffixtree
+235M	usynth
+27M	utake5
+78M	utetris
+348K	uzombie
+984K	dungeon
+328K	morsecode
+40K	sieve
+328K	fsm
+328K	forth
+1.2M	jpeg
+16M	lnm
+328K	mbta
+
+du -h profile
+631M	uacquire
+75M	ukcfa
+46M	ulnm
+250M	snake
+57M	usuffixtree
+2.1G	usynth
+89M	utake5
+670M	utetris
+3.9M	uzombie
+18M	dungeon
+1.9M	morsecode
+220K	sieve
+2.5M	fsm
+4.9M	forth
+11M	jpeg
+46M	lnm
+3.4M	mbta
+
+ls -lh *out
+-rw-r--r-- 1 ben users  30K Mar 31 16:23 00-morsecode.out
+-rw-r--r-- 1 ben users  31K Sep 27  2022 01-forth.out
+-rw-r--r-- 1 ben users  29K Sep 27  2022 02-fsm.out
+-rw-r--r-- 1 ben users  32K Sep 27  2022 03-fsmoo.out
+-rw-r--r-- 1 ben users  30K Sep 27  2022 04-mbta.out
+-rw-r--r-- 1 ben users 3.5K Sep 27  2022 05-sieve.out
+-rw-r--r-- 1 ben users 7.2M Sep 27  2022 06-acquire.out
+-rw-r--r-- 1 ben users  91K Jan 24 12:28 07-dungeon.out
+-rw-r--r-- 1 ben users  89K Sep 27  2022 08-jpeg.out
+-rw-r--r-- 1 ben users 816K Sep 27  2022 09-kcfa.out
+-rw-r--r-- 1 ben users 255K Sep 27  2022 10-lnm.out
+-rw-r--r-- 1 ben users 2.4M Sep 27  2022 11-snake.out
+-rw-r--r-- 1 ben users 283K Sep 27  2022 12-suffixtree.out
+-rw-r--r-- 1 ben users 2.5M Sep 27  2022 13-take5.out
+-rw-r--r-- 1 ben users 7.3M Jan 24 12:47 14-tetris.out
+-rw-r--r-- 1 ben users  30K Sep 27  2022 15-zombie.out
+-rw-r--r-- 1 ben users  23M Sep 27  2022 19-synth.out
+
+
+FILL explain "u" setup, appendix?
+
+
+
 
 \subsection{Data Collection}
 
@@ -31,7 +99,9 @@ We collected all the data on CloudLab~[CITE].
 For running times, we used the Wisconsin cluster c220g1 
 FILL: exception for morsecode.
 
-%% 2023-03-22 bg: quadT ran on m510 nodes
+FILL: exact racket/tr code available on zenodo
+
+FILL: footnote, quadT in the works; report current status
 
 boundary from another cluster, same racket
 exceptions: dungeon, morsecode
@@ -81,7 +151,7 @@ we instatiate the Takikawa constant to 1x ($T=1$).
 
 A very simple way to try improving performance is to toggle between
 Deep and Shallow.
-\citet{g-pldi-2022} provides justification.
+\citet{g-deep-shallow} provides justification.
 Any configuration can reach 0, 1, or 2 other configurations by
 toggling, that is, by changing all its typed modules to Deep or
 changing all to Shallow.
