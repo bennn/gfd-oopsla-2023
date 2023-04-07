@@ -1,4 +1,4 @@
-
+%% -----------------------------------------------------------------------------
 From the perspective of the experiment, every program \program{} is a
 collection of interacting components $\component$. Specifically, some
 components have deep types, some  have shallow, and some  have no types at
@@ -76,17 +76,24 @@ which may affect negatively the performance of \program{}.
  \conkw{} approach for sparsely typed programs, and an \optkw{} strategy
  for densely typed ones.
 
- Finally, the experiment includes 3 strategies that are \agnostickw{}
- (fig. ~\ref{f:astrategies}). Those
- play the role of baselines for rejecting the null-hypothesis: if 
- profiling strategies are more successful than the
- \agnostickw{} ones, then profiler feedback plays a meaningful role in
- guiding type migration. There are two kinds of  \agnostickw{} strategies. 
- First, the \randkw{} strategies pick a boundary without consulting a profiler
- and modify it either in an \optkw{} or \conkw{} manner. Second, the
- \togglekw{} strategy~\cite{g-dsgt} simply toggles all the typed components of a program
- from deep to shallow and vice versa. 
+ Finally, the experiment includes 2 strategies that are \agnostickw{}.
+ Those play the role of experimental baselines: if the profiling
+ strategies are more successful than the \agnostickw{} ones, then profiler
+ feedback plays a meaningful role in guiding type migration.  The first
+ \agnostickw{} strategy, \randkw{}, aims to invalidate the null
+ hypothesis: it picks a boundary at random and suggests to its
+ rational-programmer mode to modify the target boundary either in an
+ \optkw{} or \conkw{} manner.  The second \agnostickw{} strategy,
+ \togglekw{}, was proposed by~\citep{g-dsgt} and serves as a point of
+ comparison with that previous work that does not employ profilers. If the
+ given program has a mixture of Shallow and Deep components, the strategy
+ directs its rational-programmer mode to equip all typed components of the
+ program with Deep types. If all components are already Deep, it instructs
+ the mode to equip all typed components with Shallow types. 
 
+ %% -----------------------------------------------------------------------------
+ %% -----------------------------------------------------------------------------
+ 
  %% -----------------------------------------------------------------------------
 \begin{figure}[htb]
 
@@ -142,7 +149,7 @@ which may affect negatively the performance of \program{}.
 \end{figure}
 %% -----------------------------------------------------------------------------
 
- %% -----------------------------------------------------------------------------
+%% -----------------------------------------------------------------------------
 \begin{figure}[htb]
  
   \newcommand{\desc}[1]{\parbox[t]{21.5em}{#1}}
@@ -206,35 +213,5 @@ which may affect negatively the performance of \program{}.
   \caption{The Composite Strategies of the Experiment and their Descriptions}
   \label{f:cstrategies}
 \end{figure}
-
- %% -----------------------------------------------------------------------------
-\begin{figure}[htb]
-
-  \newcommand{\desc}[1]{\parbox[t]{26em}{#1}}
-
-  \def\desca{\desc{Selects a random boundary in the given program and
-  direacts the mode to equip both sides of the target boundary with Deep
-  types.}}
-
-  \def\descb{\desc{Selects a random boundary in the given program and
-  dirests the mode to equip both sides of the target boundary with Shallow
-  types.}}
-
-  \def\descc{\desc{Directs the mode to flip the types of all typed
-  components in the given program from Deep to Shallow and vice versa.}}
-
-
- \begin{tabular}{r|l}
-    {\bf Strategy Name} & {\bf Description} \\\hline
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    \randomopt{}        &     \desca         \\\hline
-    \randomcon{}        &     \descb         \\\hline
-    \toggle{}           &     \descc               
-     \end{tabular}
-
- 
-  \caption{The Profiler-Agnostic Strategies of the Experiment and their Descriptions}
-  \label{f:astrategies}
-\end{figure}
-
+%% -----------------------------------------------------------------------------
 
