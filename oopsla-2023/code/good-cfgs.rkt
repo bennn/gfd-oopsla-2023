@@ -40,7 +40,7 @@
                    (plot-font-size 11))
       (define *ymax (box 0))
       (ptable
-        #:ncol 3
+        #:ncols 3
         #:row-sep 8
         #:col-sep 10
         (cons (blank)

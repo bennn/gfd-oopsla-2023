@@ -151,7 +151,7 @@
     (save-pict
       (format "data/~a_~a.~a" name pmode out-kind)
       (ptable
-        #:ncol 3
+        #:ncols 3
         #:row-sep 8
         #:col-sep 10
         (cons (blank) pict*)))))

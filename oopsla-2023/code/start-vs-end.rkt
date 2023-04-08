@@ -185,7 +185,7 @@
   (save-pict
     out-name
     (ptable pict*
-            #:ncol 3
+            #:ncols 3
             #:row-sep 10 #:col-sep 10))
   (void))
 
