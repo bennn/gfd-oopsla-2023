@@ -65,7 +65,7 @@ which may affect negatively the performance of \program{}.
  strategies (fig. ~\ref{f:cstrategies}). The \costkw{} strategies rank the
  cost of boundaries not just in terms of performance, but also in terms of
  the labor needed to equip then with types.  Hence, they give priority to
- those boundaries that involve components that are laready types.
+ those boundaries that involve components that are already types.
  Modifying these components boils down to toggling their types form Deep
  to Shallow or the opposite, which is cheap in terms of labor. 
  
@@ -101,7 +101,7 @@ which may affect negatively the performance of \program{}.
 
   \def\desca{\desc{Uses the feature-specific profiler to identify the most
   expensive boundary in the given program. Then it directs the mode to equip
-  both sides of the targt boundary with Deep types.}}
+  both sides of the target boundary with Deep types.}}
 
 
   \def\descb{\desc{Same as \featopt{} except that it directs the mode to
@@ -157,10 +157,9 @@ which may affect negatively the performance of \program{}.
  
   \def\desca{\desc{Splits the boundaries in the given program to those
   between typed components and the rest.  Delegates to \featopt{} to
-  produce a modification for an (incomplete) program that consists only of
-  components in the first group. If the first group is empty, it resorts
-  to the second group.  If the first group is empty, it resorts to the
-  second group.}}
+  produce a modification for the given program but rank boundaries  
+  in the first group higher than those in the second group while
+  determining the most expensive boundary.}}
 
    \def\descb{\desc{Same as \featcostopt{} except that it delegates 
    to \featcon{}.}}
@@ -168,9 +167,9 @@ which may affect negatively the performance of \program{}.
    \def\descc{\desc{Separates the typed components   that have boundaries
    with other typed components from the rest of the components in the
    given program. Delegates to \statselfopt{} to produce a modification
-   for an (incomplete) program that consists only of components in the
-   first group. If the first group is empty, it resorts to the second
-   group.}}
+   for the given program  but rank boundaries between components  
+  in the first group higher than the rest of the boundaries
+  determining the most expensive boundary.}}
 
    \def\descd{\desc{Same as \statselfcostopt{} except that it delegates 
    to \stattotalopt{}.}}
