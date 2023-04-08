@@ -3,15 +3,15 @@
 Over the years, developers have created many large systems in untyped languages.
 In the meantime, language implementors have created gradually typed siblings of
 these languages.  Since developers tend to enjoy the benefits of type-based IDE
-support and like to type check their code, they are likely to add new components
-in the typed sibling language. Alternatively, when a developer is confronted
-with debugging an untyped component, it takes a large mental effort to
-reconstruct the informal types of its methods, and to make this effort pay off,
-it is best to turn the informal types into formal annotations. In either case,
-the result is a mixed-typed software system with boundaries between typed and
-untyped components. In a sound gradually typed language, these boundaries impose
-a performance penalty, possibly a prohibitive one. In the latter case, the
-developer faces a performance-debugging scenario.
+support and a blessing from the type checker, they are likely to add new
+components in the typed sibling language. Alternatively, when a developer is
+confronted with debugging an untyped component, it takes a large mental effort
+to reconstruct the informal types of fields, functions, and methods, and to make
+this effort pay off, it is best to turn the informal types into formal
+annotations. In either case, the result is a mixed-typed software system with
+boundaries between typed and untyped components. In a sound gradually typed
+language, these boundaries impose a performance penalty, possibly a prohibitive
+one. In the latter case, the developer faces a performance-debugging scenario.
 
 % \begin{itemize}
 %   \item Following the description of the example,  
@@ -33,7 +33,7 @@ developer faces a performance-debugging scenario.
 
 To make this concrete, consider the \bmname{fsm} program from the GTP benchmark
 suite~\cite{gtp-benchmarks}. The program is the creation of \citet{fsm},
-economist interested in simulating an economy of agents with deterministic
+economists interested in simulating an economy of agents with deterministic
 strategies. Figure~\ref{f:fsm-code:a} shows the outline of the four-module
 program: \code{auto} implements state machines; \code{pop} coordinates among
 machines; \code{main} drives the simulation and permits users to set a number of
@@ -53,14 +53,15 @@ the situation.
 At this point, the question is how to recover the performance of the untyped
 variant. The first option is to roll back the addition of types, but developers
 prefer typed code and dislike undoing the effort of adding types. The second one
-is to add types to a random module connected to \code{main} is one option, but
-doing so can easily make things worse. For example, if the choice were the
-\code{auto} module with shallow types, then performance would degrade further (a
-9x slowdown, to be precise). Finally, adding types to every module is the option
-that is almost always guaranteed to fix the situation, and in this context, it
-would produce a performance improvement over the untyped variant.  Adding types
-to all modules represents a heavy migration effort, however, which a programmer
-who started with fixing \code{main} may be reluctant to invest.
+is to add types to a random module connected to \code{main}---following a
+``hunch'' like programmers sometimes do--but doing so can easily make things
+worse. For example, if the choice were the \code{auto} module with shallow
+types, then performance would degrade further (a 9x slowdown, to be
+precise). Finally, adding types to every module is the option that is almost
+always guaranteed to fix the situation, and in this context, it would produce a
+performance improvement over the untyped variant.  Adding types to all modules
+represents a heavy migration effort, however, which a programmer who simply
+wishes to fix \code{main} and deploy again may be reluctant to invest.
 
 %% -----------------------------------------------------------------------------
 %% fsm next steps:
@@ -139,7 +140,7 @@ who started with fixing \code{main} may be reluctant to invest.
 [24]  152(12.7%)  152(12.7%) contract-wrapper
 -------------------------------------------------
     \end{boxedverbatim}
-    \caption{Statistical profiler output for deep types} \label{f:fsm-code:statistical}
+    \caption{Statistical profiler output for the top-right variant} \label{f:fsm-code:statistical}
   \end{subfigure}~\begin{subfigure}[t]{0.44\columnwidth}
     \footnotesize
     \begin{boxedverbatim}
@@ -164,7 +165,7 @@ Running time is 18.17% contracts
 
 
     \end{boxedverbatim}
-    \caption{Boundary profiler output for deep types} \label{f:fsm-code:boundary}
+    \caption{Boundary profiler output for the same variant} \label{f:fsm-code:boundary}
   \end{subfigure}
 
   \caption{Profiling during gradual-type migration} \label{f:fsm-code}

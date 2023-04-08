@@ -1,21 +1,17 @@
 %% -----------------------------------------------------------------------------
 
-Sound migratory typing promised a safe and smooth refactoring path from an
+Sound migratory typing promises a safe and smooth refactoring path from an
 untyped code base to a typed one~\cite{tf-dls-2006, tfffgksst-snapl-2017}. It
-realizes the safe part with the compilation of type interfaces to run-time
-checks that guarantee type-level integrity of each mixed-typed program configuration.
+realizes the safe part with the compilation of types to run-time checks that
+guarantee type-level integrity of each mixed-typed program configuration.
 Unfortunately, these run-time checks impose a large performance
 overhead~\cite{gtnffvf-jfp-2019}, making the path anything but smooth. While
-this problem is particularly stringent for deep run-time checks (also called
-guarded or natural~\cite{tf-dls-2006,st-sfp-2006}),\footnote{\citet{kas-pldi-2019}
-have demonstrated that, for a lambda-calculus-sized programming language, it
-might be possible to reduce the overhead dramatically. This research is yet to
-be applied to a language that supports more than selected microbenchmarks.}
-it also applies to shallow run-time type checking~\cite{gm-pepm-2018} (shallow
-checks come in a variety of
-forms~\cite{grmhn-vmil-2019,rmhn-ecoop-2019,glfd-pj-2022,lgmvpk-pj-2023}
-inspired by Reticulated's transient
-semantics~\cite{vksb-dls-2014,vss-popl-2017,v-thesis-2019}).
+this problem is particularly stringent for deep run-time
+checks~\cite{tf-dls-2006, st-sfp-2006},\footnote{\citet{kas-pldi-2019}
+demonstrate a low overhead for a lambda-calculus-sized programming
+language. This research is yet to be applied to a language that supports more
+than a set of select micro-benchmarks.}  it also applies to shallow run-time
+checking~\cite{gm-pepm-2018}.
 
 \citet{g-thesis-2020,g-deep-shallow} presents evidence that deep and shallow
 checks actually come with complementary strengths and weaknesses. Deep checking
@@ -26,7 +22,7 @@ only for the type annotations added and the worst-case cost seems to be capped
 at an order-of-magnitude. Hence, Greenman argues that developers should, in
 principle, be able to mix and match deep and shallow checking to get the
 best-possible type checking benefits with a tolerable performance penalty.
-Greenman has implemented this idea for Typed Racket so that programmers can
+Greenman has implemented this idea for Typed Racket; programmers can
 switch from deep to shallow and back with a one-line edit.  Initial empirical data
 is promising: with a mixture of checks developers can avoid migration paths that
 result in unacceptable slowdowns with either deep or shallow checks alone.
@@ -78,15 +74,12 @@ In short, this paper makes two contributions:
     
 \end{itemize}    
 The remainder of the paper is organized as follows.  Section~\ref{sec:seascape}
-uses examples to demonstrate how deep and shallow checks can cause performance
-bottlenecks during type migration, and how profiler feedback can help developers
-indentify and mitigate them.  Section~\ref{sec:ideas} explains how the rational
-programmer method makes it possible to systematically evaluate the effectiveness
-of different strategies for interpreting profiler
-feedback. Section~\ref{sec:experiment} lays out the details of how these ideas
-translate to a large-scale quantitative experiment.  Section~\ref{sec:results}
-presents the results of the experiment, and section~\ref{sec:discussion}
-extracts lessons for developers and researchers.  Section~\ref{sec:related}
-places this work in the context of prior research, and
-section~\ref{sec:conclusion} puts this work in perspective with respect to
-future research.
+uses an example to explain the problem in concrete terms. Section~\ref{sec:ideas}
+introduces the rational programmer method and how its use can help evaluate the
+effectiveness of a performance-debugging strategy systematically. Section
+\ref{sec:experiment} lays out the details of how these ideas translate to a
+large-scale quantitative experiment.  Section~\ref{sec:results} presents the data
+collected from the experiment, and section~\ref{sec:discussion} extracts lessons
+for developers and researchers.  Section~\ref{sec:related} places this work in
+the context of prior research, and section~\ref{sec:conclusion} puts this work in
+perspective with respect to future research.

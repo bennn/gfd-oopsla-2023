@@ -9,12 +9,12 @@ second alternative is chosen, the question arises
  how the developer should modify the program to obtain tolerable performance.
  
 \end{quote}   
-The type-migration lattice suggests a straightforward answer.  The developer
-should either (i) add types to an untyped component or (ii) experiment with
-toggling existing types from deep to shallow protection and vice versa.  After
-all, the fully typed program with deep run-time checks is known to be at least
-as performant as its untyped counterpart, and therefore migration is guaranteed
-to eliminate any performance bottlenecks sooner or later. 
+The type-migration lattice suggests two answers.  The developer should either
+add types to an untyped component or toggle the run-time checks for a typed one
+from deep to shallow or vice versa.  After all, the fully typed program with
+deep run-time checks is known to be at least as performant as its untyped
+counterpart, and therefore migration is guaranteed to eliminate any performance
+bottlenecks sooner or later.
 
 Deciding which of the alternatives to pursue in a given situation poses the
 follow-up question 
@@ -25,18 +25,15 @@ choose a modification.
 
 \end{quote}   
 Operationally, this question asks how the feedback is turned into a
-modification at each step of the debugging process.
+modification at each step of the performance-debugging process.
 
-In contrast to the first question, the second one does not have a
-straightforward answer.  At each step, the developer has to choose a specific
-component to modify.  The sequence of choices should result in a migratory path
-along which performance monotonically improves. Assuming that the chosen
-profiling tool identifies components that contribute to the performance
-degradation, it is rational for the programmer to rely on its feedback to narrow
-down the set of candidate components.  Obtaining profiler feedback is just the
-first step, however. Next the developer must use the feedback information to
-rank the components and to identify the highest-priority one for adding type or
-toggling its type protection. 
+Unlike the first question, this second one does not have a simple answer.  At
+each step, the developer has to choose a specific component to modify.  The
+sequence of choices should result in a migratory path along which performance
+improves. Assuming that the chosen profiling tool identifies components that
+contribute to the performance degradation, it is rational for the programmer to
+rely on this feedback to rank the components and to identify the
+highest-priority one for adding types or for toggling its run-time checking.
 
 Stepping back, these two insights suggest an experiment to determine which
 profiling tool combined with which strategy helps developers make progress with
@@ -59,7 +56,7 @@ abstracts an actual economic actor to an entity that, in any given
 transaction-scenario, acts strategically to maximize some kind of benefit.  Of
 course, the strategy cannot be fully rational given the bounded nature of human
 beings and the limits in available information. Hence, investigations in modern
-times use rational agents that are bounded: they do not make maximally optimal
+times use rational agents that are bounded; they do not make maximally optimal
 choices and settle for \emph{satisficing}~\cite{hs:satisfice} their goal.
 
 Analogously, a rational programmer is a model of a developer who aims to resolve
@@ -77,19 +74,20 @@ this paper presents the first application to a performance problem.
 \medskip
 
 %% -----------------------------------------------------------------------------
-\noindent\textbf{Sketching a Rational-Programmer Experiment for Performance Debugging.}
-In the context of profiler-guided type migration, a rational programmer consists
-of two interacting pieces.  The first is strategy-agnostic; it consumes a
-program, measures its running time, and if the performance is tolerable,
-stops. Otherwise it faces a performance-debugging scenario and asks for guidance
-from the second, strategy-specific piece. This second piece profiles the given
-program---using the feature-specific profiler or the statistical profiler---and
-analyzes the profiling information. Based on this analysis, it modifies the
-program by adding types to some untyped component or flipping the run-time
-enforcement of types for a typed-untyped boundary. This modified version is
-handed back to the first piece of the rational programmer that repeats the
-process if the program is more performant after the modification.
-Otherwise the rational programmer stops. 
+\paragraph{A sketch of a rational-programmer experiment for performance
+debugging gradual-typing overhead problems.}  In the context of profiler-guided
+type migration, a rational programmer consists of two interacting pieces.  The
+first is strategy-agnostic; it consumes a program, measures its running time,
+and if the performance is tolerable, stops. Otherwise it faces a
+performance-debugging scenario and asks for guidance from the second,
+strategy-specific piece. This second piece profiles the given program---using
+the feature-specific profiler or the statistical profiler---and analyzes the
+profiling information. Based on this analysis, it modifies the program by adding
+types to some untyped component to eliminate a boundary or flipping the run-time
+enforcement of types for a typed component. This modified version is handed back
+to the first piece of the rational programmer that repeats the process if the
+program is more performant after the modification.  Otherwise the rational
+programmer stops.
 
 In fact, as the discussion implies, there are numerous versions of the rational
 programmer that differ in their strategy-specific piece. Each such version,
