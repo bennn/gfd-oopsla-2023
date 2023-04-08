@@ -17,8 +17,8 @@ forms~\cite{grmhn-vmil-2019,rmhn-ecoop-2019,glfd-pj-2022,lgmvpk-pj-2023}
 inspired by Reticulated's transient
 semantics~\cite{vksb-dls-2014,vss-popl-2017,v-thesis-2019}).
 
-Recently, \citet{g-thesis-2020,g-deep-shallow} presented evidence that deep and
-shallow checks come with complementary strengths and weaknesses. Deep checking
+\citet{g-thesis-2020,g-deep-shallow} presents evidence that deep and shallow
+checks actually come with complementary strengths and weaknesses. Deep checking
 imposes a steep cost yet enables type-driven optimizations that off-set
 some---and sometimes more than all---of the cost as more type annotations are
 added. By contrast, shallow checking is a pay-as-you-go scheme; a developer pays
@@ -26,7 +26,8 @@ only for the type annotations added and the worst-case cost seems to be capped
 at an order-of-magnitude. Hence, Greenman argues that developers should, in
 principle, be able to mix and match deep and shallow checking to get the
 best-possible type checking benefits with a tolerable performance penalty.
-Greenman has implemented this idea for Typed Racket and initial empirical data
+Greenman has implemented this idea for Typed Racket so that programmers can
+switch from deep to shallow and back with a one-line edit.  Initial empirical data
 is promising: with a mixture of checks developers can avoid migration paths that
 result in unacceptable slowdowns with either deep or shallow checks alone.
 However, the mixture of deep and shallow checks makes it even more difficult to
@@ -40,8 +41,9 @@ This situation raises the question
  how developers can navigate the migration lattice of a code base while keeping
  the performance penalty from run-time checks at acceptable levels.
 \end{quote}  
-Obviously, such a situation calls for the use of profiling tools. But, this
-response merely refines the above question in two ways, namely, 
+Like all performance problems, this situation calls for the use of profiling
+tools. But, this conventional response merely refines the above question in two
+ways, namely,
 \begin{itemize} \em
 
 \item how a developer should react to feedback from various profiling tools; and 
@@ -51,7 +53,7 @@ response merely refines the above question in two ways, namely,
 
 \end{itemize}   
 
-These questions call for an empirical investigation, though using human
+Such questions call for an empirical investigation, though using human
 developers for a large number of performance problems is too costly and too
 error-prone. Instead, this paper reports on the results of a \emph{rational
 programmer} experiment~\cite{,lgfd-icfp-2021}. The method employs algorithmic
