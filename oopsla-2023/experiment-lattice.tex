@@ -1,1 +1,85 @@
-Given a strategy \strategyvar{} a mode of the rational is a function 
+Given a strategy \strategyvar{}, the corresponding mode of the rational, 
+$\mode{\strategyvar{}}$, is a function from a program $\program{}_0$ to a
+program $\program{}_n$. $\mode{\strategyvar{}}$ produces  $\program{}_n$
+by iteratively calling \strategyvar{} on its input and applying its
+recommendations to obtain a new potential input for \strategyvar{}. 
+In other words, intentionally,  $\mode{\strategyvar{}}$ constructs a
+\emph{migration path}, that is a sequence of programs 
+${\program{}_0} ... {\program{}_n}$ that differ in their types but share
+the same code otherwise.
+
+Put differently, all programs $\program{}_i$ are nodes on the
+\emph{migration lattice} \lattice{\program{}_u} where ${\program{}_u}$, is
+like ${\program{}_i}$ but all its components are untyped. The bottom
+element of \lattice{\program{}_u} is ${\program{}_u}$ itself, and its top
+elements are ${\program{}_u}$'s fully typed versions $\program{}_t$ (with some
+combination of Deep and Shallow types). In between these extreme points
+are all the reamining \emph{configurations} of $\program{}_u$. The $3^N$
+configurations of  \lattice{\program{}_u} are ordered:
+$\ordered{\program{}_i}{\program{}_j}$ iff $\program{}_j$ has at least one
+component that is untyped in $\program{}_j$. Hence, the lattice is
+organized in \emph{levels} of incomperable configurations that have the same
+untyped components, but different choices for which of their typed
+components have Deep or Shallow types.
+$\orderqed{\program{}_i}{\program{}_j}$ denotes that either $\program{}_i$
+and $\program{}_j$ are at the same level of \lattice{\program{}_u} or
+$\program{}_i$ is at some level below $\program{}_j$.
+
+Given, these definitions a migration path corresponds to a collection of
+configurations  $\program{}_i$, $0 \leq  i \leq n$, such that
+$\orderqed{\program{}_i}{\program{}_i+1}$. In fact, either  $\program{}_i$
+and $\program{}_{i+1}$ are at the same level or they are at two
+``neighboring'' ones.  Essentially, since that goal of all strategies
+from~\ref{subsec:strategies} is to eliminate  boundaries that impose
+run-time type checks, they either add types to a single previously
+untyped component or toggle the types of existing typed
+components.\footnote{None of the strategies modifies a boundary where both
+side are untyped. Such boundaries are invisible to the feature-specific
+profiler, and the strategies that use the statistical one explictely
+filter them out. Same for the profiler-agnostic ones.} 
+In other words, a migration path is a weakly ascending
+chain in \lattice{\program{}_u}.
+
+This latter observation is key for the implementation of the
+rational-programmer experiment. If, for each  $\program{}_u$ in the
+experiment, one of its fully type versions $\program{}_t$ is also
+available, then the construction of \lattice{\program{}_u} is
+automatic, and as a result, so are the modifications that the strategies 
+produce. Therefore, given implementations of the strategies and a
+collection of seed programs with both untyped and fully typed versions,
+the rational-programmer experiment reduces to a fully automated push-button 
+process that asks the all modes of the rational programmer to
+construct a migration path starting at the same configurations of   
+\lattice{\program{}_u}, and compares how succesful these path are. 
+
+The discussion reveals the two remaining unaswered questions for a complete
+operational description of the rational-programmer experiment. The first
+question is the
+selection of the starting points given to the modes of the rational
+programmer, i.e., the \emph{performance-debugging scenarios}. 
+The answer is simple: 
+every configuration $\program$ that exhibits performance degradation compared to 
+$\program{}_u$ is a performance-debugging scenarios. In formall terms: 
+
+\begin{quote}
+\it Given a migration lattice \lattice{\program{}_u}, a configuration $\program$
+  in \lattice{\program{}_u} is a \emph{performance-debugging scenario}
+  iff \slowdown{\program}{\program{}_u} > 1, where \slowdownkw{} is
+  calculated the standard way as the ratio of \program{} over $\program{}_u$.  
+\end{quote}
+
+The second remaining question is what consitutes a succesful migration.
+For that the experiment employs two different answers. First, 
+\begin{quote}
+\it A migration path ${\program{}_0}
+  ... {\program{}_n}$ in a lattice \lattice{\program{}_u}
+  is \emph{strictly successful} iff $\program{}_0$ 
+  is a performance-debugging scenario, forall $0 < i < n$, 
+  $\slowdown{P_i}{P_i+1} \leq 1$, and $\slowdown{P_n}{P_u} \leq \takikawa{}$.
+\end{quote}
+
+
+
+
+
+

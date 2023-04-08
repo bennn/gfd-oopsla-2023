@@ -81,15 +81,16 @@ which may affect negatively the performance of \program{}.
  strategies are more successful than the \agnostickw{} ones, then profiler
  feedback plays a meaningful role in guiding type migration.  The first
  \agnostickw{} strategy, \randkw{}, aims to invalidate the null
- hypothesis: it picks a boundary at random and suggests to its
- rational-programmer mode to modify the target boundary either in an
- \optkw{} or \conkw{} manner.  The second \agnostickw{} strategy,
- \togglekw{}, was proposed by~\citep{g-dsgt} and serves as a point of
- comparison with that previous work that does not employ profilers. If the
- given program has a mixture of Shallow and Deep components, the strategy
- directs its rational-programmer mode to equip all typed components of the
- program with Deep types. If all components are already Deep, it instructs
- the mode to equip all typed components with Shallow types. 
+ hypothesis: it picks at random  a boundary with types of different
+ strictness, and suggests to its rational-programmer mode to modify the
+ two sides of the target boundary either in an \optkw{} or \conkw{}
+ manner.  The second \agnostickw{} strategy, \togglekw{}, was proposed
+ by~\citep{g-dsgt} and serves as a point of comparison with that previous
+ work that does not employ profilers. If the given program has a mixture
+ of Shallow and Deep components, the strategy directs its
+ rational-programmer mode to equip all typed components of the program
+ with Deep types. If all components are already Deep, it instructs the
+ mode to equip all typed components with Shallow types. 
 
  %% -----------------------------------------------------------------------------
  %% -----------------------------------------------------------------------------
