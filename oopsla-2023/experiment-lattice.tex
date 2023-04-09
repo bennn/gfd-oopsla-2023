@@ -14,11 +14,11 @@ like ${\program{}_i}$ but all its components are untyped. The bottom
 element of \lattice{\program{}_u} is ${\program{}_u}$ itself, and its top
 elements are ${\program{}_u}$'s fully typed versions $\program{}_t$ (with some
 combination of Deep and Shallow types). In between these extreme points
-are all the reamining \emph{configurations} of $\program{}_u$. The $3^N$
+are all the remaining \emph{configurations} of $\program{}_u$. The $3^N$
 configurations of  \lattice{\program{}_u} are ordered:
 $\ordered{\program{}_i}{\program{}_j}$ iff $\program{}_j$ has at least one
 component that is untyped in $\program{}_j$. Hence, the lattice is
-organized in \emph{levels} of incomperable configurations that have the same
+organized in \emph{levels} of incomparable configurations that have the same
 untyped components, but different choices for which of their typed
 components have Deep or Shallow types.
 $\orderqed{\program{}_i}{\program{}_j}$ denotes that either $\program{}_i$
@@ -35,7 +35,7 @@ run-time type checks, they either add types to a single previously
 untyped component or toggle the types of existing typed
 components.\footnote{None of the strategies modifies a boundary where both
 side are untyped. Such boundaries are invisible to the feature-specific
-profiler, and the strategies that use the statistical one explictely
+profiler, and the strategies that use the statistical one explicitly
 filter them out. Same for the profiler-agnostic ones.} 
 In other words, a migration path is a weakly ascending
 chain in \lattice{\program{}_u}.
@@ -48,36 +48,75 @@ automatic, and as a result, so are the modifications that the strategies
 produce. Therefore, given implementations of the strategies and a
 collection of seed programs with both untyped and fully typed versions,
 the rational-programmer experiment reduces to a fully automated push-button 
-process that asks the all modes of the rational programmer to
+process that asks all modes of the rational programmer to
 construct a migration path starting at the same configurations of   
-\lattice{\program{}_u}, and compares how succesful these path are. 
+\lattice{\program{}_u}, and compares their successes. 
 
-The discussion reveals the two remaining unaswered questions for a complete
+The discussion reveals the two remaining unanswered questions for a complete
 operational description of the rational-programmer experiment. The first
-question is the
-selection of the starting points given to the modes of the rational
+ is the selection of the starting points for the modes of the rational
 programmer, i.e., the \emph{performance-debugging scenarios}. 
-The answer is simple: 
+For that, the answer is simple: 
 every configuration $\program$ that exhibits performance degradation compared to 
-$\program{}_u$ is a performance-debugging scenarios. In formall terms: 
+$\program{}_u$ above a certain threshold is an interesting starting point
+for a rational-programmer exploration. In formal terms: 
 
 \begin{quote}
 \it Given a migration lattice \lattice{\program{}_u}, a configuration $\program$
   in \lattice{\program{}_u} is a \emph{performance-debugging scenario}
-  iff \slowdown{\program}{\program{}_u} > 1, where \slowdownkw{} is
-  calculated the standard way as the ratio of \program{} over $\program{}_u$.  
+  iff \slowdown{\program}{\program{}_u} > \takikawa{}.\\
+  where 
+\begin{itemize}
+\item  \slowdownkw{} is
+  calculated the standard way as the ratio of \program{} over
+  $\program{}_u$, and
+\item $\takikawa{}$ is a constant that signifies the
+  the maximum acceptable performance degradation.
+\end{itemize}
 \end{quote}
 
-The second remaining question is what consitutes a succesful migration.
-For that the experiment employs two different answers. First, 
+The second remaining question is what constitutes a successful migration.
+For that the experiment employs two different answers. In a strict
+sense, a migration path should continuously improve performance, or
+in the worse case performance should stay the same for a few migration steps, before
+it reaches eventually  a tolerable value: 
 \begin{quote}
 \it A migration path ${\program{}_0}
   ... {\program{}_n}$ in a lattice \lattice{\program{}_u}
-  is \emph{strictly successful} iff $\program{}_0$ 
-  is a performance-debugging scenario, forall $0 < i < n$, 
-  $\slowdown{P_i}{P_i+1} \leq 1$, and $\slowdown{P_n}{P_u} \leq \takikawa{}$.
+  is \emph{strictly successful} iff 
+  \begin{enumerate}
+  \item  $\program{}_0$ is a performance-debugging scenario,
+  \item $\slowdown{\program{}_n}{\program{}_u} \leq \takikawa{}$, and 
+  \item forall $0 < i < n$, $\slowdown{\program{}_i}{\program{}_i+1} \leq 1$.
+  \end{enumerate} 
 \end{quote}
+\noindent A strictly successful migration path requires
+strategies that suggest modifications with monotonically improve the
+performance of a program en route to making it tolerably performant.
+Hence, it models the view of a programmer who is willing to invest in
+migration only when it results in performance gains.
 
+The alternative strict success is $k$-loose success that relaxes the
+requirement for monotonicity: 
+\begin{quote}
+\it A migration path ${\program{}_0}
+  ... {\program{}_n}$ in a lattice \lattice{\program{}_u}
+  is \emph{$k$-loosely successful} iff 
+  \begin{enumerate}
+  \item  $\program{}_0$ is a performance-debugging scenario,
+  \item $\slowdown{\program{}_n}{\program{}_u} \leq \takikawa{}$  
+  \item there exists a subsequence of the path 
+    ${\program{}^\prime_0} ... {\program{}^\prime_m}$ such that
+     $m + k = n$ and
+      forall $0 < j < m$,
+      $\slowdown{\program{}^\prime_j}{\program{}^\prime_{j+1}} \leq 1$.
+  \end{enumerate} 
+\end{quote}
+\noindent A $k$-loose success admits allows for strategies to make
+performance worse temporarily, but in a bounded manner, before guiding
+migration to reach its performance target. Therefore, it models forgiving
+programmers who can spare some (bounded) time and energy on migration if,
+at the end, it helps them achieve to construct performant code. 
 
 
 
