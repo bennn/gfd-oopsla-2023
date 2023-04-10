@@ -1,0 +1,50 @@
+%% -----------------------------------------------------------------------------
+
+The definitions of successful migration paths enables rephrasing the
+questions from~\ref{sec:intro} in terms of strategies:
+\begin{itemize}
+\item[$Q_X$] Is strategy $X$ successful in the context of the elimination of
+  performance bottlenecks via migration?
+
+\item[$Q_{X/Y}$] Is strategy $X$ more successful than strategy $Y$ in this
+  context?
+\end{itemize}
+
+Answering $Q_X$ boils down to determining the success and failures of
+$\mode{X}$, the rational-programmer mode of $X$, for all
+performance-debugging scenarios. If, for a large number of scenarios,
+$\mode{X}$ charts migration paths that are strictly successful, the answer
+is positive. Essentially, the large number of scenarios is evidence that
+when a rational programmer reacts to profiler feedback following $X$, it is
+likely to benefit  while tuning the performance of 
+mixed-typed code. Notably, the above description uses the strict notion of
+success, which sets a high standard of success. Hence, the rational
+programmer not only manages to tune performance at a tolerable level but
+each suggestion of its strategy brings the rational programmer closer to
+its target. Swapping the notion of strict success for $k$-loose success
+relaxes this high standard, and offers answers to $Q_X$ when allowing for
+some bounded flexibility in how well the intermediate suggestions of
+$X$ help the rational programmer.   
+
+While answering $Q_X$ is an evaluation of a strategy $X$ for interpreting
+profiler feedback in absolute terms, answering $Q_{X/Y}$ reveals the
+relative value of $X$ versus another strategy $Y$. Answering this second
+question asks whether the proportion of scenarios where $\mode{X}$ charts a
+successful path but  $\mode{Y}$ does not is higher that the proportion of
+scenario where  $\mode{Y}$ charts a successful path but $\mode{X}$ does not.
+Of course, the answer may not be clear cut as the two strategies may
+perform equally well in most scenarios, or may have complementary success 
+records. Again, relaxing the notion of success by different factors $k$
+may help distinguish  $X$ and $Y$ based on the quality of the feedback
+they produce. 
+
+In sum, the process for answering $Q_X$ and $Q_{X/Y}$ rests on the
+following experimental plan:
+\begin{enumerate}
+\item Create a large and diverse corpus of performance-debugging scenarios;
+\item Calculate the migration paths for each mode of the rational
+  programmer for each scenario;
+\item Compute and compare the successes and failures of the modes.  
+\end{enumerate}
+
+
