@@ -35,9 +35,14 @@
   (void))
 
 (define (go-success)
-  (define data* (all-trail-data))
-  (define bm** (take-some (sort (filter-not null? (group-by trailfile-bb data*))
-                     < #:key (compose1 benchmark-index trailfile-bb car))))
+  (define data* (filter (lambda (x)
+                          #true
+                          #;(string-contains? (trailfile-bb x) "tetris"))
+                        (all-trail-data)))
+  (define bm** (take-some
+                 (sort
+                   (filter-not null? (group-by trailfile-bb data*))
+                   < #:key (compose1 benchmark-index trailfile-bb car))))
   (define res**
     #;(file->value "data/success-res.rktd")
     (map go-bm bm**))
