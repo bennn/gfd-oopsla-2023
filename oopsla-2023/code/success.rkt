@@ -11,16 +11,22 @@
 
 (define-runtime-path trail-dir "../t1-img/")
 
+(define-syntax-rule (with-output-to-file+ fn arg* ...)
+  (begin (with-output-to-file fn arg* ...)
+         (printf "save file ~s~n" fn)))
+
 (struct row (cfg end cc*) #:prefab)
 ;; TODO delete
 
-(struct trailfile (bb ss mm ff) #:transparent)
+(struct trailfile (bb ss mm ff) #:prefab)
 (struct trailres (ss mm win-0 win-1 win-2 win-3 win-N better-N num-feasible) #:prefab)
-(struct bmres (bb seascape trails) #:transparent)
+(struct bmres (bb seascape trails) #:prefab)
 (struct seascape (num-configs immediate# feasible# hopeless#) #:prefab)
 
 (define (all-trail-data)
-  (for/list ((fn (in-glob (build-path trail-dir "*rktd"))))
+  (for/list ((fn (in-glob (build-path trail-dir "*rktd")))
+             #:unless (let ((str (path->string (file-name-from-path fn))))
+                        (regexp-match? #rx"random(D|S)" str)))
     (define-values [bm strategy mode] (split-filename (file-name-from-path fn)))
     (trailfile bm strategy mode fn)))
 
@@ -32,9 +38,11 @@
   (define data* (all-trail-data))
   (define bm** (take-some (sort (filter-not null? (group-by trailfile-bb data*))
                      < #:key (compose1 benchmark-index trailfile-bb car))))
-  (define res** (map go-bm bm**))
-  (with-output-to-file "data/success-res.rktd" #:exists 'replace (lambda () (pretty-write res**)))
-  (let ()
+  (define res**
+    #;(file->value "data/success-res.rktd")
+    (map go-bm bm**))
+  (with-output-to-file+ "data/success-res.rktd" #:exists 'replace (lambda () (pretty-write res**)))
+  #;(let ()
     (define xy** (map go-xy bm**))
     (with-output-to-file "data/success-xy.rktd" #:exists 'replace (lambda () (pretty-write (map (lambda (x) (map car x)) xy**))))
     (for* ((bmxy (in-list xy**))
@@ -45,7 +53,7 @@
       (with-output-to-file (format "data/success-xy-~a-~a-~a.rktd" bm ss mm)
                            #:exists 'replace (lambda () (pretty-write (cadr rr))))))
   (define tbl* (combine res**))
-  (with-output-to-file "data/success-tbl.rktd" #:exists 'replace (lambda () (pretty-write tbl*)))
+  (with-output-to-file+ "data/success-tbl.rktd" #:exists 'replace (lambda () (pretty-write tbl*)))
   (print-table (first tbl*))
   (newline)
   (let* ((xx* (second tbl*))
@@ -109,7 +117,8 @@
 (define (bm-trails bm* perf# ss)
   (define win# (seascape-immediate# ss))
   (define hope# (seascape-feasible# ss))
-  (define num-feasible (hash-count hope#))
+  (define hopeless# (seascape-hopeless# ss))
+  (define num-scenario (+ (hash-count hope#) (hash-count hopeless#)))
   (cons
     (let ()
       (define-values [num-win num-better]
@@ -129,7 +138,7 @@
                     (if (or (overhead>? perf (hash-ref perf# deep-cfg))
                             (overhead>? perf (hash-ref perf# shallow-cfg)))
                       1 0))))))
-      (trailres "toggle" "-" num-win "-" "-" "-" "-" num-better num-feasible))
+      (trailres "toggle" "-" num-win "-" "-" "-" "-" num-better num-scenario))
     (for/list ((td (in-list bm*)))
       (define ss (trailfile-ss td))
       (define mm (trailfile-mm td))
@@ -178,7 +187,7 @@
             win-3
             win-N
             better-N
-            num-feasible))))
+            num-scenario))))
 
 (define (combine res**)
   (list
@@ -269,6 +278,11 @@
                   (+ nN (->real (trailres-win-N tt)))
                   (+ nB (->real (trailres-better-N tt)))
                   (+ nt (trailres-num-feasible tt)))))
+      (when (zero? num-total)
+        (raise-arguments-error 'trail-collect
+                               "uhoh zero total configs"
+                               "strat" strat
+                               "mode" mode))
       (list strat
             mode
             (pctstr2 num-mono num-total)

@@ -124,8 +124,9 @@
     "con"
     "cost-con"
     "limit-opt"
-    "randomD"
-    "randomS"))
+    "randomB"
+    #;"randomD"
+    #;"randomS"))
 
 (define (all-mode-name*)
   '("boundary" "prf_total" "prf_self"))

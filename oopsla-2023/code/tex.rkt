@@ -28,22 +28,36 @@
   (("con") "conservative")
   (("cost-con") "cost-aware conservative")
   (("limit-opt") #f)
-  (("randomD") "random optimistic")
-  (("randomS") "random conservative")
+  (("randomB") "random boundary")
+  #;(("randomD") "random optimistic")
+  #;(("randomS") "random conservative")
   (else (raise-argument-error 'bg-strategy->cd-strategy  "unknown" str))))
 
 (define cd-strategy*
-  '("optimistic"
+  '(
+    "optimistic"
     "cost-aware optimistic"
     "conservative"
     "cost-aware conservative"
     "configuration-aware"
-    "random optimistic"
-    "random conservative"
+    "random boundary"
+    ;;"random optimistic"
+    ;;"random conservative"
     "toggling"))
 
+(define (shortname str)
+  (string-replace
+    (string-replace
+      (string-replace
+        (string-replace
+          str
+          "optimistic" "opt.")
+        "conservative" "con.")
+      "random boundary" "random")
+    "toggling" "tog."))
+
 (define (agnostic-strategy? str)
-  (member str (take-right cd-strategy* 3)))
+  (member str (take-right cd-strategy* 2)))
 
 (define (cd-strategy-index str)
   (or (index-of cd-strategy* str)
@@ -93,9 +107,13 @@
   (sort row** < #:key (compose1 cd-strategy-index caar)))
 
 (define (f:strategy-overall)
+  ;; TODO collect important x points
+  ;; TODO space between bars
   ;; TODO stacked bar, 1 2 3
+  ;; TODO x ticks
   (define tbl (cadr (success-tbl)))
   (define total-scenarios (last (cadr tbl)))
+  (printf "~a total scenarios~n" total-scenarios)
   (define rect**
     (cd-sort
      (filter-not null?
@@ -104,7 +122,12 @@
         (for/list ((rr (in-list rr*)))
           (list (bg-strategy->cd-strategy (first rr))
                 (second rr)
-                (pct->number (third rr)))))))))
+                (pct->number (third rr))
+                (pct->number (fourth rr))
+                (pct->number (fifth rr))
+                (pct->number (sixth rr))
+                (pct->number (seventh rr))
+                (pct->number (eighth rr)))))))))
   #;(void
     (for* ((rect* (in-list rect**))
            (rect (in-list rect*)))
@@ -113,7 +136,17 @@
     (partition (compose1 agnostic-strategy? caar) rect**))
   (define x-offset 1/2)
   (define num-mode 3)
-  (parameterize ((plot-y-ticks (pct-ticks)))
+  (parameterize ((plot-y-ticks (pct-ticks))
+                 (plot-x-far-ticks no-ticks)
+                 (plot-x-ticks (label-ticks
+                                 ;; TODO magic numbers
+                                 (append
+                                   (for/list ((rr (in-list other-rect**))
+                                              (ii (in-naturals)))
+                                     (list (+ 2 (* ii 4)) (caar rr)))
+                                   (for/list ((rr (in-list rect-agnostic**))
+                                              (ii (in-naturals)))
+                                     (list (+ 21 ii (* ii 1/2)) (caar rr)))))))
     (plot-file
       (list
         (for/list ((mode-num (in-range num-mode)))
@@ -121,18 +154,20 @@
                      (strat-num (in-naturals)))
             (rrect (+ mode-num
                       (* (+ num-mode 1) strat-num))
-                   (third (list-ref rect* mode-num))
+                   (cddr (list-ref rect* mode-num))
                    #:color (+ 1 mode-num)
                    #:x0 x-offset)))
         (for/list ((rect* (in-list rect-agnostic**))
                    (ii (in-naturals)))
-          (rrect ii
-                 (third (car rect*))
+          (rrect (+ ii (* 1/2 ii))
+                 (cddr (car rect*))
                  #:color (+ num-mode 1 ii)
-                 #:x0 (+ 1 (* 2 x-offset) (* 4 (length other-rect**))))))
+                 #:x0 (+ x-offset (* 4 (length other-rect**))))))
       (build-path data-dir (format "strategy-overall.~a" (*out-kind*)))
+      #:x-label #f
+      #:y-label #f
       #:x-min 0
-      ;; #:x-max (+ (* 2 x-offset) (* 2 (length rect**)))
+      #:x-max (+ 23 1/2) ;; TODO magic
       #:y-min 0
       #:y-max 100
       #:width 600
@@ -199,14 +234,37 @@
 (define (lbltxt str)
   (text str 'roman 9))
 
-(define (rrect x y #:color c #:x0 x0)
-  (rectangles (list
-                (vector
-                  (ivl (+ x0 x) (+ x0 x 1))
-                  (ivl 0 y)))
-              #:line-color (->pen-color c)
-              #:color (->brush-color c)
-              #:alpha 0.8))
+(define (rrect x y* #:color c #:x0 x0)
+  (define x-mid (+ x0 x 1/2))
+  (define old-y 0)
+  (define L-1 (sub1 (length y*)))
+  (filter values
+    (for/list ((y (in-list y*))
+               (ii (in-naturals))
+               #:when (>= y old-y))
+      (define y0 old-y)
+      (set! old-y y)
+      (define alpha (- 0.9 (/ ii 10)))
+      (define x-gap
+        (if (= L-1 ii)
+          0.01
+          (* 1/2 alpha)))
+      (rectangles (list
+                    (vector
+                      (ivl (- x-mid x-gap) (+ x-mid x-gap))
+                      (ivl y0 y)))
+                  #:line-color (->pen-color c)
+                  #:color (->brush-color c)
+                  #:alpha alpha))))
+
+(define (label-ticks rl*)
+  (define (my-layout ax-min ax-max)
+    (for/list ((rl (in-list rl*)))
+      (pre-tick (car rl) #true)))
+  (define (my-format ax-min ax-max pt*)
+    (for/list ((pt (in-list pt*)))
+      (shortname (cadr (assoc (pre-tick-value pt) rl*)))))
+  (ticks my-layout my-format))
 
 (define (pct-ticks)
   (define (my-layout ax-min ax-max)
