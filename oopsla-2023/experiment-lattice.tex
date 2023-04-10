@@ -1,12 +1,13 @@
-Given a strategy \strategyvar{}, the corresponding mode of the rational, 
-$\mode{\strategyvar{}}$, is a function from a program $\program{}_0$ to a
-program $\program{}_n$. $\mode{\strategyvar{}}$ produces  $\program{}_n$
-by iteratively calling \strategyvar{} on its input and applying its
-recommendations to obtain a new potential input for \strategyvar{}. 
-In other words, intentionally,  $\mode{\strategyvar{}}$ constructs a
-\emph{migration path}, that is a sequence of programs 
-${\program{}_0} ... {\program{}_n}$ that differ in their types but share
-the same code otherwise.
+%% -----------------------------------------------------------------------------
+
+Given a strategy \strategyvar{}, the corresponding mode of the rational
+programmer, $\mode{\strategyvar{}}$, is a function from a program $\program{}_0$
+to a program $\program{}_n$. $\mode{\strategyvar{}}$ produces $\program{}_n$ by
+iteratively calling \strategyvar{} on its input and applying its recommendations
+to obtain a new potential input for \strategyvar{}.  In other words,
+intentionally, $\mode{\strategyvar{}}$ constructs a \emph{migration path}, that
+is a sequence of programs ${\program{}_0}, \ldots, {\program{}_n}$ that differ in
+their types but share the same code otherwise.
 
 Put differently, all programs $\program{}_i$ are nodes on the
 \emph{migration lattice} \lattice{\program{}_u} where ${\program{}_u}$, is
@@ -26,17 +27,17 @@ and $\program{}_j$ are at the same level of \lattice{\program{}_u} or
 $\program{}_i$ is at some level below $\program{}_j$.
 
 Given, these definitions a migration path corresponds to a collection of
-configurations  $\program{}_i$, $0 \leq  i \leq n$, such that
-$\orderqed{\program{}_i}{\program{}_i+1}$. In fact, either  $\program{}_i$
+configurations  $\program{}_i$, $0 \leq  i < n$, such that
+$\orderqed{\program{}_i}{\program{}_{i+1}}$. In fact, either  $\program{}_i$
 and $\program{}_{i+1}$ are at the same level or they are at two
-``neighboring'' ones.  Essentially, since that goal of all strategies
+neighboring ones.  Essentially, since that goal of all strategies
 from~\ref{subsec:strategies} is to eliminate  boundaries that impose
 run-time type checks, they either add types to a single previously
 untyped component or toggle the types of existing typed
 components.\footnote{None of the strategies modifies a boundary where both
 side are untyped. Such boundaries are invisible to the feature-specific
 profiler, and the strategies that use the statistical one explicitly
-filter them out. Same for the profiler-agnostic ones.} 
+filter them out. Ditto for the profiler-agnostic ones.} 
 In other words, a migration path is a weakly ascending
 chain in \lattice{\program{}_u}.
 
@@ -61,18 +62,17 @@ every configuration $\program$ that exhibits performance degradation compared to
 $\program{}_u$ above a certain threshold is an interesting starting point
 for a rational-programmer exploration. In formal terms: 
 
-\begin{quote}
-\it Given a migration lattice \lattice{\program{}_u}, a configuration $\program$
-  in \lattice{\program{}_u} is a \emph{performance-debugging scenario}
-  iff \slowdown{\program}{\program{}_u} > \takikawa{}.\\
-  where 
-\begin{itemize}
-\item  \slowdownkw{} is
-  calculated the standard way as the ratio of \program{} over
-  $\program{}_u$, and
-\item $\takikawa{}$ is a constant that signifies the
-  the maximum acceptable performance degradation.
-\end{itemize}
+\begin{quote} \em
+
+Given a migration lattice \lattice{\program{}_u},
+a \emph{performance-debugging scenario} is a configuration $\program$ in \lattice{\program{}_u} 
+iff
+\slowdown{\program}{\program{}_u} > \takikawa{}.\\
+ where 
+  \begin{itemize}
+   \item \slowdownkw{} is calculated the standard way as the ratio of \program{} over $\program{}_u$, and
+   \item $\takikawa{}$ is a constant that signifies the maximum acceptable performance degradation.
+  \end{itemize}
 \end{quote}
 
 The second remaining question is what constitutes a successful migration.
@@ -80,18 +80,19 @@ For that the experiment employs two different answers. In a strict
 sense, a migration path should continuously improve performance, or
 in the worse case performance should stay the same for a few migration steps, before
 it reaches eventually  a tolerable value: 
-\begin{quote}
-\it A migration path ${\program{}_0}
-  ... {\program{}_n}$ in a lattice \lattice{\program{}_u}
-  is \emph{strictly successful} iff 
-  \begin{enumerate}
-  \item  $\program{}_0$ is a performance-debugging scenario,
+\begin{quote} \it
+
+A migration path ${\program{}_0} \ldots {\program{}_n}$ in a lattice \lattice{\program{}_u}
+is \emph{strictly successful}
+iff 
+ \begin{enumerate}
+  \item $\program{}_0$ is a performance-debugging scenario,
   \item $\slowdown{\program{}_n}{\program{}_u} \leq \takikawa{}$, and 
-  \item forall $0 < i < n$, $\slowdown{\program{}_i}{\program{}_i+1} \leq 1$.
-  \end{enumerate} 
+  \item forall $0 \leq i < n$, $\slowdown{\program{}_i}{\program{}_{i+1}} \leq 1$.
+ \end{enumerate} 
 \end{quote}
 \noindent A strictly successful migration path requires
-strategies that suggest modifications with monotonically improve the
+strategies that suggest modifications that monotonically improve the
 performance of a program en route to making it tolerably performant.
 Hence, it models the view of a programmer who is willing to invest in
 migration only when it results in performance gains.
@@ -100,15 +101,15 @@ The alternative strict success is $k$-loose success that relaxes the
 requirement for monotonicity: 
 \begin{quote}
 \it A migration path ${\program{}_0}
-  ... {\program{}_n}$ in a lattice \lattice{\program{}_u}
+  \ldots {\program{}_n}$ in a lattice \lattice{\program{}_u}
   is \emph{$k$-loosely successful} iff 
   \begin{enumerate}
   \item  $\program{}_0$ is a performance-debugging scenario,
   \item $\slowdown{\program{}_n}{\program{}_u} \leq \takikawa{}$  
   \item there exists a subsequence of the path 
-    ${\program{}^\prime_0} ... {\program{}^\prime_m}$ such that
+    ${\program{}^\prime_0} \ldots {\program{}^\prime_m}$ such that
      $m + k = n$ and
-      forall $0 < j < m$,
+      forall $0 \leq j < m$,
       $\slowdown{\program{}^\prime_j}{\program{}^\prime_{j+1}} \leq 1$.
   \end{enumerate} 
 \end{quote}

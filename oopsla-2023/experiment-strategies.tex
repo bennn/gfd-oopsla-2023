@@ -19,31 +19,139 @@ which may affect negatively the performance of \program{}.
  returns the singleton set with the pair $(a, \deep)$, then the strategy
  directs its rational-programmer mode to equip component $a$ with deep
  types, or to toggle to deep its existing types, if $a$ is already typed.
- Of course, if a component has already the prescribed kind of types, the
- modification does not affect it. Finally, the strategy returns the empty
- set when it cannot determine a modification.
+ Finally, the strategy returns the empty
+ set when it cannot figure out how to proceed.
 
- Overall, the experiment compares rational-programmer modes
- derived from 6 basic strategies. Figure~\ref{f:bstrategies}
- lists them along with their descriptions.
+%% -----------------------------------------------------------------------------
+
+\def\with{with {\em total\/} in place of {\em self\/}}
+
+\begin{figure}[htb]
+
+  \newcommand{\desc}[1]{\parbox[t]{24em}{#1\\[-2mm]}}
+  
+  \def\desca{\desc{Uses the feature-specific profiler to identify the most
+    expensive boundary in the given program. Then it directs the mode to equip
+    both sides of the target boundary with Deep types.}}
+
+  \def\descb{\desc{Like \featopt{} but with shallow types for both
+    sides of the target boundary.}}
+
+  \def\descc{\desc{Uses the statistical profiler to identify the component
+    $\component{}_1$ with the highest self time in the given program that has a
+    boundary with at least one component $\component{}_2$ that has stricter
+    types than $\component{}_1$.  Then it picks the component $\component{}_2$
+    that has the highest self time, and directs the mode to equip both
+    $\component{}_1$ and $\component{}_2$ with Deep types.}}
+
+  \def\descd{\desc{Like \statselfopt{} \with}}
+
+  \def\desce{\desc{Like \statselfopt{}, with shallow types for $\component{}_1$, $\component{}_2$}}
+
+  \def\descf{\desc{Like \statselfcon{} with {\em total\/} in place of {\em self\/}}}
+
+ \begin{tabular}{l l l}
+    {\bf Profiler} & {\bf Strategy} & {\bf Description} \\ \hline
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \multirow[b]{2}[+5]{*}{{\em feature-specific\/}} & 
+        \optkw{}          &   \desca          \\ \relax
+     &	\conkw{}          &   \descb          \\ \hline
+
+    \multirow[b]{2}[+7]{*}{{\em statistically\/} ({\em self\/})} &
+	\optkw{}      &   \descc          \\ \relax
+     &	\conkw{}      &   \desce          \\ \hline
+
+    \multirow{2}{*}{{\em statistically\/} ({\em total\/})} & 
+	\conkw{}     &   \descf           \\ \relax
+     &	\optkw{}     &   \descd           % \\ \relax
+ \end{tabular}
+
+ 
+  \caption{The Basic Strategies of the Experiment and their Descriptions}
+  \label{f:bstrategies}
+\end{figure}
+%% -----------------------------------------------------------------------------
+
+Overall, the experiment compares rational-programmer modes derived from six
+ basic strategies. Figure~\ref{f:bstrategies} lists them along with their
+ descriptions.
 
  At a first level, the basic strategies differ in whether they produce their
- result by analyzing the feedback of a \featkw{} or a \statkw{} profiler.
- Those that use the first kind of profiler identify directly the most
- costly boundary in \program{}, and produce modifications of the
- components at either side.  Those that use the second cannot directly
- identify a boundary.  Instead they detect the most costly component
- $\component{}_1$ in terms of either \selfkw{} or \totalkw{} time.  Then,
- they pick  one of the boundaries between $\component{}_1$ and the components it
- imports or import it.  Specifically, the strategies pick a boundary
- between $\component{}_1$ and a component $\component{}_2$ where
- $\component{}_2$
- has \emph{stricter} types than $\component{}_1$. Herein, deep is stricter
- than shallow, and shallow is stricter than no types.  Hence, the
- interactions across the target boundary are luckily to lead to run-time
- type checks which impact the performance of the program.  Only after
- figuring out their target boundary, \statkw{} strategies select how to
- modify the components it involves.
+ result by analyzing the feedback of a \featkw{} or a \statkw{} profiler.  Those
+ that use the first kind of profiler identify directly the most costly boundary
+ in \program{}, and produce modifications of the components at either side.
+ Those that use the second cannot directly identify a boundary.  Instead they
+ detect the most costly component $\component{}_1$ in terms of either \selfkw{}
+ or \totalkw{} time.  Then, they pick one of the boundaries between
+ $\component{}_1$ and the components it imports or import it.  Specifically, the
+ strategies pick a boundary between $\component{}_1$ and a component
+ $\component{}_2$ where $\component{}_2$ has \emph{stricter} types than
+ $\component{}_1$. Herein, deep is stricter than shallow, and shallow is
+ stricter than no types.  Hence, the interactions across the target boundary are
+ likely to generate run-time type checks that impact the performance of the
+ program.  Only after figuring out their target boundary, \statkw{} strategies
+ select how to modify the components it involves.
+
+%% -----------------------------------------------------------------------------
+\begin{figure}[htb]
+ 
+  \newcommand{\desc}[1]{\parbox[t]{19.5em}{#1\\[-2mm]}}
+ 
+  \def\desca{\desc{Splits the boundaries in the given program to those between
+    typed components and the rest.  Delegates to \featopt{} to produce a
+    modification for the given program, but rank boundaries in the first group
+    higher than those in the second group while determining the most expensive
+    boundary.}}
+
+  \def\descb{\desc{Like \featcostopt{} but it delegates to \featcon{}.}}
+
+  \def\descc{\desc{Separates the typed components that have boundaries with
+    other typed components from the rest of the components in the given
+    program. Delegates to \statselfopt{} to produce a modification for the given
+    program, but rank boundaries between components in the first group higher
+    than the rest while determining the most expensive boundary.}}
+
+   \def\descd{\desc{Like \statselfcostopt{} but it delegates to \stattotalopt{}.}}
+
+   \def\desce{\desc{Like \statselfcostopt{} but it delegates to \statselfcon{}.}}
+
+   \def\descf{\desc{Like \statselfcostopt{} but it delegates to \stattotalcon{}.}}
+
+   \def\descg{\desc{If the number of typed components in the given program is
+     above a threshold $N$, it delegates to \featopt{}. Otherwise, it delegates
+     to \featcon{}.}}
+
+   \def\desch{\desc{Like \featconf{}; it delegates to \statselfopt{}
+     or \statselfcon{} instead.}}
+
+  \def\descj{\desc{Like \featconf{}; it delegates to \stattotalopt{}
+     or \stattotalcon{} instead.}}
+
+ \begin{tabular}{l l l}
+    {\bf Strategy Name} & {\bf Description}  \\ \hline
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \multirow[b]{2}[+19]{*}{{\em feature-specific\/}} & 
+    \costoptkw{}      &   \desca           \\ \relax
+    & \costconkw{}      &   \descb           \\ \relax
+    & \confkw{}         &   \descg           \\ \hline
+
+    \multirow[b]{2}[+17]{*}{{\em statistically\/} ({\em self\/})} &
+    \costoptkw{}   &   \descc           \\ \relax
+    & \costconkw{}   &   \desce           \\ \relax
+    & \confkw{}      &   \desch           \\ \hline
+
+    \multirow{2}[+17]{*}{{\em statistically\/} ({\em total\/})} & 
+    \costoptkw{} &   \descd           \\ \relax
+    & \costconkw{} &   \descf           \\ \relax
+    & \confkw{}    &   \descj           % \\ \relax
+
+ \end{tabular}
+
+ 
+  \caption{The Composite Strategies of the Experiment and their Descriptions}
+  \label{f:cstrategies}
+\end{figure}
+%% -----------------------------------------------------------------------------
 
  At a second level, basic strategies differ in how they modify the two sides of
  their target boundary. Strategies that are \optkw{} turn the types at
@@ -61,7 +169,7 @@ which may affect negatively the performance of \program{}.
  only one is Deep. At the same time, unlike the  \optkw{}
  strategies,  there is no risk of a ripple effect. 
 
- Besides the basic strategies, the experiment investigates 9 composite
+ Besides the basic strategies, the experiment investigates nine composite
  strategies (fig. ~\ref{f:cstrategies}). The \costkw{} strategies rank the
  cost of boundaries not just in terms of performance, but also in terms of
  the labor needed to equip then with types.  Hence, they give priority to
@@ -76,7 +184,7 @@ which may affect negatively the performance of \program{}.
  \conkw{} approach for sparsely typed programs, and an \optkw{} strategy
  for densely typed ones.
 
- Finally, the experiment includes 2 strategies that are \agnostickw{}.
+ Finally, the experiment includes two strategies that are \agnostickw{}.
  Those play the role of experimental baselines: if the profiling
  strategies are more successful than the \agnostickw{} ones, then profiler
  feedback plays a meaningful role in guiding type migration.  The first
@@ -91,127 +199,4 @@ which may affect negatively the performance of \program{}.
  rational-programmer mode to equip all typed components of the program
  with Deep types. If all components are already Deep, it instructs the
  mode to equip all typed components with Shallow types. 
-
- %% -----------------------------------------------------------------------------
- %% -----------------------------------------------------------------------------
- 
- %% -----------------------------------------------------------------------------
-\begin{figure}[htb]
-
-  \newcommand{\desc}[1]{\parbox[t]{26em}{#1}}
-
-  \def\desca{\desc{Uses the feature-specific profiler to identify the most
-  expensive boundary in the given program. Then it directs the mode to equip
-  both sides of the target boundary with Deep types.}}
-
-
-  \def\descb{\desc{Same as \featopt{} except that it directs the mode to
-  equip both sides of
-  the target boundary with Shallow types.}}
-
-  \def\descc{\desc{Uses the statistical profiler to identify the component
-  $\component{}_1$  with the highest self time in the given program that
-  has a boundary with at least one  component $\component{}_2$ that has
-  stricter types than $\component{}_1$.  Then it picks the component
-  $\component{}_2$ that has the highest self time, and directs the mode to
-  equip both
-  $\component{}_1$ and $\component{}_2$ with Deep types.}}
-
-  \def\descd{\desc{Same as \statselfopt{} except that it uses total
-  instead of self time.}}
-
-
-   \def\desce{\desc{Same as \statselfopt{} except that it directs the mode
-   to equip 
-    $\component{}_1$ and $\component{}_2$
-  with Shallow types.}}
-
-   \def\descf{\desc{Same as \statselfcon{} except that it uses total
-  instead of self time.}}
-
-
-
-
-   \begin{tabular}{r|l}
-    {\bf Strategy Name} & {\bf Description} \\ \hline
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-     \featopt{}          &   \desca          \\ \hline
-    \featcon{}          &   \descb           \\ \hline
-
-    \statselfopt{}      &   \descc           \\ \hline
-    \stattotalopt{}     &   \descd           \\ \hline
-    \statselfcon{}      &   \desce           \\ \hline 
-    \stattotalcon{}     &   \descf           
-    \end{tabular}
-
- 
-  \caption{The Basic Strategies of the Experiment and their Descriptions}
-  \label{f:bstrategies}
-\end{figure}
-%% -----------------------------------------------------------------------------
-
-%% -----------------------------------------------------------------------------
-\begin{figure}[htb]
- 
-  \newcommand{\desc}[1]{\parbox[t]{21.5em}{#1}}
-
- 
-  \def\desca{\desc{Splits the boundaries in the given program to those
-  between typed components and the rest.  Delegates to \featopt{} to
-  produce a modification for the given program, but rank boundaries  
-  in the first group higher than those in the second group while
-  determining the most expensive boundary.}}
-
-   \def\descb{\desc{Same as \featcostopt{} except that it delegates 
-   to \featcon{}.}}
-
-   \def\descc{\desc{Separates the typed components   that have boundaries
-   with other typed components from the rest of the components in the
-   given program. Delegates to \statselfopt{} to produce a modification
-   for the given program,  but rank boundaries between components  
-  in the first group higher than the rest while
-  determining the most expensive boundary.}}
-
-   \def\descd{\desc{Same as \statselfcostopt{} except that it delegates 
-   to \stattotalopt{}.}}
-
-   \def\desce{\desc{Same as \statselfcostopt{} except that it delegates 
-   to \statselfcon{}.}}
-
-   \def\descf{\desc{Same as \statselfcostopt{} except that it delegates 
-   to \stattotalcon{}.}}
-
-   \def\descg{\desc{If the number of typed components in the given program 
-   is above a threshold $N$, it delegates to \featopt{}. Otherwise, it
-   delegates to \featcon{}.}}
-
-    \def\desch{\desc{Same as \featconf{} except that it delegates 
-   to \statselfopt{} or \statselfcon{}.}}
-
-    \def\descj{\desc{Same as \featconf{} except that it delegates 
-   to \stattotalopt{} or \stattotalcon{}.}}
-
-
-
- \begin{tabular}{r|l}
-    {\bf Strategy Name} & {\bf Description} \\\hline
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    \featcostopt{}      &   \desca           \\\hline
-    \featcostcon{}      &   \descb           \\\hline
-  
-    \statselfcostopt{}  &   \descc           \\\hline
-    \stattotalcostopt{} &   \descd           \\\hline
-   \statselfcostcon{}   &   \desce           \\\hline
-    \stattotalcostcon{} &   \descf           \\\hline
-
-    \featconf{}         &   \descg           \\\hline
-    \statselfconf{}     &   \desch           \\\hline
-    \stattotalconf{}    &   \descj           \\
-    \end{tabular}
-
- 
-  \caption{The Composite Strategies of the Experiment and their Descriptions}
-  \label{f:cstrategies}
-\end{figure}
-%% -----------------------------------------------------------------------------
 
