@@ -26,17 +26,21 @@ relaxes this high standard, and offers answers to $Q_X$ when allowing for
 some bounded flexibility in how well the intermediate suggestions of
 $X$ help the rational programmer.   
 
-While answering $Q_X$ is an evaluation of a strategy $X$ for interpreting
-profiler feedback in absolute terms, answering $Q_{X/Y}$ reveals the
+While an answer to $Q_X$ constitutes an evaluation of a strategy $X$ for interpreting
+profiler feedback in absolute terms, an answer to $Q_{X/Y}$ reveals the
 relative value of $X$ versus another strategy $Y$. Answering this second
 question asks whether the proportion of scenarios where $\mode{X}$ charts a
 successful path but  $\mode{Y}$ does not is higher that the proportion of
-scenario where  $\mode{Y}$ charts a successful path but $\mode{X}$ does not.
-Of course, the answer may not be clear cut as the two strategies may
+scenarios where  $\mode{Y}$ charts a successful path but $\mode{X}$ does not.
+ Imporantly, when $\mode{Y}$ is the $randomkw{}$ strategy, if
+the answer to $Q_X$ is positive, then it invalidates the null-hypothesis,
+i.e., that the success of $X$ is because of sheer luck.
+Of course, the answer may not be clear cut as $X$ and $Y$ may
 perform equally well in most scenarios, or may have complementary success 
 records. Again, relaxing the notion of success by different factors $k$
 may help distinguish  $X$ and $Y$ based on the quality of the feedback
-they produce. 
+they produce.
+
 
 In sum, the process for answering $Q_X$ and $Q_{X/Y}$ rests on the
 following experimental plan:

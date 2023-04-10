@@ -112,11 +112,14 @@ requirement for monotonicity:
       $\slowdown{\program{}^\prime_j}{\program{}^\prime_{j+1}} \leq 1$.
   \end{enumerate} 
 \end{quote}
-\noindent A $k$-loose success admits allows for strategies to make
-performance worse temporarily, but in a bounded manner, before guiding
-migration to reach its performance target. Therefore, it models forgiving
-programmers who can spare some (bounded) time and energy on migration if,
-at the end, it helps them achieve to construct performant code. 
+\noindent A $k$-loose success allows strategies to  temporarily stir migration towards
+worse performance. In other words, $k$ 
+is an upper on the inaccuracy of the strategy's interpretation of
+profiler feedback.
+Therefore,  $k$-loose success imagines forgiving
+programmers who can spare some (bounded) time and energy on migration
+detours if,
+at the end, it helps them obtain performant code. 
 
 
 
