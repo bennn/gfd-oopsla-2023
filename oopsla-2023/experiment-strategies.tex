@@ -32,7 +32,7 @@ which may affect negatively the performance of \program{}.
   
   \def\desca{\desc{Uses the feature-specific profiler to identify the most
     expensive boundary in the given program. Then it directs the mode to equip
-    both sides of the target boundary with Deep types.}}
+    both sides of the target boundary with deep types.}}
 
   \def\descb{\desc{Like \featopt{} but with shallow types for both
     sides of the target boundary.}}
@@ -42,7 +42,7 @@ which may affect negatively the performance of \program{}.
     boundary with at least one component $\component{}_2$ that has stricter
     types than $\component{}_1$.  Then it picks the component $\component{}_2$
     that has the highest self time, and directs the mode to equip both
-    $\component{}_1$ and $\component{}_2$ with Deep types.}}
+    $\component{}_1$ and $\component{}_2$ with deep types.}}
 
   \def\descd{\desc{Like \statselfopt{} \with}}
 
@@ -93,18 +93,18 @@ with their descriptions.
 
  At a second level, basic strategies differ in how they modify the two sides of
  their target boundary. Strategies that are \optkw{} turn the types at
- either side of the boundary to Deep. After all, when two components with
- Deep types interact, no checks take place. Hence, such a modification
+ either side of the boundary to deep. After all, when two components with
+ deep types interact, no checks take place. Hence, such a modification
  eliminates the cost of the boundary entirely, and may even enable the
  compiler to apply type-driven optimizations to the two components. 
  However, there is a risk or
- a ripple effect: the new Deep types of the two components may increase
+ a ripple effect: the new deep types of the two components may increase
  the cost of other boundaries that the two components are involved in. In
  contrast to strategies that are \optkw{}, those that are \conkw{} turn
  the types at either side of the target boundary to shallow. The rationale
  behind this choice is that if both sides of a boundary have
  shallow types, the interactions across the boundary cost less than if
- only one is Deep. At the same time, unlike the  \optkw{}
+ only one is deep. At the same time, unlike the  \optkw{}
  strategies,  there is no risk of a ripple effect. 
 
 %% -----------------------------------------------------------------------------
@@ -174,8 +174,8 @@ with their descriptions.
  cost of boundaries not just in terms of performance, but also in terms of
  the labor needed to equip then with types.  Hence, they give priority to
  those boundaries that involve components that are already types.
- Modifying these components boils down to toggling their types form Deep
- to Shallow or the opposite, which is cheap in terms of labor. 
+ Modifying these components boils down to toggling their types form deep
+ to shallow or the opposite, which is cheap in terms of labor. 
  
  The \confkw{} strategies decide whether to be
  \optkw{} or \conkw{} best on how many components of a program are typed.
@@ -197,8 +197,8 @@ with their descriptions.
  manner.  The second \agnostickw{} strategy, \togglekw{}, was proposed
  by~\citep{g-deep-shallow} and serves as a point of comparison with that previous
  work that does not employ profilers. If the given program has a mixture
- of Shallow and Deep components, the strategy directs its
+ of shallow and deep components, the strategy directs its
  rational-programmer mode to equip all typed components of the program
- with Deep types. If all components are already Deep, it instructs the
- mode to equip all typed components with Shallow types. 
+ with deep types. If all components are already deep, it instructs the
+ mode to equip all typed components with shallow types. 
 
