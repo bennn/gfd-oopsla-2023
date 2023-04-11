@@ -3,11 +3,37 @@
 (require
   "base.rkt"
   "success.rkt"
+  math/statistics
   racket/runtime-path
   text-table
   pict pict-abbrevs
   plot/no-gui
   (except-in plot/utils min* max*))
+
+;; Color picker: https://davidmathlogic.com/colorblind
+;; Wong: https://www.nature.com/articles/nmeth.1618
+
+(define wong*
+  (map hex-triplet->color%
+       '( #x000000
+          #xe69f00 ; orange
+        ;  #x56b4e9 ; lite blue
+        ;  #xf0e442 ; yellow
+          #x0072b2 ; red
+          #xd55e00 ; blu
+          #xcc79a7 ; pink
+          )))
+
+(define wong-lite*
+  (map hex-triplet->color%
+       '( #xffffff
+          #xffbf20 ; orange
+        ;  #x56b4e9 ; lite blue
+        ;  #xfff452 ;yellow
+          #x2092d2 ;red
+          #xf57e20 ;blu
+          #xec99c7 ;pink
+          )))
 
 (define-runtime-path data-dir "../data")
 (define *out-kind* (make-parameter 'pdf))
@@ -109,9 +135,6 @@
 
 (define (f:strategy-overall)
   ;; TODO collect important x points
-  ;; TODO space between bars
-  ;; TODO stacked bar, 1 2 3
-  ;; TODO x ticks
   (define tbl (cadr (success-tbl)))
   (define total-scenarios (last (cadr tbl)))
   (printf "~a total scenarios~n" total-scenarios)
@@ -137,43 +160,117 @@
     (partition (compose1 agnostic-strategy? caar) rect**))
   (define x-offset 1/2)
   (define num-mode 3)
-  (parameterize ((plot-y-ticks (pct-ticks))
-                 (plot-x-far-ticks no-ticks)
-                 (plot-x-ticks (label-ticks
-                                 ;; TODO magic numbers
-                                 (append
-                                   (for/list ((rr (in-list other-rect**))
-                                              (ii (in-naturals)))
-                                     (list (+ 2 (* ii 4)) (caar rr)))
-                                   (for/list ((rr (in-list rect-agnostic**))
-                                              (ii (in-naturals)))
-                                     (list (+ 21 ii (* ii 1/2)) (caar rr)))))))
-    (plot-file
+  (define pp
+    (parameterize ((plot-y-ticks (pct-ticks))
+                   (plot-x-far-ticks no-ticks)
+                   (plot-x-ticks (label-ticks
+                                   ;; TODO magic numbers
+                                   (append
+                                     (for/list ((rr (in-list other-rect**))
+                                                (ii (in-naturals)))
+                                       (list (+ 2 (* ii 4)) (caar rr)))
+                                     (for/list ((rr (in-list rect-agnostic**))
+                                                (ii (in-naturals)))
+                                       (list (+ 21 ii (* ii 1/2)) (caar rr)))))))
+      (plot-pict
+        (list
+          (for/list ((y (in-range 9)))
+            (hrule (* 10 (+ y 1))
+                   #:width 1
+                   #:color "black"
+                   #:alpha 0.06))
+          (for/list ((mode-num (in-range num-mode)))
+            (for/list ((rect* (in-list other-rect**))
+                       (strat-num (in-naturals)))
+              (rrect (+ mode-num
+                        (* (+ num-mode 1) strat-num))
+                     (cddr (list-ref rect* mode-num))
+                     #:color (+ 1 mode-num)
+                     #:x0 x-offset)))
+          (for/list ((rect* (in-list rect-agnostic**))
+                     (ii (in-naturals)))
+            (rrect (+ ii (* 1/2 ii))
+                   (cddr (aggregate rect*))
+                   #:color (+ num-mode 1)
+                   #:x0 (+ x-offset (* 4 (length other-rect**))))))
+        #:x-label #f
+        #:y-label #f
+        #:x-min 0
+        #:x-max (+ 23 1/2) ;; TODO magic
+        #:y-min 0
+        #:y-max 100
+        #:width 600
+        #:height 300)))
+  (save-pict
+    (build-path data-dir (format "strategy-overall.~a" (*out-kind*)))
+    (hc-append
+      2
+      pp
+      (legend-pict num-mode)))
+  (void))
+
+(define (aggregate rect*)
+  (if (null? (cdr rect*))
+    (car rect*)
+    (let* ((strat (caar rect*))
+           (mode "-")
+           (num* (apply map list (map cddr rect*)))
+           (avg* (map mean num*))
+           (std* (map stddev/mean avg* num*)))
+      #;(log-error "aggregate: ~a~n stddevs: ~a nums: ~a" strat std* num*)
+      (log-error "aggregate: avg of ~a runs, max stddev ~a" (length (car num*)) (~r (apply max std*) #:precision '(= 2)))
+      (list*
+        strat
+        mode
+        avg*))))
+
+(define (legend-pict num-mode)
+  (define ymax 6)
+  (define x-txt (- 1 1/10))
+  (define rrect-y* (map add1 (range ymax)))
+  (define (lbltxt2 str)
+    (lbltxt str #:size+ 2))
+  ;; colors = 1 ... num-mode+1
+  (parameterize ((plot-y-ticks no-ticks)
+                 (plot-y-far-ticks no-ticks)
+                 (plot-x-ticks no-ticks)
+                 (plot-x-far-ticks no-ticks))
+    (plot-pict
       (list
-        (for/list ((mode-num (in-range num-mode)))
-          (for/list ((rect* (in-list other-rect**))
-                     (strat-num (in-naturals)))
-            (rrect (+ mode-num
-                      (* (+ num-mode 1) strat-num))
-                   (cddr (list-ref rect* mode-num))
-                   #:color (+ 1 mode-num)
-                   #:x0 x-offset)))
-        (for/list ((rect* (in-list rect-agnostic**))
-                   (ii (in-naturals)))
-          (rrect (+ ii (* 1/2 ii))
-                 (cddr (car rect*))
-                 #:color (+ num-mode 1 ii)
-                 #:x0 (+ x-offset (* 4 (length other-rect**))))))
-      (build-path data-dir (format "strategy-overall.~a" (*out-kind*)))
+        ;; tower shapes
+        (rrect 0 rrect-y* #:color 0 #:w 3/4)
+        (for/list ((y (in-list rrect-y*))
+                   (str (in-list '("strict success" "1-loose" "2-loose" "3-loose" "N-loose" "improved"))))
+          (lblpoint
+            (vector x-txt (- y 1/2))
+            (lbltxt2 str)))
+        ;; mode colors
+        (for/list ((ii (in-range (add1 num-mode)))
+                   (str (in-list '("feature-specific" "statistical (total)" "statistical (self)" "agnostic"))))
+          (define yy (* (+ 1 (if (= ii num-mode) 5/4 3/4) ii) -1))
+          (list
+            (rswatch 13/100 yy #:color (+ 1 ii))
+            (lblpoint
+              (vector x-txt (+ yy 1/4))
+              (lbltxt2 str)))))
+      #:x-min 0
+      #:x-max 200/100
+      #:y-min (+ ymax 1/2)
+      #:y-max (- ymax)
       #:x-label #f
       #:y-label #f
-      #:x-min 0
-      #:x-max (+ 23 1/2) ;; TODO magic
-      #:y-min 0
-      #:y-max 100
-      #:width 600
-      #:height 350))
-  (void))
+      #:title #f
+      #:width 140
+      #:height 200)))
+
+(define (rswatch x y #:color cc)
+  (rectangles
+    (list (vector (ivl x (+ x 1/2))
+                  (ivl y (+ y 1/2))))
+    #:line-width 1
+    #:line-color (my->pen-color cc)
+    #:color (my->brush-color cc)
+    #:alpha 0.9))
 
 (define (group-by-mode x*)
   (sort (group-by third x*) < #:key (compose1 mode->idx third car)))
@@ -232,31 +329,49 @@
   (save-pict (format "data/deathplot.~a" (*out-kind*)) pp)
   (void))
 
-(define (lbltxt str)
-  (text str 'roman 9))
+(define (lbltxt str #:size+ [size+ 0])
+  (text str 'roman (+ size+ 9)))
 
-(define (rrect x y* #:color c #:x0 x0)
+(define (rrect x y* #:color c #:x0 [x0 0] #:w [w% 1])
   (define x-mid (+ x0 x 1/2))
   (define old-y 0)
   (define L-1 (sub1 (length y*)))
+  (define L-2 (sub1 L-1))
   (filter values
     (for/list ((y (in-list y*))
                (ii (in-naturals))
                #:when (>= y old-y))
       (define y0 old-y)
       (set! old-y y)
-      (define alpha (- 0.9 (/ ii 10)))
+      (define alpha
+        (if (= L-2 ii)
+          0.5
+          (- 0.9 (/ ii 10))))
       (define x-gap
         (if (= L-1 ii)
           0.01
-          (* 1/2 alpha)))
+          (if (= L-2 ii)
+            0.12
+            (* 1/2 alpha))))
+      (define rstyle
+        (if (= L-2 ii)
+          'fdiagonal-hatch
+          'solid))
       (rectangles (list
                     (vector
-                      (ivl (- x-mid x-gap) (+ x-mid x-gap))
+                      (ivl (* w% (- x-mid x-gap)) (* w% (+ x-mid x-gap)))
                       (ivl y0 y)))
-                  #:line-color (->pen-color c)
-                  #:color (->brush-color c)
+                  #:line-color (my->pen-color c)
+                  #:style rstyle
+                  #:color ((if (= L-2 ii) my->pen-color my->brush-color) c)
                   #:alpha alpha))))
+
+(define (my->pen-color c)
+  (list-ref wong* c))
+
+(define (my->brush-color c)
+  #;(color%-update-alpha (my->pen-color c) 0.2)
+  (list-ref wong-lite* c))
 
 (define (label-ticks rl*)
   (define (my-layout ax-min ax-max)
@@ -272,7 +387,7 @@
     (append
       (list (pre-tick 0 #true))
       (for/list ((ii (in-range 1 (+ 1 (exact-floor (/ ax-max 10))))))
-        (pre-tick (* 10 ii) #f))
+        (pre-tick (* 10 ii) (= ii 5)))
       (list (pre-tick (exact-floor ax-max) #true))))
   (define (my-format ax-min ax-max pt*)
     (for/list ((pt (in-list pt*))
@@ -281,6 +396,13 @@
         (format "~a%" (pre-tick-value pt))
         (make-string ii #\NUL))))
   (ticks my-layout my-format))
+
+(define (lblpoint xy pp)
+  (point-pict
+    xy pp
+    #:anchor 'left
+    #:point-size 0
+    #:point-sym 'none))
 
 (define (go)
   (parameterize ( #;(*out-kind* 'png))
