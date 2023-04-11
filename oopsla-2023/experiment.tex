@@ -1,9 +1,9 @@
 %% -----------------------------------------------------------------------------
 
 Turning the sketch from section~\ref{sec:ideas} into a large-scale automated
-experiment requires the formalization of rational programmers. In turn, this
-task demands (1) strategy components that identify (2) the next migration step,
-plus (3) a collection of performance-debugging scenarios. As the preceding
+experiment requires the formal descriptions of rational programmers. In turn,
+this task demands (1) strategy components that identify (2) the next migration
+step, plus (3) a collection of performance-debugging scenarios. As the preceding
 section implies, parts~2 and~3 are tied together. Every rational programmer
 recognizes whether a given program is a performance-debugging scenario; if so,
 it applies a strategy to the profiler feedback and migrates the program---which
@@ -12,19 +12,18 @@ The preceding section also implies that a strategy's response is one of three
 possibilities: (1) to signal failure; (2) to add types and to specify their
 enforcement regime (deep, shallow); or (3) to toggle from one regime to
 another. Hence it is possible to specify strategies independently of the
-scenarios per se. Once this pieces are formalized, it is possible to turn the
+scenarios per se. Equipped with formal descriptions, it is possible to turn the
 generic research question of the introduction into questions with a quantitative
-nature. 
+nature.
 
-The rest of the section provides precise definitions for all these elements of
-the experiment.  Section~\ref{subsec:strategies} presents the profiling
-strategies that induce the modes of the rational programmer for the experiment.
-Section~\ref{subsec:lattice} defines the migration lattice of a program, which
-the modes navigate, characterizes the performance-debugging scenarios that serve
-as starting navigation points, and lays out the criteria for a successful or
-failed navigation. Finally, section~\ref{subsec:questions} leverages these
-definitions to formalize the experimental questions and the experimental
-procedure that answers them.
+This section provides precise the required formal descriptions.
+Section~\ref{subsec:strategies} presents the profiling strategies.
+Section~\ref{subsec:lattice} characterizes the performance-debugging scenarios
+that serve as starting navigation points and how a type-based migration is a
+path through a lattice of program configurations. Using these definitions, It
+also lays out the criteria for successes and failures. Finally,
+section~\ref{subsec:questions} formalizes the precise experimental questions and
+the experimental procedure that answers them.
 
 %% -----------------------------------------------------------------------------
 
