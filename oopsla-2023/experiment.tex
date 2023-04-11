@@ -1,54 +1,35 @@
 %% -----------------------------------------------------------------------------
 
-Turning the sketch from section~\ref{sec:ideas} into a large-scale
-automated experiment rests on implementing the reactions of the rational
-programmer to profiler feedback. In essence, this requires constructing an
-algorithm for each mode of the rational programmer that implements the
-strategy-specific piece of the mode. All these algorithms share a  common
-task: they have to modify a program as dictated by the
-strategy of a mode.  In particular, the modification may ask the addition
-of types to an untyped component, i.e., the gradual type migration of the
-component.  However, gradual type migration is still an open and challenging
-problem for realistic components~\cite{rch:in-out-infer-gt,
-mp:gt-decidable, ccew:gt-migrate, msi:gt-infer-hm, gc:gt-infer,
-cagg-solver-based-migration, km:ts-type-evo}.
-Fortunately~\citep{lgfd-icfp-2021} show a way forward. If the program
-corpus of the experiment is based on a set of fully-typed programs then
-the types of each component are known in advance, and moreover, their
-migration  lattices~\citep{tfgnvf-popl-2016} can be pre-constructed.
-Hence, a rational programmer mode starts from a program configuration
-that exhibits intolerable performance, that is a performance-debugging
-scenario, and uses the known types of the components to chart a path
-through the program's migration lattice guided by its profiling strategy.
+Turning the sketch from section~\ref{sec:ideas} into a large-scale automated
+experiment requires the formalization of rational programmers. In turn, this
+task demands (1) strategy components that identify (2) the next migration step,
+plus (3) a collection of performance-debugging scenarios. As the preceding
+section implies, parts~2 and~3 are tied together. Every rational programmer
+recognizes whether a given program is a performance-debugging scenario; if so,
+it applies a strategy to the profiler feedback and migrates the program---which
+should yield a performant program or another performance-debugging scenario.
+The preceding section also implies that a strategy's response is one of three
+possibilities: (1) to signal failure; (2) to add types and to specify their
+enforcement regime (deep, shallow); or (3) to toggle from one regime to
+another. Hence it is possible to specify strategies independently of the
+scenarios per se. Once this pieces are formalized, it is possible to turn the
+generic research question of the introduction into questions with a quantitative
+nature. 
 
-As section~\ref{sec:ideas} describes, each profiling strategy interprets
-profiler feedback differently, and suggests a corresponding program
-modification. Hence, in addition to the common for all modes part that
-modifies a program, an automated experiment demands the implementation
-of the strategies it aims to compare. With the mode implementations in
-hand, the experiment runs all of them on the same large number of
-scenarios and compares their successes. The rest of the section provides
-precise definitions for all these elements of the experiment.
-Section~\ref{subsec:strategies} presents the profiling strategies that induce the
-modes of the rational programmer for the experiment.
-Section~\ref{subsec:lattice} defines the migration lattice of a program,
-which the modes navigate, characterizes the performance-debugging
-scenarios that serve as starting navigation points, and lays out  the
-criteria for a successful or failed navigation. Finally,
-section~\ref{subsec:questions} leverages these definitions to formalize
-the experimental questions and the experimental procedure that answers
-them.
+The rest of the section provides precise definitions for all these elements of
+the experiment.  Section~\ref{subsec:strategies} presents the profiling
+strategies that induce the modes of the rational programmer for the experiment.
+Section~\ref{subsec:lattice} defines the migration lattice of a program, which
+the modes navigate, characterizes the performance-debugging scenarios that serve
+as starting navigation points, and lays out the criteria for a successful or
+failed navigation. Finally, section~\ref{subsec:questions} leverages these
+definitions to formalize the experimental questions and the experimental
+procedure that answers them.
 
-\subsection{The Profiling Strategies}
-\label{subsec:strategies}
-\input{experiment-strategies.tex}
+%% -----------------------------------------------------------------------------
 
+\def\exp#1#2{\subsection{#2} \label{subsec:#1} \input{experiment-#1.tex}}
 
-\subsection{Migration Lattices and their Navigation}
-\label{subsec:lattice}
-\input{experiment-lattice.tex}
-
-
-\subsection{The Experimental Questions}
-\label{subsec:questions}
-\input{experiment-questions.tex}
+\exp{strategies}{The Profiling Strategies}
+\exp{lattice}{Migration Lattices and their Navigation}
+\exp{questions}{The Experimental Questions}
