@@ -118,6 +118,22 @@
   (tex-table (cons title* row*))
   (void))
 
+(define (t:blackhole)
+  (define tbl (car (success-tbl)))
+  (define title* (list "Benchmark" "$3^N$" "\\% Hopeless"))
+  (define row*
+    (for/list ((rr (in-list (cdr tbl))))
+      (list (bmname (first rr))
+            (number->string (fifth rr))
+            (hide-zeropct (third rr)))))
+  (tex-table (cons title* row*))
+  (void))
+
+(define (hide-zeropct str)
+  (if (equal? str "0.00%")
+    "---"
+    str))
+
 (define (rev-pct str)
   (define nn (pct->number str))
   (format "~a\\%"
@@ -134,7 +150,9 @@
   (sort row** < #:key (compose1 cd-strategy-index caar)))
 
 (define (f:strategy-overall)
-  ;; TODO collect important x points
+  ;; TODO legend too fat
+  ;; TODO stagger the B PT PS swatches, left-right
+  ;; TODO thicker lines, lighter brush color
   (define tbl (cadr (success-tbl)))
   (define total-scenarios (last (cadr tbl)))
   (printf "~a total scenarios~n" total-scenarios)
@@ -208,6 +226,81 @@
       pp
       (legend-pict num-mode)))
   (void))
+
+(define (vector-add1 v k)
+  (vector-set! v k (+ 1 (vector-ref v k))))
+
+(define (f:head2head)
+  (define num-sm (length all-sm-name*))
+  (define fave*
+    ;; '("opt_boundary" "cost-opt_boundary" "limit-con_boundary")
+    (drop-right all-sm-name* 4))
+  (define vv (file->value (build-path data-dir "h2h.rktd")))
+  (define pp*
+    (parameterize ((plot-y-ticks (mini-pct-ticks))
+                   #;(plot-x-ticks (exact-ticks num-sm))
+                   (plot-x-far-ticks no-ticks))
+      (for/list ((from-mode (in-list fave*)))
+        (define from-key (sm->idx from-mode))
+        (define-values [strategy mode]
+          (let* ((str* (string-split from-mode "_")))
+            (values (bg-strategy->cd-strategy (car str*))
+                    (string-join (cdr str*) "_"))))
+        #;(define win* (make-list num-sm 0))
+        #;(define tie* (make-list num-sm 0))
+        (define los* (make-vector num-sm 0))
+        (define num-configs 0)
+        (void
+          (for* ((bm (in-list vv))
+                 (res (in-hash-values (cadr bm))))
+            (define from-win? (eq? #\1 (string-ref res from-key)))
+            (set! num-configs (add1 num-configs))
+            (for ((to-mode (in-list all-sm-name*))
+                  (to-key (in-naturals)))
+              (define to-win? (eq? #\1 (string-ref res to-key)))
+              (when (and to-win?
+                         (not from-win?))
+                (vector-add1 los* to-key)))))
+        (define pp
+          (plot-pict
+            (rectangles
+              (for/list ((yy (in-vector los*))
+                         (xx (in-naturals)))
+                (vector (ivl (- xx 1/4) (+ xx 1/4))
+                        (ivl 0 (/ yy num-configs))))
+              #:line-color 1
+              #:line-width 1
+              #:color 1
+              #:alpha 0.8)
+            #:width 600
+            #:height 300
+            #:y-min 0
+            #:y-max 5
+            #:x-label #f
+            #:y-label #f
+            #:title #f))
+        (define title-pict (lbltxt (format "~a ~a, ~a configs" strategy mode num-configs)))
+        (ht-append
+          4
+          (vl-append title-pict pp)
+          (cheap-h2h-legend)))))
+  (save-pict
+    (build-path data-dir (format "head-to-head.~a" (*out-kind*)))
+    (ptable
+      #:ncols 3
+      #:row-sep 4
+      #:col-sep 4
+      pp*)
+    #;(apply vl-append 4 pp*))
+  (void))
+
+
+(define (cheap-h2h-legend)
+  (apply
+    vl-append
+    (for/list ((str (in-list all-sm-name*))
+               (ii (in-naturals)))
+      (lbltxt (format "~a. ~a" ii str)))))
 
 (define (aggregate rect*)
   (if (null? (cdr rect*))
@@ -389,13 +482,23 @@
       (for/list ((ii (in-range 1 (+ 1 (exact-floor (/ ax-max 10))))))
         (pre-tick (* 10 ii) (= ii 5)))
       (list (pre-tick (exact-floor ax-max) #true))))
-  (define (my-format ax-min ax-max pt*)
-    (for/list ((pt (in-list pt*))
-               (ii (in-naturals)))
-      (if (pre-tick-major? pt)
-        (format "~a%" (pre-tick-value pt))
-        (make-string ii #\NUL))))
-  (ticks my-layout my-format))
+  (ticks my-layout pct-format))
+
+(define (mini-pct-ticks)
+  (define (my-layout ax-min ax-max)
+    (append
+      (list (pre-tick 0 #true))
+      (for/list ((ii (in-range 1 (+ 1 ax-max))))
+        (pre-tick ii (= ii 5)))
+      (list (pre-tick ax-max #true))))
+  (ticks my-layout pct-format))
+
+(define (pct-format ax-min ax-max pt*)
+  (for/list ((pt (in-list pt*))
+             (ii (in-naturals)))
+    (if (pre-tick-major? pt)
+      (format "~a%" (pre-tick-value pt))
+      (make-string ii #\NUL))))
 
 (define (lblpoint xy pp)
   (point-pict
@@ -405,10 +508,12 @@
     #:point-sym 'none))
 
 (define (go)
-  (parameterize ( #;(*out-kind* 'png))
+  (parameterize ( (*out-kind* 'png))
     #;(t:baseline-trouble)
-    (f:strategy-overall)
+    #;(f:strategy-overall)
     #;(f:deathplot)
+    #;(f:head2head)
+    (t:blackhole)
     (void)))
 
 (module+ main

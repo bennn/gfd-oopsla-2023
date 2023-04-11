@@ -155,5 +155,36 @@ FILL say more
   \label{f:strategy-overall}
 \end{figure}
 
+\begin{table}[t]
+  \caption{How many of the $3^N$ configurations cannot reach 1x without removing types?}
+  \label{t:blackhole}
+  \begin{tabular}[t]{l@{\qquad}l}
+    \begin{tabular}[t]{lrr}
+Benchmark           & $3^N$ & \% Hopeless \\\midrule
+\bmname{sieve}      &     9 &         --- \\
+\bmname{morsecode}  &    81 &         --- \\
+\bmname{forth}      &    81 &      59.26\% \\
+\bmname{fsm}        &    81 &         --- \\
+\bmname{fsmoo}      &    81 &         --- \\
+\bmname{mbta}       &    81 &      88.89\% \\
+\bmname{zombie}     &    81 &      59.26\% \\
+\bmname{dungeon}    &   243 &      99.59\% \\
+\bmname{jpeg}       &   243 &         ---
+    \end{tabular}
+    &
+    \begin{tabular}[t]{lrr}
+Benchmark           & $3^N$ & \% Hopeless \\\midrule
+\bmname{lnm}        &   729 &         --- \\
+\bmname{suffixtree} &   729 &         --- \\
+\bmname{kcfa}       &  2187 &         --- \\
+\bmname{snake}      &  6561 &         --- \\
+\bmname{take5}      &  6561 &      99.95\% \\
+\bmname{acquire}    & 19683 &      93.83\% \\
+\bmname{tetris}     & 19683 &         --- \\
+\bmname{synth}      & 59049 &         ---
+    \end{tabular}
+  \end{tabular}
+\end{table}
+
 \clearpage
 

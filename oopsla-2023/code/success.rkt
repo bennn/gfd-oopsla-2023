@@ -24,21 +24,64 @@
 (struct seascape (num-configs immediate# feasible# hopeless#) #:prefab)
 
 (define (all-trail-data)
-  (for/list ((fn (in-glob (build-path trail-dir "*rktd")))
-             #:unless (let ((str (path->string (file-name-from-path fn))))
-                        (regexp-match? #rx"random(D|S)" str)))
-    (define-values [bm strategy mode] (split-filename (file-name-from-path fn)))
-    (trailfile bm strategy mode fn)))
+  (filter-data
+    (for/list ((fn (in-glob (build-path trail-dir "*rktd")))
+               #:unless (let ((str (path->string (file-name-from-path fn))))
+                          (or (regexp-match? #rx"limit-opt" str)
+                              (regexp-match? #rx"random(D|S)" str))))
+      (define-values [bm strategy mode] (split-filename (file-name-from-path fn)))
+      (trailfile bm strategy mode fn))))
+
+(define (filter-data xx)
+  (filter
+    (lambda (x)
+      #true
+      #;(string-contains? (trailfile-bb x) "tetris")
+      )
+    xx))
 
 (define (go)
-  (go-success)
+  #;(go-success)
+  (go-h2h)
   (void))
 
+(define (go-h2h)
+  ;; head to head
+  (define data* (all-trail-data))
+  (define bm** (take-some
+                 (sort
+                   (filter-not null? (group-by trailfile-bb data*))
+                   < #:key (compose1 benchmark-index trailfile-bb car))))
+  (define res**
+    #;(file->value "data/success-res.rktd")
+    (map go-bm-h2h bm**))
+  (with-output-to-file+ "data/h2h.rktd" #:exists 'replace (lambda () (pretty-write res**)))
+  (void))
+
+;;  #;(let ()
+;;    (define xy** (map go-xy bm**))
+;;    (with-output-to-file "data/success-xy.rktd" #:exists 'replace (lambda () (pretty-write (map (lambda (x) (map car x)) xy**))))
+;;    (for* ((bmxy (in-list xy**))
+;;           (rr (in-list bmxy)))
+;;      (define bm (first (car rr)))
+;;      (define ss (second (car rr)))
+;;      (define mm (third (car rr)))
+;;      (with-output-to-file (format "data/success-xy-~a-~a-~a.rktd" bm ss mm)
+;;                           #:exists 'replace (lambda () (pretty-write (cadr rr))))))
+;;  (define tbl* (combine res**))
+;;  (with-output-to-file+ "data/success-tbl.rktd" #:exists 'replace (lambda () (pretty-write tbl*)))
+;;  (print-table (first tbl*))
+;;  (newline)
+;;  (let* ((xx* (second tbl*))
+;;         (title* (car xx*))
+;;         (row** (group-by second (cdr xx*))))
+;;    (for ((row* (in-list row**)))
+;;      (print-table (cons title* row*))
+;;      (newline)))
+;;  (void))
+
 (define (go-success)
-  (define data* (filter (lambda (x)
-                          #true
-                          #;(string-contains? (trailfile-bb x) "tetris"))
-                        (all-trail-data)))
+  (define data* (all-trail-data))
   (define bm** (take-some
                  (sort
                    (filter-not null? (group-by trailfile-bb data*))
@@ -82,6 +125,53 @@
   (define ss (bm-seascape perf#))
   (define tt (bm-trails bm* perf# ss))
   (bmres bm-name ss tt))
+
+(define (winning-trail? cc* perf#)
+  (and (not (null? cc*))
+       (ormap
+         (compose1 good-overhead?  (lambda (x) (hash-ref perf# x)))
+         cc*)))
+
+(define (go-bm-h2h bm*)
+  (define bm-name (trailfile-bb (car bm*)))
+  (printf "go-bm-h2h: ~a~n" bm-name)
+  (define perf# (benchmark->perf# bm-name))
+  (define ss (bm-seascape perf#))
+  (define win# (seascape-immediate# ss))
+  #;(define hope# (seascape-feasible# ss))
+  #;(define hopeless# (seascape-hopeless# ss))
+  (define acc#
+    ;; acc# : config -> ss+mode -> bool
+    (let* ((acc# (make-hash)))
+      (for ((td (in-list bm*)))
+        (define ss (trailfile-ss td))
+        (define mm (trailfile-mm td))
+        (define subkey (format "~a_~a" ss mm))
+        (for ((rr (in-list (file->value (trailfile-ff td)))))
+          (define cfg (row-cfg rr))
+          (unless (hash-ref win# cfg #f)
+            (define cc* (row-cc* rr))
+            (define win? (winning-trail? cc* perf#))
+            (hash-update! acc# cfg
+                          (lambda (hh)
+                            (sm-str-set hh subkey win?))
+                          (lambda () (sm-str-init))))))
+      (let ((subkey "toggle"))
+        (for ((cfg (in-hash-keys perf#))
+              #:unless (hash-ref win# cfg #f))
+          (define win?
+            (let ()
+              (define deep-cfg (config->deep cfg))
+              (define shallow-cfg (config->shallow cfg))
+              (or (hash-ref win# deep-cfg #f)
+                  (hash-ref win# shallow-cfg #f))))
+          (hash-update! acc# cfg
+                        (lambda (hh)
+                          (sm-str-set hh subkey win?))
+                        (lambda () (error 'toggle-init))))
+        (void))
+      acc#))
+  (list bm-name acc#))
 
 (define (untyped-ms perf#)
   (hash-ref perf# (untyped-config perf#)))

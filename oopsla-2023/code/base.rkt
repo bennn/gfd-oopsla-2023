@@ -9,6 +9,10 @@
   config-reachable?
   all-strategy-name*
   all-mode-name*
+  all-sm-name*
+  sm->idx
+  sm-str-init
+  sm-str-set
   point-sym*
   take-some
   row*->get-overhead
@@ -123,13 +127,53 @@
     "limit-con"
     "con"
     "cost-con"
-    "limit-opt"
+    #;"limit-opt"
     "randomB"
     #;"randomD"
     #;"randomS"))
 
 (define (all-mode-name*)
   '("boundary" "prf_total" "prf_self"))
+
+(define all-sm-name*
+  '(
+    "con_boundary"
+    "con_prf_self"
+    "con_prf_total"
+    "cost-con_boundary"
+    "cost-con_prf_self"
+    "cost-con_prf_total"
+    "cost-opt_boundary"
+    "cost-opt_prf_self"
+    "cost-opt_prf_total"
+    "limit-con_boundary"
+    "limit-con_prf_self"
+    "limit-con_prf_total"
+;    "limit-opt_boundary"
+;    "limit-opt_prf_self"
+;    "limit-opt_prf_total"
+    "opt_boundary"
+    "opt_prf_self"
+    "opt_prf_total"
+    "randomB_boundary"
+    "randomB_prf_self"
+    "randomB_prf_total"
+    "toggle"))
+
+(define (sm->idx str)
+  (or (index-of all-sm-name* str)
+      (error 'sm->idx)))
+
+(define (sm-str-init)
+  (make-string (length all-sm-name*) #\x))
+
+(define (sm-str-set str ks v)
+  (define k (sm->idx ks))
+  (define old (string-ref str k))
+  (if (eq? #\x old)
+    (string-set! str k (if v #\1 #\0))
+    (error 'sm-str-set))
+  str)
 
 (define (take-some x*)
   (take x* 2))
