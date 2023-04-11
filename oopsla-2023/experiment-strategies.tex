@@ -183,21 +183,22 @@ Figure~\ref{f:cstrategies} lists these composite strategies. In addition to the
  strategies favor a \conkw{} approach for sparsely typed programs and an
  \optkw{} strategy for densely typed ones.
 
-\paragraph{Null Strategies}
+\paragraph{Null Strategies} An experiment must include baselines, i.e., the
+ building block for a null hypothesis. In terms of strategies, the experiment
+ needs a \agnostickw{} strategy.  If this \agnostickw{ strategy is less
+ successful in eliminating performance bottlenecks than the profiling ones, then
+ the feedback from the profiler plays a meaningful role; otherwise, the
+ experiment is meaningless.
 
- Finally, the experiment includes two strategies that are \agnostickw{}.
- Those play the role of experimental baselines: if the profiling
- strategies are more successful than the \agnostickw{} ones, then profiler
- feedback plays a meaningful role in guiding type migration.  The first
- \agnostickw{} strategy, \randkw{}, aims to invalidate the null
- hypothesis: it picks at random  a boundary with types of different
- strictness, and suggests to its rational-programmer mode to modify the
- two sides of the target boundary either in an \optkw{} or \conkw{}
- manner.  The second \agnostickw{} strategy, \togglekw{}, was proposed
- by~\citep{g-deep-shallow} and serves as a point of comparison with that previous
- work that does not employ profilers. If the given program has a mixture
- of shallow and deep components, the strategy directs its
- rational-programmer mode to equip all typed components of the program
- with deep types. If all components are already deep, it instructs the
- mode to equip all typed components with shallow types. 
+The results presented in the next section include two rational programmers using
+ \agnostickw{} strategies. The first one, \randkw{}, aims to invalidate the null
+ hypothesis with random choices. Specifically, it picks a random boundary with
+ types of different strictness and suggests to modify the two sides of the
+ target boundary in either an \optkw{} or a \conkw{} manner.  The second
+ \agnostickw{} strategy, \togglekw{}, is due to~\citet{g-deep-shallow}. It
+ serves as a point of comparison with Greenman's results, which do not rely on
+ profiling information. If the given program uses a mixture of shallow and deep
+ enforcement, the strategy directs its rational-programmer mode to equip all
+ typed components with deep enforcement. If all components already use deep, it
+ instructs the mode to toggle the enforcement to shallow.
 
