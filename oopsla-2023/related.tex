@@ -1,15 +1,59 @@
+
+
+
+The work in this paper touches a range of existing strands of research. At
+the object-level, the main motivation for this paper is prior research on
+the performance issues of sound gradual typinh; while two significant
+sources of inspiration are research on gradual type migration and
+profiling technique.  At the meta-level, this work builds on and extends
+prior results on the rational programmer method.   
+
+\paragraph{The Rational Programmer}
+
+ \citep{lksfd-popl-2020,lgfd-icfp-2021} propose the rational programmer as
+ an empirical method for evaluating the role of blame in debugging
+ different kinds of logical mistakes with software contracts and gradual types. However,
+ the ideas behind the rational programmer go beyond debugging logical
+ mistakes. In essence, the rational programmer is a general methodological
+ framework for the systematic investigation of the pragmatics of
+ programming languages and tool, i.e., the value of the various aspects of a
+ language or a tool in the context of a specific task. In that sense,
+ Lazarek et al.'s work focuses on a single context: debugging logical
+ mistakes. This work shows how the rational programmer applies to
+ another context: performance tuning and debugging of performance
+ bottlenecks. Hence, it shares the language features
+ it studies, gradual typing, with Lazarek's work, but it looks at a different aspect of its
+ pragmatics. As a result besides contributing to the understanding of the
+ value of gradual types, it also provides evidence for the generality of
+ the rational programmer method itself.  
+
+\paragraph{Performance Tuning and Gradual Typing} 
+
+Deep types performance: Pycket, Corpse Reviver,
+
 (shallow
 checks come in a variety of
 forms~\cite{grmhn-vmil-2019,rmhn-ecoop-2019,glfd-pj-2022,lgmvpk-pj-2023}
 inspired by Reticulated's transient
 semantics~\cite{vksb-dls-2014,vss-popl-2017,v-thesis-2019})
 
-Deep types performance: Pycket, Corpse Reviver,
-
 Alternate semantics: concrete, Nom, Thorn, StrongScript, SafeTS;
 Static Python; monotonic; Pyret. See toplas.
+
+
+
+\paragraph{Gradual Type Migration}
+
+
+
+\paragraph{Performance Tuning with Profilers}
 
 grmhn-vmil-2019;
 profiling strategy for transient: run once for each type, set of hot types => hot config;
 mention too when discussing FSP for transient
+
+
+
+
+
 
