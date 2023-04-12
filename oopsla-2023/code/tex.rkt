@@ -27,7 +27,7 @@
 (define wong-lite*
   (map hex-triplet->color%
        '( #xffffff
-          #xffbf20 ; orange
+          #xffcf50 ; orange
         ;  #x56b4e9 ; lite blue
         ;  #xfff452 ;yellow
           #x2092d2 ;red
@@ -150,9 +150,6 @@
   (sort row** < #:key (compose1 cd-strategy-index caar)))
 
 (define (f:strategy-overall)
-  ;; TODO legend too fat
-  ;; TODO stagger the B PT PS swatches, left-right
-  ;; TODO thicker lines, lighter brush color
   (define tbl (cadr (success-tbl)))
   (define total-scenarios (last (cadr tbl)))
   (printf "~a total scenarios~n" total-scenarios)
@@ -237,7 +234,7 @@
     (drop-right all-sm-name* 4))
   (define vv (file->value (build-path data-dir "h2h.rktd")))
   (define pp*
-    (parameterize ((plot-y-ticks (mini-pct-ticks))
+    (parameterize ((plot-y-ticks (pct-ticks))
                    #;(plot-x-ticks (exact-ticks num-sm))
                    (plot-x-far-ticks no-ticks))
       (for/list ((from-mode (in-list fave*)))
@@ -246,36 +243,46 @@
           (let* ((str* (string-split from-mode "_")))
             (values (bg-strategy->cd-strategy (car str*))
                     (string-join (cdr str*) "_"))))
-        #;(define win* (make-list num-sm 0))
-        #;(define tie* (make-list num-sm 0))
+        (define win* (make-vector num-sm 0))
+        (define tie* (make-vector num-sm 0))
         (define los* (make-vector num-sm 0))
         (define num-configs 0)
         (void
           (for* ((bm (in-list vv))
                  (res (in-hash-values (cadr bm))))
-            (define from-win? (eq? #\1 (string-ref res from-key)))
             (set! num-configs (add1 num-configs))
+            (define from-win? (eq? #\1 (string-ref res from-key)))
             (for ((to-mode (in-list all-sm-name*))
                   (to-key (in-naturals)))
               (define to-win? (eq? #\1 (string-ref res to-key)))
-              (when (and to-win?
-                         (not from-win?))
-                (vector-add1 los* to-key)))))
+              (cond
+                ((eq? from-win? to-win?)
+                 (vector-add1 tie* to-key))
+                ((and from-win?  (not to-win?))
+                 (vector-add1 win* to-key))
+                ((and to-win?  (not from-win?))
+                 (vector-add1 los* to-key))
+                (else
+                  (error 'h2hwtf))))))
         (define pp
           (plot-pict
-            (rectangles
-              (for/list ((yy (in-vector los*))
-                         (xx (in-naturals)))
-                (vector (ivl (- xx 1/4) (+ xx 1/4))
-                        (ivl 0 (/ yy num-configs))))
-              #:line-color 1
-              #:line-width 1
-              #:color 1
-              #:alpha 0.8)
+            (for/list ((vec (in-list (list tie* los* win*)))
+                       (cc (in-naturals)))
+              (rectangles
+                (for/list ((yy (in-vector vec))
+                           (xx (in-naturals))
+                           #:when (< 0 yy))
+                  (define x0 (+ (- xx 1/4) (* 1/4 cc)))
+                  (vector (ivl x0 (+ x0 1/4))
+                          (ivl 0 (pct2 yy num-configs))))
+                #:line-width 1
+                #:line-color cc
+                #:color cc
+                #:alpha 0.8))
             #:width 600
             #:height 300
             #:y-min 0
-            #:y-max 5
+            #:y-max 100
             #:x-label #f
             #:y-label #f
             #:title #f))
@@ -294,6 +301,86 @@
     #;(apply vl-append 4 pp*))
   (void))
 
+(define (app:head2head)
+  (define num-sm (length all-sm-name*))
+  (define fave*
+    ;; '("opt_boundary" "cost-opt_boundary" "limit-con_boundary")
+    (drop-right all-sm-name* 4))
+  (define vv (file->value (build-path data-dir "h2h.rktd")))
+  (define out-dir (build-path data-dir "h2h"))
+  (void (ensure-dir out-dir))
+  (for ((tgt-bm (in-list (map car vv))))
+    (define pp*
+      (parameterize ((plot-y-ticks (pct-ticks))
+                     #;(plot-x-ticks (exact-ticks num-sm))
+                     (plot-x-far-ticks no-ticks))
+        (for/list ((from-mode (in-list fave*)))
+          (define from-key (sm->idx from-mode))
+          (define-values [strategy mode]
+            (let* ((str* (string-split from-mode "_")))
+              (values (bg-strategy->cd-strategy (car str*))
+                      (string-join (cdr str*) "_"))))
+          (define win* (make-vector num-sm 0))
+          (define tie* (make-vector num-sm 0))
+          (define los* (make-vector num-sm 0))
+          (define num-configs 0)
+          (void
+            (for* ((bm (in-list vv))
+                   #:when (equal? (car bm) tgt-bm)
+                   (res (in-hash-values (cadr bm))))
+              (set! num-configs (add1 num-configs))
+              (define from-win? (eq? #\1 (string-ref res from-key)))
+              (for ((to-mode (in-list all-sm-name*))
+                    (to-key (in-naturals)))
+                (define to-win? (eq? #\1 (string-ref res to-key)))
+                (cond
+                  ((eq? from-win? to-win?)
+                   (vector-add1 tie* to-key))
+                  ((and from-win?  (not to-win?))
+                   (vector-add1 win* to-key))
+                  ((and to-win?  (not from-win?))
+                   (vector-add1 los* to-key))
+                  (else
+                    (error 'h2hwtf))))))
+          (define pp
+            (plot-pict
+              (for/list ((vec (in-list (list tie* los* win*)))
+                         (cc (in-naturals)))
+                (rectangles
+                  (for/list ((yy (in-vector vec))
+                             (xx (in-naturals))
+                             #:when (< 0 yy))
+                    (define x0 (+ (- xx 1/4) (* 1/4 cc)))
+                    (vector (ivl x0 (+ x0 1/4))
+                            (ivl 0 (pct2 yy num-configs))))
+                  #:line-width 1
+                  #:line-color cc
+                  #:color cc
+                  #:alpha 0.8))
+              #:width 600
+              #:height 300
+              #:y-min 0
+              #:y-max 100
+              #:x-label #f
+              #:y-label #f
+              #:title #f))
+          (define title-pict (lbltxt (format "~a ~a ~a, ~a configs" tgt-bm strategy mode num-configs)))
+          (ht-append
+            4
+            (vl-append title-pict pp)
+            (cheap-h2h-legend)))))
+    (define out-name (format "~a.~a" tgt-bm (*out-kind*)))
+    (printf "save-pict ~a~n" out-name)
+    (save-pict
+      (build-path out-dir out-name)
+      (ptable
+        #:ncols 3
+        #:row-sep 4
+        #:col-sep 4
+        pp*)
+      #;(apply vl-append 4 pp*))
+    (void))
+  (void))
 
 (define (cheap-h2h-legend)
   (apply
@@ -317,9 +404,11 @@
         mode
         avg*))))
 
+(define swatch-w 12/100)
+
 (define (legend-pict num-mode)
   (define ymax 6)
-  (define x-txt (- 1 1/10))
+  (define x-txt (- 1 2/10))
   (define rrect-y* (map add1 (range ymax)))
   (define (lbltxt2 str)
     (lbltxt str #:size+ 2))
@@ -331,7 +420,7 @@
     (plot-pict
       (list
         ;; tower shapes
-        (rrect 0 rrect-y* #:color 0 #:w 3/4)
+        (rrect 0 rrect-y* #:color 0 #:w 60/100)
         (for/list ((y (in-list rrect-y*))
                    (str (in-list '("strict success" "1-loose" "2-loose" "3-loose" "N-loose" "improved"))))
           (lblpoint
@@ -342,12 +431,13 @@
                    (str (in-list '("feature-specific" "statistical (total)" "statistical (self)" "agnostic"))))
           (define yy (* (+ 1 (if (= ii num-mode) 5/4 3/4) ii) -1))
           (list
-            (rswatch 13/100 yy #:color (+ 1 ii))
+            (rswatch (+ 10/100 (* (+ 3/100 swatch-w) (if (= ii num-mode) 1 ii)))
+                     yy #:color (+ 1 ii))
             (lblpoint
               (vector x-txt (+ yy 1/4))
               (lbltxt2 str)))))
       #:x-min 0
-      #:x-max 200/100
+      #:x-max 175/100
       #:y-min (+ ymax 1/2)
       #:y-max (- ymax)
       #:x-label #f
@@ -358,7 +448,7 @@
 
 (define (rswatch x y #:color cc)
   (rectangles
-    (list (vector (ivl x (+ x 1/2))
+    (list (vector (ivl x (+ x swatch-w))
                   (ivl y (+ y 1/2))))
     #:line-width 1
     #:line-color (my->pen-color cc)
@@ -510,10 +600,12 @@
 (define (go)
   (parameterize ( (*out-kind* 'png))
     #;(t:baseline-trouble)
-    #;(f:strategy-overall)
+    (f:strategy-overall)
+    #;(app:strategy-overall)
     #;(f:deathplot)
     #;(f:head2head)
-    (t:blackhole)
+    #;(t:blackhole)
+    #;(app:head2head)
     (void)))
 
 (module+ main

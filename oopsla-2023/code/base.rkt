@@ -12,6 +12,7 @@
   all-sm-name*
   sm->idx
   sm-str-init
+  sm-str-ref
   sm-str-set
   point-sym*
   take-some
@@ -174,6 +175,10 @@
     (string-set! str k (if v #\1 #\0))
     (error 'sm-str-set))
   str)
+
+(define (sm-str-ref str ks)
+  (define k (sm->idx ks))
+  (string-ref str k))
 
 (define (take-some x*)
   (take x* 2))
