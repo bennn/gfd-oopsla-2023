@@ -1,54 +1,60 @@
 %% -----------------------------------------------------------------------------
 
-The definitions of successful migration paths enables rephrasing the
-questions from~\ref{sec:intro} in terms of strategies:
-\begin{itemize}
-\item[$Q_X$] Is strategy $X$ successful in the context of the elimination of
-  performance bottlenecks via migration?
+Equipped with rigorous definitions, it is possible to formulate the research
+questions precisely:
+\begin{description}
+
+\item[$Q_X$] How successful is a strategy $X$ with the elimination of
+  performance bottlenecks?
 
 \item[$Q_{X/Y}$] Is strategy $X$ more successful than strategy $Y$ in this
   context?
-\end{itemize}
+  
+\end{description}
 
 Answering $Q_X$ boils down to determining the success and failures of
-$\mode{X}$, the rational-programmer mode of $X$, for all
-performance-debugging scenarios. If, for a large number of scenarios,
-$\mode{X}$ charts migration paths that are strictly successful, the answer
-is positive. Essentially, the large number of scenarios is evidence that
-when a rational programmer reacts to profiler feedback following $X$, it is
-likely to benefit  while tuning the performance of 
-mixed-typed code. Notably, the above description uses the strict notion of
-success, which sets a high standard of success. Hence, the rational
-programmer not only manages to tune performance at a tolerable level but
-each suggestion of its strategy brings the rational programmer closer to
-its target. Swapping the notion of strict success for $k$-loose success
-relaxes this high standard, and offers answers to $Q_X$ when allowing for
-some bounded flexibility in how well the intermediate suggestions of
-$X$ help the rational programmer.   
+$\mode{X}$, the rational-programmer mode of $X$ for all performance-debugging
+scenarios in all available lattices. If, for a large number of scenarios,
+$\mode{X}$ charts migration paths that are strictly successful, the answer is
+positive. Essentially, the large number of scenarios is evidence that when a
+rational programmer reacts to profiler feedback following $X$, it is likely to
+succeed with tuning the performance of mixed-typed code. Notably, the above
+description uses the strict notion of success, which sets a high standard of
+success. Hence, the rational programmer not only manages to tune performance at
+a tolerable level but each suggestion of its strategy brings the rational
+programmer closer to its target. Swapping the notion of strict success for
+$k$-loose success relaxes this high standard, and offers answers to $Q_X$ when
+allowing for some bounded flexibility in how well the intermediate suggestions
+of $X$ help the rational programmer. For completeness, the next section also
+reports the data collected for the notion of $N$-loose success.
 
-While an answer to $Q_X$ constitutes an evaluation of a strategy $X$ for interpreting
-profiler feedback in absolute terms, an answer to $Q_{X/Y}$ reveals the
-relative value of $X$ versus another strategy $Y$. Answering this second
-question asks whether the proportion of scenarios where $\mode{X}$ charts a
-successful path but  $\mode{Y}$ does not is higher that the proportion of
-scenarios where  $\mode{Y}$ charts a successful path but $\mode{X}$ does not.
- Imporantly, when $\mode{Y}$ is the $randomkw{}$ strategy, if
-the answer to $Q_X$ is positive, then it invalidates the null-hypothesis,
-i.e., that the success of $X$ is because of sheer luck.
-Of course, the answer may not be clear cut as $X$ and $Y$ may
-perform equally well in most scenarios, or may have complementary success 
-records. Again, relaxing the notion of success by different factors $k$
-may help distinguish  $X$ and $Y$ based on the quality of the feedback
-they produce.
+While an answer to $Q_X$ constitutes an evaluation of a strategy $X$ for
+interpreting profiler feedback in absolute terms, an answer to $Q_{X/Y}$ is
+about the relative value a strategy of $X$ versus some other strategy
+$Y$. Answering this second question asks whether the proportion of scenarios
+where $\mode{X}$ charts a successful path but $\mode{Y}$ does not is higher that
+the proportion of scenarios where $\mode{Y}$ charts a successful path but
+$\mode{X}$ does not. Of course, the answer may not be clear cut as $X$ and $Y$
+may perform equally well in most scenarios or may have complementary success
+records. Finally, relaxing the notion of success by different factors $k$ may
+help distinguish $X$ and $Y$ based on the quality of the feedback they produce.
 
+Importantly, when $\mode{Y}$ is the $\randkw{}$ strategy and the answer to
+$Q_X/\randkw$ is positive, then the experiment invalidates its null-hypothesis.
+Put differently, the success of $X$ is not due to sheer luck but the rational
+use of profiler feedback.
 
-In sum, the process for answering $Q_X$ and $Q_{X/Y}$ rests on the
-following experimental plan:
+Summing up, the process for answering $Q_X$ and $Q_{X/Y}$ rests on the following
+experimental plan:
 \begin{enumerate}
-\item Create a large and diverse corpus of performance-debugging scenarios;
-\item Calculate the migration paths for each mode of the rational
-  programmer for each scenario;
-\item Compute and compare the successes and failures of the modes.  
+
+\item Create a large and diverse corpus of performance-debugging scenarios.
+
+\item Calculate the migration paths for each mode of the rational programmer for
+  each scenario.
+
+\item Compute and compare the successes and failures of the modes.
+
 \end{enumerate}
 
 
