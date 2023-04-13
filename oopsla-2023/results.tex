@@ -1,15 +1,57 @@
-\newcommand{\numgtp}{}
-\newcommand{\boundaryMB}{527}
-\newcommand{\statisticalMB}{4010}
+\newcommand{\numgtp}{16}
+\newcommand{\gtpurl}{\url{https://docs.racket-lang.org/gtp-benchmarks/index.html}}
+\newcommand{\boundaryMB}{536} % 536244 kb
+\newcommand{\statisticalMB}{4645} % 4645788 kb
 \newcommand{\runtimeMB}{44}
 
+This section presents the results of a rational programmer
+experiment that compares 17 strategies on programs from
+the GTP benchmark suite~\cite{gtp-benchmarks}.
 
-%% \bg{TODO rerun snake profile, have "snake" not "usnake" just in case}
-%% should not matter but still
 
-We have conducted a rational programmer experiment
-using the FILL strategies
-on FILL of the GTP benchmarks~\cite{}.
+\subsection{Benchmarks}
+
+The GTP benchmarks are a collection of small to mid-sized Typed Racket programs
+that support a full lattice of mixed-typed interactions.
+Since the benchmarks originate from useful scripts~\cite{gtnffvf-jfp-2019}
+and exercise a variety of types at module boundaries,\footnote{\gtpurl{}}
+they are an appropriate testbed for comparing profilers.
+Configurations with high overhead due to deep types should benefit from
+feature-specific profiling, while configurations that suffer from shallow
+types may benefit more from the statistical profiler.
+
+The experiment uses the v7.0 release of the GTP Benchmarks with small modifications
+to support feature-specific profiling.
+Version 7.0 is outdated, but was the latest version when we began collecting
+data in Fall 2022.
+The modifications add static information so that the profiler can peek through
+\emph{adaptor modules} in specific benchmarks.
+They do not change the run-time behavior of the code.
+In total, nine benchmarks are affected~(\cref{s:adaptor-rewrite}).
+Source code for the original benchmarks and our modified ones will be available
+in the artifact for this paper.
+
+We omit four of the 21 benchmarks:
+\bmname{zordoz} because it currently cannot run all deep/shallow/untyped configurations
+due to a known issue;\footnote{\url{https://github.com/bennn/gtp-benchmarks/issues/46}}
+\bmname{gregor},\bmname{quadT}, and \bmname{quadU} because we lack the resources
+to run a full experiment (each has over 1.5 million configurations);
+and \bmname{sieve} because it is very small, with only four configurations.
+\textbf{NOTE TO OOPSLA REVIEWERS}:
+for \bmname{quadT}, however, we have collected performance data and hope to
+collect profile results in the coming weeks.
+
+
+\subsection{Profilers}
+
+FILL Two profilers, both modified:
+
+\begin{itemize}
+  \item
+    profile, jsexpr output instead of text
+  \item
+    contract, group by boundary
+\end{itemize}
 
 
 \subsection{Data Collection}

@@ -131,6 +131,44 @@ We gratefully acknowledge support from
 
 \appendix
 
+\section{Modifications to the GTP Benchmarks}
+
+To support a rational programmer experiment using feature-specific profiling,
+we had to change nine of the GTP Benchmarks in a minor way.
+The change lets the profiler peek through \emph{adaptor modules}.
+Adaptor modules are a layer of indirection that lets benchmark with
+generative types (structs)support a lattice of mixed-typed
+configurations~\cite{gtp-benchmarks,tfgnvf-popl-2016}.
+The benchmarks are:
+\bmname{acquire}, \bmname{kcfa},
+\bmname{snake}, \bmname{suffixtree}, \bmname{synth}, \bmname{take5},
+\bmname{tetris}, and \bmname{zombie}.
+%% FILL also quadT
+
+In short, the trouble with an adaptor is that its name appears
+in contracts instead of the name of its clients.
+If one adaptor has three clients, then profiling will attribute costs to one
+library--adaptor boundary instead of three library--client boundaries.
+
+The change is to add client-specific submodules to each adaptor.
+Using an adaptor with three clients as an example, the changes are:
+\begin{enumerate}
+  \item
+    define generative types at the top level of the adaptor;
+  \item
+    export the generative types \emph{unsafely}, without any contract;
+  \item
+    create three submodules, one for each client, each of which imports
+    the generative types and provides them safely; and
+  \item
+    modify the clients to import from the newly-created submodules rather
+    than the top level.
+\end{enumerate}
+%
+The submodules attach client-specific names to contracts without changing
+run-time behavior.
+
+
 \section{FILL Skyline}
 
 \begin{figure}[t]
