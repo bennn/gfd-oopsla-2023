@@ -13,9 +13,9 @@ the GTP benchmark suite~\cite{gtp-benchmarks}.
 
 The GTP benchmarks are a collection of small to mid-sized Typed Racket programs
 that support a full lattice of mixed-typed interactions.
-Since the benchmarks originate from useful scripts~\cite{gtnffvf-jfp-2019}
-and exercise a variety of types at module boundaries,\footnote{\gtpurl{}}
-they are an appropriate testbed for comparing profilers.
+Since the benchmarks originate from useful scripts
+and exercise a variety of types at module boundaries~\cite{gtnffvf-jfp-2019},\footnote{\gtpurl{}}
+they are an appropriate testbed for comparing navigation strategies.
 Configurations with high overhead due to deep types should benefit from
 feature-specific profiling, while configurations that suffer from shallow
 types may benefit more from the statistical profiler.
@@ -38,20 +38,26 @@ due to a known issue;\footnote{\url{https://github.com/bennn/gtp-benchmarks/issu
 to run a full experiment (each has over 1.5 million configurations);
 and \bmname{sieve} because it is very small, with only four configurations.
 \textbf{NOTE TO OOPSLA REVIEWERS}:
-for \bmname{quadT}, however, we have collected performance data and hope to
+we have collected performance data for \bmname{quadT} and hope to
 collect profile results in the coming weeks.
 
 
-\subsection{Profilers}
+\subsection{Profiling Tools}
 
-FILL Two profilers, both modified:
+Racket ships with tools for statistical and feature-specific profiling.
+The feature-specific profiler is able to isolate the cost of contracts.
+Since deep gradual types compile to contracts, this default contract
+mode is suitable for the experiment.
 
-\begin{itemize}
-  \item
-    profile, jsexpr output instead of text
-  \item
-    contract, group by boundary
-\end{itemize}
+We use these two default tools with small modifications to make the output
+easier to analyze.
+For the statistical profiler, we change the default output format to
+JSON rather than a text table~(see~\cref{sec:seascape}).
+For the feature-specific profiler, we group the contracts by boundary and
+sort the groups in decreasing order.
+Thus the most expensive boundary appears at the top rather than the single
+most expensive contract.
+The modified code is will be in our artifact.
 
 
 \subsection{Data Collection}
