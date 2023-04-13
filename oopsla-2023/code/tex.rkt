@@ -76,7 +76,9 @@
     (string-replace
       (string-replace
         (string-replace
-          str
+          (string-replace
+            str
+            "configuration" "config.")
           "optimistic" "opt.")
         "conservative" "con.")
       "random boundary" "random")
@@ -84,6 +86,9 @@
 
 (define (agnostic-strategy? str)
   (member str (take-right cd-strategy* 2)))
+
+(define (con-strategy? str)
+  (string-contains? str "conservative"))
 
 (define (cd-strategy-index str)
   (or (index-of cd-strategy* str)
@@ -149,10 +154,11 @@
 (define (cd-sort row**)
   (sort row** < #:key (compose1 cd-strategy-index caar)))
 
-(define (f:strategy-overall)
+(define (f:strategy-overall #:hope? [hope? #f])
   (define tbl (cadr (success-tbl)))
-  (define total-scenarios (last (cadr tbl)))
-  (printf "~a total scenarios~n" total-scenarios)
+  (define total-scenarios
+    (list-ref (cadr tbl) (if hope? 8 9)))
+  (printf "~a total ~a scenarios~n" (if hope? "(hopeful)" "") total-scenarios)
   (define rect**
     (cd-sort
      (filter-not null?
@@ -161,20 +167,22 @@
         (for/list ((rr (in-list rr*)))
           (list (bg-strategy->cd-strategy (first rr))
                 (second rr)
-                (pct->number (third rr))
-                (pct->number (fourth rr))
-                (pct->number (fifth rr))
-                (pct->number (sixth rr))
-                (pct->number (seventh rr))
-                (pct->number (eighth rr)))))))))
-  #;(void
-    (for* ((rect* (in-list rect**))
-           (rect (in-list rect*)))
-      (printf "~a ~a~n" (first rect) (second rect))))
-  (define-values [rect-agnostic** other-rect**]
+                (pct2 (third rr) total-scenarios)
+                (pct2 (fourth rr) total-scenarios)
+                (pct2 (fifth rr) total-scenarios)
+                (pct2 (sixth rr) total-scenarios)
+                (pct2 (seventh rr) total-scenarios)
+                (pct2 (eighth rr) total-scenarios))))))))
+  (define-values [rect-agnostic** -other-rect**]
     (partition (compose1 agnostic-strategy? caar) rect**))
+  (define other-rect**
+    (if hope?
+      (filter-not (compose1 con-strategy? caar) -other-rect**)
+      -other-rect**))
   (define x-offset 1/2)
   (define num-mode 3)
+  (define num-ag (length rect-agnostic**))
+  (define num-other (length other-rect**))
   (define pp
     (parameterize ((plot-y-ticks (pct-ticks))
                    (plot-x-far-ticks no-ticks)
@@ -186,7 +194,8 @@
                                        (list (+ 2 (* ii 4)) (caar rr)))
                                      (for/list ((rr (in-list rect-agnostic**))
                                                 (ii (in-naturals)))
-                                       (list (+ 21 ii (* ii 1/2)) (caar rr)))))))
+                                       (list (+ (* 4 num-other) 1
+                                                ii (* ii 1/2)) (caar rr)))))))
       (plot-pict
         (list
           (for/list ((y (in-range 9)))
@@ -211,13 +220,15 @@
         #:x-label #f
         #:y-label #f
         #:x-min 0
-        #:x-max (+ 23 1/2) ;; TODO magic
+        #:x-max (+ (* 4 num-other) num-ag 1 1/2)
         #:y-min 0
         #:y-max 100
-        #:width 600
+        #:width (if hope? 500 600)
         #:height 300)))
+  (define out-name (format "strategy-overall~a.~a" (if hope? "-hope" "") (*out-kind*)))
+  (printf "save-pict ~a~n" out-name)
   (save-pict
-    (build-path data-dir (format "strategy-overall.~a" (*out-kind*)))
+    (build-path data-dir out-name)
     (hc-append
       2
       pp
@@ -598,9 +609,10 @@
     #:point-sym 'none))
 
 (define (go)
-  (parameterize ( (*out-kind* 'png))
+  (parameterize ( #;(*out-kind* 'png))
     #;(t:baseline-trouble)
     (f:strategy-overall)
+    (f:strategy-overall #:hope? #true)
     #;(app:strategy-overall)
     #;(f:deathplot)
     #;(f:head2head)

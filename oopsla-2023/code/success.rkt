@@ -19,7 +19,7 @@
 ;; TODO delete
 
 (struct trailfile (bb ss mm ff) #:prefab)
-(struct trailres (ss mm win-0 win-1 win-2 win-3 win-N better-N num-feasible) #:prefab)
+(struct trailres (ss mm win-0 win-1 win-2 win-3 win-N better-N num-feasible num-scenario) #:prefab)
 (struct bmres (bb seascape trails) #:prefab)
 (struct seascape (num-configs immediate# feasible# hopeless#) #:prefab)
 
@@ -39,11 +39,6 @@
       #;(string-contains? (trailfile-bb x) "tetris")
       )
     xx))
-
-(define (go)
-  #;(go-success)
-  (go-h2h)
-  (void))
 
 (define (go-h2h)
   ;; head to head
@@ -191,7 +186,8 @@
   (define win# (seascape-immediate# ss))
   (define hope# (seascape-feasible# ss))
   (define hopeless# (seascape-hopeless# ss))
-  (define num-scenario (+ (hash-count hope#) (hash-count hopeless#)))
+  (define num-feasible (hash-count hope#))
+  (define num-scenario (+ num-feasible (hash-count hopeless#)))
   (cons
     (let ()
       (define-values [num-win num-better]
@@ -211,7 +207,7 @@
                     (if (or (overhead>? perf (hash-ref perf# deep-cfg))
                             (overhead>? perf (hash-ref perf# shallow-cfg)))
                       1 0))))))
-      (trailres "toggle" "-" num-win "-" "-" "-" "-" num-better num-scenario))
+      (trailres "toggle" "-" num-win "-" "-" "-" "-" num-better num-feasible num-scenario))
     (for/list ((td (in-list bm*)))
       (define ss (trailfile-ss td))
       (define mm (trailfile-mm td))
@@ -260,6 +256,7 @@
             win-3
             win-N
             better-N
+            num-feasible
             num-scenario))))
 
 (define (combine res**)
@@ -311,7 +308,7 @@
 
 (define (combine-seascape res**)
   (cons
-    (list "benchmark" "%immediate" "%hopeless" "%feasible" "3^N")
+    (list "benchmark" "%immediate" "%hopeless" "%feasible" "%scenario" "3^N")
     (for/list ((res (in-list res**)))
       (define bb (bmres-bb res))
       (define ss (bmres-seascape res))
@@ -319,11 +316,13 @@
       (define nw (hash-count (seascape-immediate# ss)))
       (define ny (hash-count (seascape-feasible# ss)))
       (define nn (hash-count (seascape-hopeless# ss)))
-      (list bb (pctstr2 nw nc) (pctstr2 nn nc) (pctstr2 ny nc) nc))))
+      (list bb (pctstr2 nw nc) (pctstr2 nn nc)
+            (pctstr2 ny nc) (pctstr2 (+ ny nn) nc)
+            nc))))
 
 (define (combine-trails res**)
   (cons
-    (list "strategy" "mode" "%mono-win" "%1-win" "%2-win" "%3-win" "%N-win" "%improved" "total scenarios")
+    (list "strategy" "mode" "mono-win" "1-win" "2-win" "3-win" "N-win" "improved" "total-feas" "total-scenarios")
     (cons
       (trail-collect res** "toggle" "-")
       (for*/list ((strat (in-list (all-strategy-name*)))
@@ -331,15 +330,16 @@
         (trail-collect res** strat mode)))))
 
 (define (trail-collect res** strat mode)
-      (define-values [num-mono num-1 num-2 num-3 num-N num-better num-total]
+      (define-values [num-mono num-1 num-2 num-3 num-N num-better num-feasible num-scenario]
         (for*/fold ((nm 0)
                    (n1 0)
                    (n2 0)
                    (n3 0)
                    (nN 0)
                    (nB 0)
+                   (nf 0)
                    (nt 0)
-                   #:result (values nm n1 n2 n3 nN nB nt))
+                   #:result (values nm n1 n2 n3 nN nB nf nt))
                   ((rr (in-list res**))
                    (tt (in-list (bmres-trails rr)))
                    #:when (and (equal? (trailres-ss tt) strat)
@@ -350,24 +350,31 @@
                   (+ n3 (->real (trailres-win-3 tt)))
                   (+ nN (->real (trailres-win-N tt)))
                   (+ nB (->real (trailres-better-N tt)))
-                  (+ nt (trailres-num-feasible tt)))))
-      (when (zero? num-total)
+                  (+ nf (trailres-num-feasible tt))
+                  (+ nt (trailres-num-scenario tt)))))
+      (when (zero? num-scenario)
         (raise-arguments-error 'trail-collect
                                "uhoh zero total configs"
                                "strat" strat
                                "mode" mode))
       (list strat
             mode
-            (pctstr2 num-mono num-total)
-            (pctstr2 num-1 num-total)
-            (pctstr2 num-2 num-total)
-            (pctstr2 num-3 num-total)
-            (pctstr2 num-N num-total)
-            (pctstr2 num-better num-total)
-            num-total))
+            num-mono
+            num-1
+            num-2
+            num-3
+            num-N
+            num-better
+            num-feasible
+            num-scenario))
 
 (define (->real n)
   (if (real? n) n 0))
+
+(define (go)
+  (go-success)
+  #;(go-h2h)
+  (void))
 
 (module+ main (go))
 
