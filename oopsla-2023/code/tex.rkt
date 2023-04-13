@@ -38,6 +38,8 @@
 (define-runtime-path data-dir "../data")
 (define *out-kind* (make-parameter 'pdf))
 
+(define mode-name-for-plot* '("feature-specific" "statistical (total)" "statistical (self)" "agnostic"))
+
 (define (mode->idx str)
   (case str
     (("boundary") 0)
@@ -297,54 +299,97 @@
                                (h2h-key strategy)))))
             (sort to* << #:key (compose1 fkey car) #:cache-keys? #true)))
         (define num-gap (length (all-mode-name*)))
+        (define ymin   0)
+        (define ymax 70)
         (define pp
           (parameterize ((plot-y-ticks (pct-ticks))
-                         #;(TODO plot-x-ticks (exact-ticks num-sm))
+                         (plot-x-ticks (label-ticks
+                                           (for/list ((smode (in-list (map car x-order*)))
+                                                      (ii (in-naturals)))
+                                             (define-values [strategy mode] (h2hstr->sm smode))
+                                             (list (+ ii
+                                                      (cond
+                                                        ((string-contains? smode "prf_t") 1)
+                                                        ((string-contains? smode "prf_s") 2)
+                                                        ((string-contains? smode "random") 3)
+                                                        ((string-contains? smode "togg") 3)
+                                                        (else 0)))
+                                                   strategy))))
+                         (plot-x-tick-label-angle 30)
+                         [plot-x-tick-label-anchor  'top-right]
                          (plot-x-far-ticks no-ticks))
             (plot-pict
-              (for/list ((vec (in-list (list #;tie* los* win*)))
-                         (cc (in-naturals #;0 1)))
-                (rectangles
-                 (filter values
-                  (for/list ((ni (in-list x-order*))
-                             (xx (in-naturals)))
-                    (define smode (car ni))
-                    (define ii (cadr ni))
-                    (define yy
-                      (if (string-contains? smode "randomB")
-                        (mean (list (vector-ref vec ii)
-                                    (vector-ref vec (+ ii 1))
-                                    (vector-ref vec (+ ii 2))))
-                        (vector-ref vec ii)))
-                    (define x0 (+ (- xx 1/4)
-                                  (cond
-                                    ((string-contains? smode "prf_t") 1)
-                                    ((string-contains? smode "prf_s") 2)
-                                    ((string-contains? smode "random") 3)
-                                    ((string-contains? smode "togg") 3)
-                                    (else 0))
-                                  (* 1/4 (sub1 cc))))
-                    (and (< 0 yy)
-                      (vector (ivl x0 (+ x0 1/4))
-                              (ivl 0 (pct2 yy num-configs))))))
-                  #:line-width 1
-                  #:line-color cc
-                  #:color cc
-                  #:alpha 0.8))
+              (list
+                (let* ((mode* (filter non-empty-string?
+                                      (map (lambda (x) 
+                                        (define-values [ss mm] (h2hstr->sm (car x)))
+                                        mm)
+                                      x-order*)))
+                       (mode** (group-consec mode*)))
+                  (let loop ((m** mode**)
+                             (str* mode-name-for-plot*)
+                             (cc 1)
+                             (x0 -1/2))
+                    (if (null? m**)
+                      '()
+                      (let* ((len (length (car m**)))
+                             (len (if (string-contains? (caar m**) "bound") (sub1 len) len))
+                             (x1 (+ x0
+                                    (if (null? (cdr m**)) 1/2 (* 1/2 (min cc 2)))
+                                    (max 2 len))))
+                        (cons (list
+                                (area-rect x0 x1 #:color cc)
+                                (lblpoint (vector (+ x0 (/ (- x1 x0) 2)) (- ymax 5))
+                                          (add-rounded-border
+                                            #:x-margin 8 #:y-margin 4
+                                            #:radius 2
+                                            (lbltxt (car str*) #:size+ 3))
+                                          #:anchor 'top))
+                              (loop (cdr m**) (cdr str*) (+ 1 cc) x1))))))
+                (for/list ((y (in-range (/ ymax 10))))
+                  (hrule (* 10 (+ y 1))
+                         #:width 1
+                         #:color "black"
+                         #:alpha 0.1))
+                (for/list ((vec (in-list (list #;tie* los* win*)))
+                           (cc (in-naturals #;0 1)))
+                  (rectangles
+                   (filter values
+                    (for/list ((ni (in-list x-order*))
+                               (xx (in-naturals)))
+                      (define smode (car ni))
+                      (define ii (cadr ni))
+                      (define yy
+                        (if (string-contains? smode "randomB")
+                          (mean (list (vector-ref vec ii)
+                                      (vector-ref vec (+ ii 1))
+                                      (vector-ref vec (+ ii 2))))
+                          (vector-ref vec ii)))
+                      (define x0 (+ (- xx 1/4)
+                                    (cond
+                                      ((string-contains? smode "prf_t") 1)
+                                      ((string-contains? smode "prf_s") 2)
+                                      ((string-contains? smode "random") 3)
+                                      ((string-contains? smode "togg") 3)
+                                      (else 0))
+                                    (* 1/4 (sub1 cc))))
+                      (and (< 0 yy)
+                        (vector (ivl x0 (+ x0 1/4))
+                                (ivl 0 (pct2 yy num-configs))))))
+                    #:line-width 1
+                    #:line-color cc
+                    #:color (if (= 1 cc) (->pen-color cc) cc)
+                    #:alpha 0.8)))
               #:width 600
               #:height 300
               #:x-min -1/2
               #:x-max (+ 1/2 (sub1 (length x-order*)) num-gap)
-              #:y-min 0
-              #:y-max 100
+              #:y-min ymin
+              #:y-max ymax
               #:x-label #f
               #:y-label #f
               #:title #f)))
-        (define title-pict (lbltxt (format "~a ~a, ~a configs" strategy mode num-configs)))
-        (ht-append
-          4
-          (vl-append title-pict pp)
-          (cheap-h2h-legend x-order*))))
+        pp))
   (save-pict
     (build-path data-dir (format "head-to-head.~a" (*out-kind*)))
     (cond
@@ -471,8 +516,6 @@
   (define ymax 6)
   (define x-txt (- 1 2/10))
   (define rrect-y* (map add1 (range ymax)))
-  (define (lbltxt2 str)
-    (lbltxt str #:size+ 2))
   ;; colors = 1 ... num-mode+1
   (parameterize ((plot-y-ticks no-ticks)
                  (plot-y-far-ticks no-ticks)
@@ -489,7 +532,7 @@
             (lbltxt2 str)))
         ;; mode colors
         (for/list ((ii (in-range (add1 num-mode)))
-                   (str (in-list '("feature-specific" "statistical (total)" "statistical (self)" "agnostic"))))
+                   (str (in-list mode-name-for-plot*)))
           (define yy (* (+ 1 (if (= ii num-mode) 5/4 3/4) ii) -1))
           (list
             (rswatch (+ 10/100 (* (+ 3/100 swatch-w) (if (= ii num-mode) 1 ii)))
@@ -573,8 +616,19 @@
   (save-pict (format "data/deathplot.~a" (*out-kind*)) pp)
   (void))
 
+(define (group-consec x*)
+  (for/fold ((acc (list (list (car x*))))
+             #:result (reverse acc))
+            ((x (in-list x*)))
+    (if (equal? (caar acc) x)
+      (cons (cons x (car acc)) (cdr acc))
+      (cons (list x) acc))))
+
 (define (lbltxt str #:size+ [size+ 0])
   (text str 'roman (+ size+ 9)))
+
+(define (lbltxt2 str)
+  (lbltxt str #:size+ 2))
 
 (define (rrect x y* #:color c #:x0 [x0 0] #:w [w% 1])
   (define x-mid (+ x0 x 1/2))
@@ -609,6 +663,17 @@
                   #:style rstyle
                   #:color ((if (= L-2 ii) my->pen-color my->brush-color) c)
                   #:alpha alpha))))
+
+(define (area-rect x0 x1 #:color cc)
+  (rectangles
+    (list
+      (vector (ivl x0 x1)
+              (ivl 0 100)))
+    #:line-color "white"
+    #:line-width 0
+    #:color (my->brush-color cc)
+    #:alpha 0.4))
+
 
 (define (my->pen-color c)
   (list-ref wong* c))
@@ -651,15 +716,15 @@
       (format "~a%" (pre-tick-value pt))
       (make-string ii #\NUL))))
 
-(define (lblpoint xy pp)
+(define (lblpoint xy pp #:anchor [anchor #f])
   (point-pict
     xy pp
-    #:anchor 'left
+    #:anchor (or anchor 'left)
     #:point-size 0
     #:point-sym 'none))
 
 (define (go)
-  (parameterize ( (*out-kind* 'png))
+  (parameterize ( #;(*out-kind* 'png))
     #;(t:baseline-trouble)
     #;(f:strategy-overall)
     #;(f:strategy-overall #:hope? #true)
