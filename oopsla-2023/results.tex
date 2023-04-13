@@ -34,12 +34,14 @@ in the artifact for this paper.
 We omit four of the 21 benchmarks:
 \bmname{zordoz} because it currently cannot run all deep/shallow/untyped configurations
 due to a known issue;\footnote{\url{https://github.com/bennn/gtp-benchmarks/issues/46}}
-\bmname{gregor},\bmname{quadT}, and \bmname{quadU} because we lack the resources
-to run a full experiment (each has over 1.5 million configurations);
+\bmname{gregor},\bmname{quadT}, and \bmname{quadU} because each has over 1.5
+million configurations and we lack the resources to run a full experiment;\footnote{
+\emph{To OOPSLA reviewers}: we have collected performance data for
+\bmname{quadT} (which has the worst performance of the three) and hope to
+collect profile results in the coming weeks.  We have no plans to measure
+\bmname{gregor} or \bmname{quadU}.
+}
 and \bmname{sieve} because it is very small, with only four configurations.
-\textbf{NOTE TO OOPSLA REVIEWERS}:
-we have collected performance data for \bmname{quadT} and hope to
-collect profile results in the coming weeks.
 
 
 \subsection{Profiling Tools}
@@ -186,12 +188,12 @@ FILL say more
       Benchmark           & $3^N$ & \% Slow \\\midrule
       \ycell{\bmname{lnm}}        &   \ycell{729} & \ycell{40.47\%} \\
       \bmname{suffixtree} &   729 & 98.49\% \\
-      \bmname{kcfa}       &  2187 & 92.87\% \\
-      \bmname{snake}      &  6561 & 99.97\% \\
-      \bmname{take5}      &  6561 & 99.95\% \\
-      \bmname{acquire}    & 19683 & 99.23\% \\
-      \bmname{tetris}     & 19683 & 95.47\% \\
-      \bmname{synth}      & 59049 & 99.99\%
+      \bmname{kcfa}       &  2,187 & 92.87\% \\
+      \bmname{snake}      &  6,561 & 99.97\% \\
+      \bmname{take5}      &  6,561 & 99.95\% \\
+      \bmname{acquire}    & 19,683 & 99.23\% \\
+      \bmname{tetris}     & 19,683 & 95.47\% \\
+      \bmname{synth}      & 59,049 & 99.99\%
     \end{tabular}
   \end{tabular}
 \end{table}
@@ -203,37 +205,37 @@ FILL say more
 \end{figure}
 
 \begin{table}[t]
-  \caption{How many of the $3^N$ configurations cannot reach 1x without removing types?}
+  \caption{How scenarios can possibly reach 1x without removing types?}
   \label{t:blackhole}
   \begin{tabular}[t]{l@{\qquad}l}
     \begin{tabular}[t]{lrr}
-Benchmark           & $3^N$ & \% Hopeless \\\midrule
-\bmname{morsecode}  &    81 &         0\% \\
-\bmname{forth}      &    81 &      59.26\% \\
-\bmname{fsm}        &    81 &         0\% \\
-\bmname{fsmoo}      &    81 &         0\% \\
-      \rcell{\bmname{mbta}}       &    \rcell{81} &      \rcell{88.89\%} \\
-\bmname{zombie}     &    81 &      59.26\% \\
-      \rcell{\bmname{dungeon}}    &   \rcell{243} &      \rcell{99.59\%} \\
-\bmname{jpeg}       &   243 &         0\%
+      Benchmark                &  \# Scenario &  \% Hopeful \\\midrule
+      \bmname{morsecode}       &           67 &    100\% \\
+      \bmname{forth}           &           76 &     36.84\% \\
+      \bmname{fsm}             &           62 &    100\% \\
+      \bmname{fsmoo}           &           68 &    100\% \\
+      \rcell{\bmname{mbta}}    &   \rcell{72} & \rcell{0\%} \\
+      \bmname{zombie}          &           74 &     35.14\% \\
+      \rcell{\bmname{dungeon}} &  \rcell{242} & \rcell{0\%} \\
+      \bmname{jpeg}            &          230 &    100\%
     \end{tabular}
     &
     \begin{tabular}[t]{lrr}
-Benchmark           & $3^N$ & \% Hopeless \\\midrule
-\bmname{lnm}        &   729 &         0\% \\
-\bmname{suffixtree} &   729 &         0\% \\
-\bmname{kcfa}       &  2187 &         0\% \\
-\bmname{snake}      &  6561 &         0\% \\
-      \rcell{\bmname{take5}}      &  \rcell{6561} &      \rcell{99.95\%} \\
-\bmname{acquire}    & 19683 &      93.83\% \\
-\bmname{tetris}     & 19683 &         0\% \\
-\bmname{synth}      & 59049 &         0\%
+      Benchmark                &   \# Scenario &  \% Hopeful \\\midrule
+      \bmname{lnm}             &           295 &    100\% \\
+      \bmname{suffixtree}      &           718 &    100\% \\
+      \bmname{kcfa}            &         2,031 &    100\% \\
+      \bmname{snake}           &         6,559 &    100\% \\
+      \rcell{\bmname{take5}}   & \rcell{6,558} & \rcell{0\%} \\
+      \bmname{acquire}         &        19,532 &      5.45\% \\
+      \bmname{tetris}          &        18,791 &    100\% \\
+      \bmname{synth}           &        59,046 &    100\%
     \end{tabular}
   \end{tabular}
 \end{table}
 
 \begin{figure}[t]
-  \includegraphics[width=0.8\columnwidth]{data/strategy-overall-hopeful.pdf}
+  \includegraphics[width=\columnwidth]{data/strategy-overall-hopeful.pdf}
   \caption{Hopeful only, 88,992 scenarios. RandomB is average of 3 runs, max stddev <0.12}
   \label{f:strategy-hope}
 \end{figure}

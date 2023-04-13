@@ -126,21 +126,33 @@
   (void))
 
 (define (t:blackhole)
-  (define tbl (car (success-tbl 'feasible)))
-  (define title* (list "Benchmark" "$3^N$" "\\% Hopeless"))
+  (define title* (list "Benchmark" "\\# Scenario" "\\% Hopeful"))
   (define row*
-    (for/list ((rr (in-list (cdr tbl))))
-      (list (bmname (first rr))
-            (fifth rr)
-            (hide-zeropct (third rr)))))
+    (for/list ((bb (in-list (file->value (build-path data-dir "success-res.rktd")))))
+      (define bm (bmres-bb bb))
+      (define ss (bmres-seascape bb))
+      (define num-hopeful (hash-count (seascape-feasible# ss)))
+      (define num-scenario (+ num-hopeful (hash-count (seascape-hopeless# ss))))
+      (define pstr (hide-zeropct (pctstr2 num-hopeful num-scenario)))
+      (define red? (equal? #\0 (string-ref pstr 0)))
+      (map
+        (if red? rcell values)
+        (list (bmname bm)
+              num-scenario
+              pstr))))
   (tex-table (cons title* row*))
   (void))
+
+(define (rcell str)
+  (format "\\rcell{~a}" str))
 
 (define (hide-zeropct str)
   (string-replace
     (if (equal? str "0.00%")
       "0%"
-      str)
+      (if (equal? str "100.00%")
+        "100%"
+        str))
     "%"
     "\\%"))
 
@@ -192,13 +204,14 @@
     (define-values [rect-agnostic** -other-rect**]
       (partition (compose1 agnostic-strategy? caar) rect**))
     (define other-rect**
-      (if hope?
+      (if #f ;; hope?
         (filter-not (compose1 con-strategy? caar) -other-rect**)
         -other-rect**))
     (define x-offset 1/2)
     (define num-mode 3)
     (define num-ag (length rect-agnostic**))
     (define num-other (length other-rect**))
+    (define ymax 100)
     (define pp
       (parameterize ((plot-y-ticks (pct-ticks))
                      (plot-x-far-ticks no-ticks)
@@ -214,6 +227,9 @@
                                                   ii (* ii 1/2)) (caar rr)))))))
         (plot-pict
           (list
+            (if hope?
+              (text-box (vector 1/4 (- ymax 2)) "Hopeful only" #:anchor 'top-left)
+              '())
             (for/list ((y (in-range 9)))
               (hrule (* 10 (+ y 1))
                      #:width 1
@@ -238,7 +254,7 @@
           #:x-min 0
           #:x-max (+ (* 4 num-other) num-ag 1 1/2)
           #:y-min 0
-          #:y-max 100
+          #:y-max ymax
           #:width (* (if split-bm? 8/10 1) (if hope? 500 600))
           #:height (* (if split-bm? 56/100 1) 300))))
     (define out-name
@@ -364,11 +380,8 @@
                                     (max 2 len))))
                         (cons (list
                                 (area-rect x0 x1 #:color cc)
-                                (lblpoint (vector (+ x0 (/ (- x1 x0) 2)) (- ymax 5))
-                                          (add-rounded-border
-                                            #:x-margin 8 #:y-margin 4
-                                            #:radius 2
-                                            (lbltxt (car str*) #:size+ 3))
+                                (text-box (vector (+ x0 (/ (- x1 x0) 2)) (- ymax 5))
+                                          (car str*)
                                           #:anchor 'top))
                               (loop (cdr m**) (cdr str*) (+ 1 cc) x1))))))
                 (for/list ((y (in-range (/ ymax 10))))
@@ -676,13 +689,21 @@
     #:point-size 0
     #:point-sym 'none))
 
+(define (text-box xy str #:anchor [anchor #f])
+  (define pp
+    (add-rounded-border
+      #:x-margin 8 #:y-margin 4
+      #:radius 2
+      (lbltxt str #:size+ 3)))
+  (lblpoint xy pp #:anchor anchor))
+
 (define (go)
   (parameterize ( #;(*out-kind* 'png))
     #;(t:baseline-trouble)
-    #;(t:blackhole)
+    (t:blackhole)
     #;(f:strategy-overall)
     #;(f:strategy-overall #:hope? #true)
-    (app:strategy-overall)
+    #;(app:strategy-overall)
     #;(f:head2head)
     #;(app:head2head)
     #;(f:deathplot)
