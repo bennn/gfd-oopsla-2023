@@ -14,6 +14,7 @@
   sm-str-init
   sm-str-ref
   sm-str-set
+  <<
   point-sym*
   take-some
   row*->get-overhead
@@ -182,6 +183,11 @@
 
 (define (take-some x*)
   (take x* 2))
+
+(define (<< aa bb)
+  (or (< (car aa) (car bb))
+      (and (= (car aa) (car bb))
+           (< (cadr aa) (cadr bb)))))
 
 (define (row*->get-overhead rr*)
   (define urow (car rr*))

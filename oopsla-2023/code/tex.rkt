@@ -155,6 +155,8 @@
   (sort row** < #:key (compose1 cd-strategy-index caar)))
 
 (define (f:strategy-overall #:hope? [hope? #f])
+  ;; TODO `hope?` is wrong, computed over all configs instead of all hopeful,
+  ;; gotta redo successrktd
   (define tbl (cadr (success-tbl)))
   (define total-scenarios
     (list-ref (cadr tbl) (if hope? 8 9)))
@@ -238,22 +240,27 @@
 (define (vector-add1 v k)
   (vector-set! v k (+ 1 (vector-ref v k))))
 
-(define (f:head2head)
+(define (h2hstr->sm from-mode)
+  (let* ((str* (string-split from-mode "_")))
+    (values (bg-strategy->cd-strategy (car str*))
+            (string-join (cdr str*) "_"))))
+
+(define (h2h-key str)
+  (or
+    (index-of cd-strategy* str)
+    (index-of (append (all-mode-name*) (list "")) (string-replace str "profile" "prf"))
+    (raise-argument-error 'h2h-key "key" str)))
+
+(define (f:head2head #:all? [all? #f])
   (define num-sm (length all-sm-name*))
   (define fave*
-    ;; '("opt_boundary" "cost-opt_boundary" "limit-con_boundary")
-    (drop-right all-sm-name* 4))
+    (if all? (drop-right all-sm-name* 4) '("opt_boundary")))
   (define vv (file->value (build-path data-dir "h2h.rktd")))
   (define pp*
-    (parameterize ((plot-y-ticks (pct-ticks))
-                   #;(plot-x-ticks (exact-ticks num-sm))
-                   (plot-x-far-ticks no-ticks))
       (for/list ((from-mode (in-list fave*)))
         (define from-key (sm->idx from-mode))
         (define-values [strategy mode]
-          (let* ((str* (string-split from-mode "_")))
-            (values (bg-strategy->cd-strategy (car str*))
-                    (string-join (cdr str*) "_"))))
+          (h2hstr->sm from-mode))
         (define win* (make-vector num-sm 0))
         (define tie* (make-vector num-sm 0))
         (define los* (make-vector num-sm 0))
@@ -275,41 +282,82 @@
                  (vector-add1 los* to-key))
                 (else
                   (error 'h2hwtf))))))
+        (define x-order*
+          (let* ((to* (for/list ((to-mode (in-list all-sm-name*))
+                                 (to-key (in-naturals))
+                                 #:unless (string-contains? to-mode "randomB_prf"))
+                        (list to-mode to-key)))
+                 (fkey (lambda (str)
+                         (define-values [strategy mode] (h2hstr->sm str))
+                         (list (if (string-contains? strategy "random")
+                                 (length to*)
+                                 (if (string-contains? strategy "togg")
+                                   (add1 (length to*))
+                                   (h2h-key mode)))
+                               (h2h-key strategy)))))
+            (sort to* << #:key (compose1 fkey car) #:cache-keys? #true)))
+        (define num-gap (length (all-mode-name*)))
         (define pp
-          (plot-pict
-            (for/list ((vec (in-list (list tie* los* win*)))
-                       (cc (in-naturals)))
-              (rectangles
-                (for/list ((yy (in-vector vec))
-                           (xx (in-naturals))
-                           #:when (< 0 yy))
-                  (define x0 (+ (- xx 1/4) (* 1/4 cc)))
-                  (vector (ivl x0 (+ x0 1/4))
-                          (ivl 0 (pct2 yy num-configs))))
-                #:line-width 1
-                #:line-color cc
-                #:color cc
-                #:alpha 0.8))
-            #:width 600
-            #:height 300
-            #:y-min 0
-            #:y-max 100
-            #:x-label #f
-            #:y-label #f
-            #:title #f))
+          (parameterize ((plot-y-ticks (pct-ticks))
+                         #;(TODO plot-x-ticks (exact-ticks num-sm))
+                         (plot-x-far-ticks no-ticks))
+            (plot-pict
+              (for/list ((vec (in-list (list #;tie* los* win*)))
+                         (cc (in-naturals #;0 1)))
+                (rectangles
+                 (filter values
+                  (for/list ((ni (in-list x-order*))
+                             (xx (in-naturals)))
+                    (define smode (car ni))
+                    (define ii (cadr ni))
+                    (define yy
+                      (if (string-contains? smode "randomB")
+                        (mean (list (vector-ref vec ii)
+                                    (vector-ref vec (+ ii 1))
+                                    (vector-ref vec (+ ii 2))))
+                        (vector-ref vec ii)))
+                    (define x0 (+ (- xx 1/4)
+                                  (cond
+                                    ((string-contains? smode "prf_t") 1)
+                                    ((string-contains? smode "prf_s") 2)
+                                    ((string-contains? smode "random") 3)
+                                    ((string-contains? smode "togg") 3)
+                                    (else 0))
+                                  (* 1/4 (sub1 cc))))
+                    (and (< 0 yy)
+                      (vector (ivl x0 (+ x0 1/4))
+                              (ivl 0 (pct2 yy num-configs))))))
+                  #:line-width 1
+                  #:line-color cc
+                  #:color cc
+                  #:alpha 0.8))
+              #:width 600
+              #:height 300
+              #:x-min -1/2
+              #:x-max (+ 1/2 (sub1 (length x-order*)) num-gap)
+              #:y-min 0
+              #:y-max 100
+              #:x-label #f
+              #:y-label #f
+              #:title #f)))
         (define title-pict (lbltxt (format "~a ~a, ~a configs" strategy mode num-configs)))
         (ht-append
           4
           (vl-append title-pict pp)
-          (cheap-h2h-legend)))))
+          (cheap-h2h-legend x-order*))))
   (save-pict
     (build-path data-dir (format "head-to-head.~a" (*out-kind*)))
-    (ptable
-      #:ncols 3
-      #:row-sep 4
-      #:col-sep 4
-      pp*)
-    #;(apply vl-append 4 pp*))
+    (cond
+      ((null? (cdr pp*))
+       (car pp*))
+      (all?
+       (ptable
+         #:ncols 3
+         #:row-sep 4
+         #:col-sep 4
+         pp*))
+      (else
+       (apply vl-append 4 pp*))))
   (void))
 
 (define (app:head2head)
@@ -393,12 +441,14 @@
     (void))
   (void))
 
-(define (cheap-h2h-legend)
+(define (cheap-h2h-legend [x-order* #f])
   (apply
     vl-append
-    (for/list ((str (in-list all-sm-name*))
-               (ii (in-naturals)))
-      (lbltxt (format "~a. ~a" ii str)))))
+    (for/list ((ni (in-list (or x-order*
+                                (for/list ((str (in-list all-sm-name*))
+                                           (ii (in-naturals)))
+                                   (list str ii))))))
+      (lbltxt (format "~a. ~a" (second ni) (first ni))))))
 
 (define (aggregate rect*)
   (if (null? (cdr rect*))
@@ -609,13 +659,13 @@
     #:point-sym 'none))
 
 (define (go)
-  (parameterize ( #;(*out-kind* 'png))
+  (parameterize ( (*out-kind* 'png))
     #;(t:baseline-trouble)
-    (f:strategy-overall)
-    (f:strategy-overall #:hope? #true)
+    #;(f:strategy-overall)
+    #;(f:strategy-overall #:hope? #true)
     #;(app:strategy-overall)
     #;(f:deathplot)
-    #;(f:head2head)
+    (f:head2head)
     #;(t:blackhole)
     #;(app:head2head)
     (void)))
