@@ -81,8 +81,8 @@
           (string-replace
             str
             "configuration" "config.")
-          "optimistic" "opt.")
-        "conservative" "con.")
+          "aware optimistic" "aware opt.")
+        "aware conservative" "aware con.")
       "random boundary" "random")
     "toggling" "tog."))
 
@@ -102,8 +102,8 @@
     #:border-style 'latex
     x*))
 
-(define (success-tbl)
-  (file->value (build-path data-dir "success-tbl.rktd")))
+(define (success-tbl scene)
+  (file->value (build-path data-dir (format "success-tbl-~a.rktd" scene))))
 
 (define (points-by-strategy vv)
   (let* ((all (filter (compose1 (lambda (x) (define vv (bg-strategy->cd-strategy x))
@@ -115,31 +115,34 @@
     ss*))
 
 (define (t:baseline-trouble)
-  (define tbl (car (success-tbl)))
+  (define tbl (car (success-tbl 'feasible)))
   (define title* (list "Benchmark" "$3^N$" "\\% Slow"))
   (define row*
     (for/list ((rr (in-list (cdr tbl))))
       (list (bmname (first rr))
-            (number->string (fifth rr))
+            (fifth rr)
             (rev-pct (second rr)))))
   (tex-table (cons title* row*))
   (void))
 
 (define (t:blackhole)
-  (define tbl (car (success-tbl)))
+  (define tbl (car (success-tbl 'feasible)))
   (define title* (list "Benchmark" "$3^N$" "\\% Hopeless"))
   (define row*
     (for/list ((rr (in-list (cdr tbl))))
       (list (bmname (first rr))
-            (number->string (fifth rr))
+            (fifth rr)
             (hide-zeropct (third rr)))))
   (tex-table (cons title* row*))
   (void))
 
 (define (hide-zeropct str)
-  (if (equal? str "0.00%")
-    "---"
-    str))
+  (string-replace
+    (if (equal? str "0.00%")
+      "0%"
+      str)
+    "%"
+    "\\%"))
 
 (define (rev-pct str)
   (define nn (pct->number str))
@@ -157,11 +160,10 @@
   (sort row** < #:key (compose1 cd-strategy-index caar)))
 
 (define (f:strategy-overall #:hope? [hope? #f])
-  ;; TODO `hope?` is wrong, computed over all configs instead of all hopeful,
-  ;; gotta redo successrktd
-  (define tbl (cadr (success-tbl)))
+  (define my-scene (if hope? 'hopeful 'feasible))
+  (define tbl (cadr (success-tbl my-scene)))
   (define total-scenarios
-    (list-ref (cadr tbl) (if hope? 8 9)))
+    (list-ref (cadr tbl) 8))
   (printf "~a total ~a scenarios~n" (if hope? "(hopeful)" "") total-scenarios)
   (define rect**
     (cd-sort
@@ -229,7 +231,7 @@
         #:y-max 100
         #:width (if hope? 500 600)
         #:height 300)))
-  (define out-name (format "strategy-overall~a.~a" (if hope? "-hope" "") (*out-kind*)))
+  (define out-name (format "strategy-overall-~a.~a" my-scene (*out-kind*)))
   (printf "save-pict ~a~n" out-name)
   (save-pict
     (build-path data-dir out-name)
@@ -381,7 +383,7 @@
                     #:color (if (= 1 cc) (->pen-color cc) cc)
                     #:alpha 0.8)))
               #:width 600
-              #:height 300
+              #:height (* 7/10 300)
               #:x-min -1/2
               #:x-max (+ 1/2 (sub1 (length x-order*)) num-gap)
               #:y-min ymin
@@ -526,7 +528,7 @@
         ;; tower shapes
         (rrect 0 rrect-y* #:color 0 #:w 60/100)
         (for/list ((y (in-list rrect-y*))
-                   (str (in-list '("strict success" "1-loose" "2-loose" "3-loose" "N-loose" "improved"))))
+                   (str (in-list '("strict success" "1-loose" "2-loose" "3-loose" "N-loose" "strict 3x"))))
           (lblpoint
             (vector x-txt (- y 1/2))
             (lbltxt2 str)))
@@ -726,8 +728,8 @@
 (define (go)
   (parameterize ( #;(*out-kind* 'png))
     #;(t:baseline-trouble)
-    #;(f:strategy-overall)
-    #;(f:strategy-overall #:hope? #true)
+    (f:strategy-overall)
+    (f:strategy-overall #:hope? #true)
     #;(app:strategy-overall)
     #;(f:deathplot)
     (f:head2head)

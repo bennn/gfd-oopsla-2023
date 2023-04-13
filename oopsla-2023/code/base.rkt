@@ -23,6 +23,7 @@
   row-trail-failure?
   bm->num-configs
   good-overhead?
+  backup-overhead?
   overhead<=?
   overhead>?
   pct2 pctstr2
@@ -237,6 +238,9 @@
 
 (define (good-overhead? m/s)
   (<= (apply - m/s) 1))
+
+(define (backup-overhead? m/s)
+  (<= (apply - m/s) 3))
 
 (define (overhead<=? a b)
   (not (overhead>? a b)))

@@ -1,36 +1,4 @@
 (#s(bmres
-    "sieve"
-    #s(seascape
-       9
-       #hash(("00" . #t) ("11" . #t))
-       #hash(("01" . #t)
-             ("02" . #t)
-             ("10" . #t)
-             ("12" . #t)
-             ("20" . #t)
-             ("21" . #t)
-             ("22" . #t))
-       #hash())
-    (#s(trailres "toggle" "-" 3 "-" "-" "-" "-" 5 7 7)
-     #s(trailres "con" "boundary" 0 0 0 0 0 5 7 7)
-     #s(trailres "con" "prf_self" 0 0 0 0 0 2 7 7)
-     #s(trailres "con" "prf_total" 0 0 0 0 0 2 7 7)
-     #s(trailres "cost-con" "boundary" 0 0 0 0 0 5 7 7)
-     #s(trailres "cost-con" "prf_self" 0 0 0 0 0 2 7 7)
-     #s(trailres "cost-con" "prf_total" 0 0 0 0 0 2 7 7)
-     #s(trailres "cost-opt" "boundary" 5 5 5 5 5 5 7 7)
-     #s(trailres "cost-opt" "prf_self" 3 3 3 3 3 3 7 7)
-     #s(trailres "cost-opt" "prf_total" 3 3 3 3 3 3 7 7)
-     #s(trailres "limit-con" "boundary" 5 5 5 5 5 5 7 7)
-     #s(trailres "limit-con" "prf_self" 3 3 3 3 3 3 7 7)
-     #s(trailres "limit-con" "prf_total" 3 3 3 3 3 3 7 7)
-     #s(trailres "opt" "boundary" 5 5 5 5 5 5 7 7)
-     #s(trailres "opt" "prf_self" 3 3 3 3 3 3 7 7)
-     #s(trailres "opt" "prf_total" 3 3 3 3 3 3 7 7)
-     #s(trailres "randomB" "boundary" 4 4 4 4 4 6 7 7)
-     #s(trailres "randomB" "prf_self" 2 2 2 2 2 5 7 7)
-     #s(trailres "randomB" "prf_total" 1 1 1 1 1 5 7 7)))
- #s(bmres
     "morsecode"
     #s(seascape
        81
@@ -116,25 +84,25 @@
              ("2221" . #t)
              ("2222" . #t))
        #hash())
-    (#s(trailres "toggle" "-" 26 "-" "-" "-" "-" 48 67 67)
-     #s(trailres "con" "boundary" 0 0 0 0 0 6 67 67)
-     #s(trailres "con" "prf_self" 6 6 6 6 6 24 67 67)
-     #s(trailres "con" "prf_total" 2 2 2 2 2 24 67 67)
-     #s(trailres "cost-con" "boundary" 0 0 0 0 0 6 67 67)
-     #s(trailres "cost-con" "prf_self" 6 6 6 6 6 24 67 67)
-     #s(trailres "cost-con" "prf_total" 2 2 2 2 2 24 67 67)
-     #s(trailres "cost-opt" "boundary" 2 2 2 2 2 8 67 67)
-     #s(trailres "cost-opt" "prf_self" 9 9 9 9 9 21 67 67)
-     #s(trailres "cost-opt" "prf_total" 11 11 11 11 11 23 67 67)
-     #s(trailres "limit-con" "boundary" 2 2 2 2 2 8 67 67)
-     #s(trailres "limit-con" "prf_self" 7 7 7 7 7 19 67 67)
-     #s(trailres "limit-con" "prf_total" 9 9 9 9 9 21 67 67)
-     #s(trailres "opt" "boundary" 2 2 2 2 2 8 67 67)
-     #s(trailres "opt" "prf_self" 9 9 9 9 9 21 67 67)
-     #s(trailres "opt" "prf_total" 11 11 11 11 11 23 67 67)
-     #s(trailres "randomB" "boundary" 31 38 44 44 46 60 67 67)
-     #s(trailres "randomB" "prf_self" 26 32 40 41 43 58 67 67)
-     #s(trailres "randomB" "prf_total" 28 34 37 40 42 55 67 67)))
+    (#s(trailres "toggle" "-" 26 "-" "-" "-" "-" 67 67)
+     #s(trailres "con" "boundary" 0 0 0 0 0 67 67)
+     #s(trailres "con" "prf_self" 6 6 6 6 6 67 67)
+     #s(trailres "con" "prf_total" 2 2 2 2 2 67 67)
+     #s(trailres "cost-con" "boundary" 0 0 0 0 0 67 67)
+     #s(trailres "cost-con" "prf_self" 6 6 6 6 6 67 67)
+     #s(trailres "cost-con" "prf_total" 2 2 2 2 2 67 67)
+     #s(trailres "cost-opt" "boundary" 2 2 2 2 2 67 67)
+     #s(trailres "cost-opt" "prf_self" 9 9 9 9 9 67 67)
+     #s(trailres "cost-opt" "prf_total" 11 11 11 11 11 67 67)
+     #s(trailres "limit-con" "boundary" 2 2 2 2 2 67 67)
+     #s(trailres "limit-con" "prf_self" 7 7 7 7 7 67 67)
+     #s(trailres "limit-con" "prf_total" 9 9 9 9 9 67 67)
+     #s(trailres "opt" "boundary" 2 2 2 2 2 67 67)
+     #s(trailres "opt" "prf_self" 9 9 9 9 9 67 67)
+     #s(trailres "opt" "prf_total" 11 11 11 11 11 67 67)
+     #s(trailres "randomB" "boundary" 31 38 44 44 46 67 67)
+     #s(trailres "randomB" "prf_self" 26 32 40 41 43 67 67)
+     #s(trailres "randomB" "prf_total" 28 34 37 40 42 67 67)))
  #s(bmres
     "forth"
     #s(seascape
@@ -220,25 +188,25 @@
              ("2212" . #t)
              ("2221" . #t)
              ("2222" . #t)))
-    (#s(trailres "toggle" "-" 12 "-" "-" "-" "-" 43 28 76)
-     #s(trailres "con" "boundary" 0 0 0 0 0 46 28 76)
-     #s(trailres "con" "prf_self" 0 0 0 0 0 24 28 76)
-     #s(trailres "con" "prf_total" 0 0 0 0 0 24 28 76)
-     #s(trailres "cost-con" "boundary" 0 0 0 0 0 46 28 76)
-     #s(trailres "cost-con" "prf_self" 0 0 0 0 0 24 28 76)
-     #s(trailres "cost-con" "prf_total" 0 0 0 0 0 24 28 76)
-     #s(trailres "cost-opt" "boundary" 12 12 12 12 12 48 28 76)
-     #s(trailres "cost-opt" "prf_self" 3 3 3 3 3 19 28 76)
-     #s(trailres "cost-opt" "prf_total" 4 4 4 4 4 19 28 76)
-     #s(trailres "limit-con" "boundary" 8 8 8 8 8 48 28 76)
-     #s(trailres "limit-con" "prf_self" 3 3 3 3 3 18 28 76)
-     #s(trailres "limit-con" "prf_total" 4 4 4 4 4 18 28 76)
-     #s(trailres "opt" "boundary" 11 11 11 11 11 48 28 76)
-     #s(trailres "opt" "prf_self" 3 3 3 3 3 19 28 76)
-     #s(trailres "opt" "prf_total" 4 4 4 4 4 19 28 76)
-     #s(trailres "randomB" "boundary" 1 3 3 3 3 54 28 76)
-     #s(trailres "randomB" "prf_self" 2 3 3 3 3 51 28 76)
-     #s(trailres "randomB" "prf_total" 2 2 2 2 2 50 28 76)))
+    (#s(trailres "toggle" "-" 12 "-" "-" "-" "-" 22 28)
+     #s(trailres "con" "boundary" 0 0 0 0 0 9 28)
+     #s(trailres "con" "prf_self" 0 0 0 0 0 9 28)
+     #s(trailres "con" "prf_total" 0 0 0 0 0 9 28)
+     #s(trailres "cost-con" "boundary" 0 0 0 0 0 9 28)
+     #s(trailres "cost-con" "prf_self" 0 0 0 0 0 9 28)
+     #s(trailres "cost-con" "prf_total" 0 0 0 0 0 9 28)
+     #s(trailres "cost-opt" "boundary" 12 12 12 12 12 20 28)
+     #s(trailres "cost-opt" "prf_self" 3 3 3 3 3 11 28)
+     #s(trailres "cost-opt" "prf_total" 4 4 4 4 4 12 28)
+     #s(trailres "limit-con" "boundary" 8 8 8 8 8 16 28)
+     #s(trailres "limit-con" "prf_self" 3 3 3 3 3 11 28)
+     #s(trailres "limit-con" "prf_total" 4 4 4 4 4 12 28)
+     #s(trailres "opt" "boundary" 11 11 11 11 11 19 28)
+     #s(trailres "opt" "prf_self" 3 3 3 3 3 11 28)
+     #s(trailres "opt" "prf_total" 4 4 4 4 4 12 28)
+     #s(trailres "randomB" "boundary" 1 3 3 3 3 10 28)
+     #s(trailres "randomB" "prf_self" 2 3 3 3 3 10 28)
+     #s(trailres "randomB" "prf_total" 2 2 2 2 2 10 28)))
  #s(bmres
     "fsm"
     #s(seascape
@@ -325,25 +293,25 @@
              ("2221" . #t)
              ("2222" . #t))
        #hash())
-    (#s(trailres "toggle" "-" 28 "-" "-" "-" "-" 44 62 62)
-     #s(trailres "con" "boundary" 20 20 20 20 20 32 62 62)
-     #s(trailres "con" "prf_self" 10 11 11 11 11 20 62 62)
-     #s(trailres "con" "prf_total" 10 10 10 10 10 19 62 62)
-     #s(trailres "cost-con" "boundary" 18 18 18 18 18 31 62 62)
-     #s(trailres "cost-con" "prf_self" 10 11 11 11 11 20 62 62)
-     #s(trailres "cost-con" "prf_total" 10 10 10 10 10 19 62 62)
-     #s(trailres "cost-opt" "boundary" 55 59 59 59 59 59 62 62)
-     #s(trailres "cost-opt" "prf_self" 38 41 41 41 41 49 62 62)
-     #s(trailres "cost-opt" "prf_total" 34 35 35 35 35 46 62 62)
-     #s(trailres "limit-con" "boundary" 52 58 59 59 59 59 62 62)
-     #s(trailres "limit-con" "prf_self" 37 41 41 41 41 48 62 62)
-     #s(trailres "limit-con" "prf_total" 33 35 35 35 35 45 62 62)
-     #s(trailres "opt" "boundary" 55 59 59 59 59 59 62 62)
-     #s(trailres "opt" "prf_self" 38 41 41 41 41 49 62 62)
-     #s(trailres "opt" "prf_total" 34 35 35 35 35 46 62 62)
-     #s(trailres "randomB" "boundary" 29 35 36 36 40 47 62 62)
-     #s(trailres "randomB" "prf_self" 31 35 37 38 40 50 62 62)
-     #s(trailres "randomB" "prf_total" 29 40 42 43 45 52 62 62)))
+    (#s(trailres "toggle" "-" 28 "-" "-" "-" "-" 62 62)
+     #s(trailres "con" "boundary" 20 20 20 20 20 33 62)
+     #s(trailres "con" "prf_self" 10 11 11 11 11 33 62)
+     #s(trailres "con" "prf_total" 10 10 10 10 10 33 62)
+     #s(trailres "cost-con" "boundary" 18 18 18 18 18 33 62)
+     #s(trailres "cost-con" "prf_self" 10 11 11 11 11 33 62)
+     #s(trailres "cost-con" "prf_total" 10 10 10 10 10 33 62)
+     #s(trailres "cost-opt" "boundary" 55 59 59 59 59 59 62)
+     #s(trailres "cost-opt" "prf_self" 38 41 41 41 41 48 62)
+     #s(trailres "cost-opt" "prf_total" 34 35 35 35 35 43 62)
+     #s(trailres "limit-con" "boundary" 52 58 59 59 59 59 62)
+     #s(trailres "limit-con" "prf_self" 37 41 41 41 41 47 62)
+     #s(trailres "limit-con" "prf_total" 33 35 35 35 35 42 62)
+     #s(trailres "opt" "boundary" 55 59 59 59 59 59 62)
+     #s(trailres "opt" "prf_self" 38 41 41 41 41 48 62)
+     #s(trailres "opt" "prf_total" 34 35 35 35 35 43 62)
+     #s(trailres "randomB" "boundary" 29 35 36 36 40 44 62)
+     #s(trailres "randomB" "prf_self" 31 35 37 38 40 44 62)
+     #s(trailres "randomB" "prf_total" 29 40 42 43 45 41 62)))
  #s(bmres
     "fsmoo"
     #s(seascape
@@ -430,25 +398,25 @@
              ("2221" . #t)
              ("2222" . #t))
        #hash())
-    (#s(trailres "toggle" "-" 18 "-" "-" "-" "-" 37 68 68)
-     #s(trailres "con" "boundary" 0 0 0 0 0 45 68 68)
-     #s(trailres "con" "prf_self" 0 0 0 0 0 24 68 68)
-     #s(trailres "con" "prf_total" 0 0 0 0 0 24 68 68)
-     #s(trailres "cost-con" "boundary" 0 0 0 0 0 45 68 68)
-     #s(trailres "cost-con" "prf_self" 0 0 0 0 0 24 68 68)
-     #s(trailres "cost-con" "prf_total" 0 0 0 0 0 24 68 68)
-     #s(trailres "cost-opt" "boundary" 30 39 39 39 39 59 68 68)
-     #s(trailres "cost-opt" "prf_self" 18 18 18 18 18 29 68 68)
-     #s(trailres "cost-opt" "prf_total" 17 18 18 18 18 29 68 68)
-     #s(trailres "limit-con" "boundary" 30 39 39 39 39 57 68 68)
-     #s(trailres "limit-con" "prf_self" 18 18 18 18 18 27 68 68)
-     #s(trailres "limit-con" "prf_total" 17 18 18 18 18 27 68 68)
-     #s(trailres "opt" "boundary" 30 39 39 39 39 59 68 68)
-     #s(trailres "opt" "prf_self" 18 18 18 18 18 29 68 68)
-     #s(trailres "opt" "prf_total" 17 18 18 18 18 29 68 68)
-     #s(trailres "randomB" "boundary" 35 39 44 45 46 57 68 68)
-     #s(trailres "randomB" "prf_self" 27 30 37 38 39 56 68 68)
-     #s(trailres "randomB" "prf_total" 27 32 35 38 39 55 68 68)))
+    (#s(trailres "toggle" "-" 18 "-" "-" "-" "-" 32 68)
+     #s(trailres "con" "boundary" 0 0 0 0 0 5 68)
+     #s(trailres "con" "prf_self" 0 0 0 0 0 5 68)
+     #s(trailres "con" "prf_total" 0 0 0 0 0 5 68)
+     #s(trailres "cost-con" "boundary" 0 0 0 0 0 5 68)
+     #s(trailres "cost-con" "prf_self" 0 0 0 0 0 5 68)
+     #s(trailres "cost-con" "prf_total" 0 0 0 0 0 5 68)
+     #s(trailres "cost-opt" "boundary" 30 39 39 39 39 35 68)
+     #s(trailres "cost-opt" "prf_self" 18 18 18 18 18 23 68)
+     #s(trailres "cost-opt" "prf_total" 17 18 18 18 18 22 68)
+     #s(trailres "limit-con" "boundary" 30 39 39 39 39 35 68)
+     #s(trailres "limit-con" "prf_self" 18 18 18 18 18 23 68)
+     #s(trailres "limit-con" "prf_total" 17 18 18 18 18 22 68)
+     #s(trailres "opt" "boundary" 30 39 39 39 39 35 68)
+     #s(trailres "opt" "prf_self" 18 18 18 18 18 23 68)
+     #s(trailres "opt" "prf_total" 17 18 18 18 18 22 68)
+     #s(trailres "randomB" "boundary" 35 39 44 45 46 38 68)
+     #s(trailres "randomB" "prf_self" 27 30 37 38 39 31 68)
+     #s(trailres "randomB" "prf_total" 27 32 35 38 39 30 68)))
  #s(bmres
     "mbta"
     #s(seascape
@@ -535,25 +503,25 @@
              ("2220" . #t)
              ("2221" . #t)
              ("2222" . #t)))
-    (#s(trailres "toggle" "-" 0 "-" "-" "-" "-" 26 0 72)
-     #s(trailres "con" "boundary" 0 0 0 0 0 20 0 72)
-     #s(trailres "con" "prf_self" 0 0 0 0 0 13 0 72)
-     #s(trailres "con" "prf_total" 0 0 0 0 0 13 0 72)
-     #s(trailres "cost-con" "boundary" 0 0 0 0 0 20 0 72)
-     #s(trailres "cost-con" "prf_self" 0 0 0 0 0 13 0 72)
-     #s(trailres "cost-con" "prf_total" 0 0 0 0 0 13 0 72)
-     #s(trailres "cost-opt" "boundary" 0 0 0 0 0 25 0 72)
-     #s(trailres "cost-opt" "prf_self" 0 0 0 0 0 19 0 72)
-     #s(trailres "cost-opt" "prf_total" 0 0 0 0 0 19 0 72)
-     #s(trailres "limit-con" "boundary" 0 0 0 0 0 25 0 72)
-     #s(trailres "limit-con" "prf_self" 0 0 0 0 0 19 0 72)
-     #s(trailres "limit-con" "prf_total" 0 0 0 0 0 19 0 72)
-     #s(trailres "opt" "boundary" 0 0 0 0 0 25 0 72)
-     #s(trailres "opt" "prf_self" 0 0 0 0 0 19 0 72)
-     #s(trailres "opt" "prf_total" 0 0 0 0 0 19 0 72)
-     #s(trailres "randomB" "boundary" 0 0 0 0 0 15 0 72)
-     #s(trailres "randomB" "prf_self" 0 0 0 0 0 18 0 72)
-     #s(trailres "randomB" "prf_total" 0 0 0 0 0 18 0 72)))
+    (#s(trailres "toggle" "-" 0 "-" "-" "-" "-" 0 0)
+     #s(trailres "con" "boundary" 0 0 0 0 0 0 0)
+     #s(trailres "con" "prf_self" 0 0 0 0 0 0 0)
+     #s(trailres "con" "prf_total" 0 0 0 0 0 0 0)
+     #s(trailres "cost-con" "boundary" 0 0 0 0 0 0 0)
+     #s(trailres "cost-con" "prf_self" 0 0 0 0 0 0 0)
+     #s(trailres "cost-con" "prf_total" 0 0 0 0 0 0 0)
+     #s(trailres "cost-opt" "boundary" 0 0 0 0 0 0 0)
+     #s(trailres "cost-opt" "prf_self" 0 0 0 0 0 0 0)
+     #s(trailres "cost-opt" "prf_total" 0 0 0 0 0 0 0)
+     #s(trailres "limit-con" "boundary" 0 0 0 0 0 0 0)
+     #s(trailres "limit-con" "prf_self" 0 0 0 0 0 0 0)
+     #s(trailres "limit-con" "prf_total" 0 0 0 0 0 0 0)
+     #s(trailres "opt" "boundary" 0 0 0 0 0 0 0)
+     #s(trailres "opt" "prf_self" 0 0 0 0 0 0 0)
+     #s(trailres "opt" "prf_total" 0 0 0 0 0 0 0)
+     #s(trailres "randomB" "boundary" 0 0 0 0 0 0 0)
+     #s(trailres "randomB" "prf_self" 0 0 0 0 0 0 0)
+     #s(trailres "randomB" "prf_total" 0 0 0 0 0 0 0)))
  #s(bmres
     "zombie"
     #s(seascape
@@ -639,25 +607,25 @@
              ("2220" . #t)
              ("2221" . #t)
              ("2222" . #t)))
-    (#s(trailres "toggle" "-" 10 "-" "-" "-" "-" 43 26 74)
-     #s(trailres "con" "boundary" 0 0 0 0 0 45 26 74)
-     #s(trailres "con" "prf_self" 0 0 0 0 0 26 26 74)
-     #s(trailres "con" "prf_total" 0 0 0 0 0 26 26 74)
-     #s(trailres "cost-con" "boundary" 0 0 0 0 0 45 26 74)
-     #s(trailres "cost-con" "prf_self" 0 0 0 0 0 26 26 74)
-     #s(trailres "cost-con" "prf_total" 0 0 0 0 0 26 26 74)
-     #s(trailres "cost-opt" "boundary" 11 13 13 13 13 54 26 74)
-     #s(trailres "cost-opt" "prf_self" 5 10 10 10 10 55 26 74)
-     #s(trailres "cost-opt" "prf_total" 6 10 10 10 10 55 26 74)
-     #s(trailres "limit-con" "boundary" 11 12 12 12 12 53 26 74)
-     #s(trailres "limit-con" "prf_self" 5 9 9 9 9 53 26 74)
-     #s(trailres "limit-con" "prf_total" 6 9 9 9 9 53 26 74)
-     #s(trailres "opt" "boundary" 11 13 13 13 13 54 26 74)
-     #s(trailres "opt" "prf_self" 5 10 10 10 10 55 26 74)
-     #s(trailres "opt" "prf_total" 6 10 10 10 10 55 26 74)
-     #s(trailres "randomB" "boundary" 1 3 3 3 3 58 26 74)
-     #s(trailres "randomB" "prf_self" 1 1 2 2 2 56 26 74)
-     #s(trailres "randomB" "prf_total" 5 5 5 5 5 57 26 74)))
+    (#s(trailres "toggle" "-" 10 "-" "-" "-" "-" 14 26)
+     #s(trailres "con" "boundary" 0 0 0 0 0 5 26)
+     #s(trailres "con" "prf_self" 0 0 0 0 0 5 26)
+     #s(trailres "con" "prf_total" 0 0 0 0 0 5 26)
+     #s(trailres "cost-con" "boundary" 0 0 0 0 0 5 26)
+     #s(trailres "cost-con" "prf_self" 0 0 0 0 0 5 26)
+     #s(trailres "cost-con" "prf_total" 0 0 0 0 0 5 26)
+     #s(trailres "cost-opt" "boundary" 11 13 13 13 13 15 26)
+     #s(trailres "cost-opt" "prf_self" 5 10 10 10 10 10 26)
+     #s(trailres "cost-opt" "prf_total" 6 10 10 10 10 11 26)
+     #s(trailres "limit-con" "boundary" 11 12 12 12 12 15 26)
+     #s(trailres "limit-con" "prf_self" 5 9 9 9 9 10 26)
+     #s(trailres "limit-con" "prf_total" 6 9 9 9 9 11 26)
+     #s(trailres "opt" "boundary" 11 13 13 13 13 15 26)
+     #s(trailres "opt" "prf_self" 5 10 10 10 10 10 26)
+     #s(trailres "opt" "prf_total" 6 10 10 10 10 11 26)
+     #s(trailres "randomB" "boundary" 1 3 3 3 3 6 26)
+     #s(trailres "randomB" "prf_self" 1 1 2 2 2 5 26)
+     #s(trailres "randomB" "prf_total" 5 5 5 5 5 8 26)))
  #s(bmres
     "dungeon"
     #s(seascape
@@ -906,25 +874,25 @@
              ("22220" . #t)
              ("22221" . #t)
              ("22222" . #t)))
-    (#s(trailres "toggle" "-" 0 "-" "-" "-" "-" 140 0 242)
-     #s(trailres "con" "boundary" 0 0 0 0 0 144 0 242)
-     #s(trailres "con" "prf_self" 0 0 0 0 0 72 0 242)
-     #s(trailres "con" "prf_total" 0 0 0 0 0 72 0 242)
-     #s(trailres "cost-con" "boundary" 0 0 0 0 0 144 0 242)
-     #s(trailres "cost-con" "prf_self" 0 0 0 0 0 72 0 242)
-     #s(trailres "cost-con" "prf_total" 0 0 0 0 0 72 0 242)
-     #s(trailres "cost-opt" "boundary" 0 0 0 0 0 169 0 242)
-     #s(trailres "cost-opt" "prf_self" 0 0 0 0 0 159 0 242)
-     #s(trailres "cost-opt" "prf_total" 0 0 0 0 0 159 0 242)
-     #s(trailres "limit-con" "boundary" 0 0 0 0 0 169 0 242)
-     #s(trailres "limit-con" "prf_self" 0 0 0 0 0 145 0 242)
-     #s(trailres "limit-con" "prf_total" 0 0 0 0 0 150 0 242)
-     #s(trailres "opt" "boundary" 0 0 0 0 0 169 0 242)
-     #s(trailres "opt" "prf_self" 0 0 0 0 0 159 0 242)
-     #s(trailres "opt" "prf_total" 0 0 0 0 0 159 0 242)
-     #s(trailres "randomB" "boundary" 0 0 0 0 0 186 0 242)
-     #s(trailres "randomB" "prf_self" 0 0 0 0 0 185 0 242)
-     #s(trailres "randomB" "prf_total" 0 0 0 0 0 180 0 242)))
+    (#s(trailres "toggle" "-" 0 "-" "-" "-" "-" 0 0)
+     #s(trailres "con" "boundary" 0 0 0 0 0 0 0)
+     #s(trailres "con" "prf_self" 0 0 0 0 0 0 0)
+     #s(trailres "con" "prf_total" 0 0 0 0 0 0 0)
+     #s(trailres "cost-con" "boundary" 0 0 0 0 0 0 0)
+     #s(trailres "cost-con" "prf_self" 0 0 0 0 0 0 0)
+     #s(trailres "cost-con" "prf_total" 0 0 0 0 0 0 0)
+     #s(trailres "cost-opt" "boundary" 0 0 0 0 0 0 0)
+     #s(trailres "cost-opt" "prf_self" 0 0 0 0 0 0 0)
+     #s(trailres "cost-opt" "prf_total" 0 0 0 0 0 0 0)
+     #s(trailres "limit-con" "boundary" 0 0 0 0 0 0 0)
+     #s(trailres "limit-con" "prf_self" 0 0 0 0 0 0 0)
+     #s(trailres "limit-con" "prf_total" 0 0 0 0 0 0 0)
+     #s(trailres "opt" "boundary" 0 0 0 0 0 0 0)
+     #s(trailres "opt" "prf_self" 0 0 0 0 0 0 0)
+     #s(trailres "opt" "prf_total" 0 0 0 0 0 0 0)
+     #s(trailres "randomB" "boundary" 0 0 0 0 0 0 0)
+     #s(trailres "randomB" "prf_self" 0 0 0 0 0 0 0)
+     #s(trailres "randomB" "prf_total" 0 0 0 0 0 0 0)))
  #s(bmres
     "jpeg"
     #s(seascape
@@ -1173,25 +1141,25 @@
              ("22221" . #t)
              ("22222" . #t))
        #hash())
-    (#s(trailres "toggle" "-" 68 "-" "-" "-" "-" 151 230 230)
-     #s(trailres "con" "boundary" 0 0 0 0 0 180 230 230)
-     #s(trailres "con" "prf_self" 0 0 0 0 0 129 230 230)
-     #s(trailres "con" "prf_total" 0 0 0 0 0 129 230 230)
-     #s(trailres "cost-con" "boundary" 0 0 0 0 0 180 230 230)
-     #s(trailres "cost-con" "prf_self" 0 0 0 0 0 129 230 230)
-     #s(trailres "cost-con" "prf_total" 0 0 0 0 0 129 230 230)
-     #s(trailres "cost-opt" "boundary" 153 198 199 199 199 199 230 230)
-     #s(trailres "cost-opt" "prf_self" 68 105 108 108 108 142 230 230)
-     #s(trailres "cost-opt" "prf_total" 66 91 106 106 106 143 230 230)
-     #s(trailres "limit-con" "boundary" 129 180 182 182 182 199 230 230)
-     #s(trailres "limit-con" "prf_self" 60 87 98 98 98 131 230 230)
-     #s(trailres "limit-con" "prf_total" 62 85 98 103 103 139 230 230)
-     #s(trailres "opt" "boundary" 153 198 199 199 199 199 230 230)
-     #s(trailres "opt" "prf_self" 68 105 108 108 108 142 230 230)
-     #s(trailres "opt" "prf_total" 66 91 106 106 106 143 230 230)
-     #s(trailres "randomB" "boundary" 59 87 106 118 136 208 230 230)
-     #s(trailres "randomB" "prf_self" 58 88 101 117 138 203 230 230)
-     #s(trailres "randomB" "prf_total" 66 88 99 109 137 204 230 230)))
+    (#s(trailres "toggle" "-" 68 "-" "-" "-" "-" 176 230)
+     #s(trailres "con" "boundary" 0 0 0 0 0 95 230)
+     #s(trailres "con" "prf_self" 0 0 0 0 0 95 230)
+     #s(trailres "con" "prf_total" 0 0 0 0 0 95 230)
+     #s(trailres "cost-con" "boundary" 0 0 0 0 0 95 230)
+     #s(trailres "cost-con" "prf_self" 0 0 0 0 0 95 230)
+     #s(trailres "cost-con" "prf_total" 0 0 0 0 0 95 230)
+     #s(trailres "cost-opt" "boundary" 153 198 199 199 199 230 230)
+     #s(trailres "cost-opt" "prf_self" 68 105 108 108 108 161 230)
+     #s(trailres "cost-opt" "prf_total" 66 91 106 106 106 158 230)
+     #s(trailres "limit-con" "boundary" 129 180 182 182 182 222 230)
+     #s(trailres "limit-con" "prf_self" 60 87 98 98 98 156 230)
+     #s(trailres "limit-con" "prf_total" 62 85 98 103 103 157 230)
+     #s(trailres "opt" "boundary" 153 198 199 199 199 230 230)
+     #s(trailres "opt" "prf_self" 68 105 108 108 108 161 230)
+     #s(trailres "opt" "prf_total" 66 91 106 106 106 158 230)
+     #s(trailres "randomB" "boundary" 59 87 106 118 136 177 230)
+     #s(trailres "randomB" "prf_self" 58 88 101 117 138 177 230)
+     #s(trailres "randomB" "prf_total" 66 88 99 109 137 177 230)))
  #s(bmres
     "lnm"
     #s(seascape
@@ -1926,25 +1894,25 @@
              ("222212" . #t)
              ("222222" . #t))
        #hash())
-    (#s(trailres "toggle" "-" 250 "-" "-" "-" "-" 250 295 295)
-     #s(trailres "con" "boundary" 16 16 16 16 16 25 295 295)
-     #s(trailres "con" "prf_self" 41 41 41 41 41 29 295 295)
-     #s(trailres "con" "prf_total" 68 68 68 68 68 55 295 295)
-     #s(trailres "cost-con" "boundary" 16 16 16 16 16 25 295 295)
-     #s(trailres "cost-con" "prf_self" 41 41 41 41 41 29 295 295)
-     #s(trailres "cost-con" "prf_total" 68 68 68 68 68 55 295 295)
-     #s(trailres "cost-opt" "boundary" 81 81 81 81 81 73 295 295)
-     #s(trailres "cost-opt" "prf_self" 234 234 234 234 234 226 295 295)
-     #s(trailres "cost-opt" "prf_total" 218 218 218 218 218 213 295 295)
-     #s(trailres "limit-con" "boundary" 77 77 77 77 77 69 295 295)
-     #s(trailres "limit-con" "prf_self" 229 229 229 229 229 225 295 295)
-     #s(trailres "limit-con" "prf_total" 215 215 215 215 215 215 295 295)
-     #s(trailres "opt" "boundary" 81 81 81 81 81 72 295 295)
-     #s(trailres "opt" "prf_self" 234 234 234 234 234 226 295 295)
-     #s(trailres "opt" "prf_total" 218 218 218 218 218 213 295 295)
-     #s(trailres "randomB" "boundary" 238 241 241 241 241 227 295 295)
-     #s(trailres "randomB" "prf_self" 238 240 241 241 241 228 295 295)
-     #s(trailres "randomB" "prf_total" 247 249 249 249 249 240 295 295)))
+    (#s(trailres "toggle" "-" 250 "-" "-" "-" "-" 295 295)
+     #s(trailres "con" "boundary" 16 16 16 16 16 295 295)
+     #s(trailres "con" "prf_self" 41 41 41 41 41 295 295)
+     #s(trailres "con" "prf_total" 68 68 68 68 68 295 295)
+     #s(trailres "cost-con" "boundary" 16 16 16 16 16 295 295)
+     #s(trailres "cost-con" "prf_self" 41 41 41 41 41 295 295)
+     #s(trailres "cost-con" "prf_total" 68 68 68 68 68 295 295)
+     #s(trailres "cost-opt" "boundary" 81 81 81 81 81 295 295)
+     #s(trailres "cost-opt" "prf_self" 234 234 234 234 234 295 295)
+     #s(trailres "cost-opt" "prf_total" 218 218 218 218 218 295 295)
+     #s(trailres "limit-con" "boundary" 77 77 77 77 77 295 295)
+     #s(trailres "limit-con" "prf_self" 229 229 229 229 229 295 295)
+     #s(trailres "limit-con" "prf_total" 215 215 215 215 215 295 295)
+     #s(trailres "opt" "boundary" 81 81 81 81 81 295 295)
+     #s(trailres "opt" "prf_self" 234 234 234 234 234 295 295)
+     #s(trailres "opt" "prf_total" 218 218 218 218 218 295 295)
+     #s(trailres "randomB" "boundary" 238 241 241 241 241 295 295)
+     #s(trailres "randomB" "prf_self" 238 240 241 241 241 295 295)
+     #s(trailres "randomB" "prf_total" 247 249 249 249 249 295 295)))
  #s(bmres
     "suffixtree"
     #s(seascape
@@ -2679,25 +2647,25 @@
              ("222221" . #t)
              ("222222" . #t))
        #hash())
-    (#s(trailres "toggle" "-" 136 "-" "-" "-" "-" 586 718 718)
-     #s(trailres "con" "boundary" 0 0 0 0 0 675 718 718)
-     #s(trailres "con" "prf_self" 0 0 0 0 0 419 718 718)
-     #s(trailres "con" "prf_total" 0 0 0 0 0 419 718 718)
-     #s(trailres "cost-con" "boundary" 0 0 0 0 0 675 718 718)
-     #s(trailres "cost-con" "prf_self" 0 0 0 0 0 419 718 718)
-     #s(trailres "cost-con" "prf_total" 0 0 0 0 0 419 718 718)
-     #s(trailres "cost-opt" "boundary" 531 588 673 696 696 696 718 718)
-     #s(trailres "cost-opt" "prf_self" 279 309 312 314 314 510 718 718)
-     #s(trailres "cost-opt" "prf_total" 252 286 299 311 314 492 718 718)
-     #s(trailres "limit-con" "boundary" 520 584 670 671 671 694 718 718)
-     #s(trailres "limit-con" "prf_self" 273 297 303 304 306 493 718 718)
-     #s(trailres "limit-con" "prf_total" 250 280 295 305 314 486 718 718)
-     #s(trailres "opt" "boundary" 564 615 696 696 696 696 718 718)
-     #s(trailres "opt" "prf_self" 279 309 312 314 314 510 718 718)
-     #s(trailres "opt" "prf_total" 252 286 299 311 314 492 718 718)
-     #s(trailres "randomB" "boundary" 112 160 200 241 416 696 718 718)
-     #s(trailres "randomB" "prf_self" 117 159 200 234 404 694 718 718)
-     #s(trailres "randomB" "prf_total" 107 153 210 245 394 692 718 718)))
+    (#s(trailres "toggle" "-" 136 "-" "-" "-" "-" 268 718)
+     #s(trailres "con" "boundary" 0 0 0 0 0 66 718)
+     #s(trailres "con" "prf_self" 0 0 0 0 0 66 718)
+     #s(trailres "con" "prf_total" 0 0 0 0 0 66 718)
+     #s(trailres "cost-con" "boundary" 0 0 0 0 0 66 718)
+     #s(trailres "cost-con" "prf_self" 0 0 0 0 0 66 718)
+     #s(trailres "cost-con" "prf_total" 0 0 0 0 0 66 718)
+     #s(trailres "cost-opt" "boundary" 531 588 673 696 696 574 718)
+     #s(trailres "cost-opt" "prf_self" 279 309 312 314 314 322 718)
+     #s(trailres "cost-opt" "prf_total" 252 286 299 311 314 307 718)
+     #s(trailres "limit-con" "boundary" 520 584 670 671 671 566 718)
+     #s(trailres "limit-con" "prf_self" 273 297 303 304 306 316 718)
+     #s(trailres "limit-con" "prf_total" 250 280 295 305 314 306 718)
+     #s(trailres "opt" "boundary" 564 615 696 696 696 607 718)
+     #s(trailres "opt" "prf_self" 279 309 312 314 314 322 718)
+     #s(trailres "opt" "prf_total" 252 286 299 311 314 307 718)
+     #s(trailres "randomB" "boundary" 112 160 200 241 416 205 718)
+     #s(trailres "randomB" "prf_self" 117 159 200 234 404 215 718)
+     #s(trailres "randomB" "prf_total" 107 153 210 245 394 208 718)))
  #s(bmres
     "kcfa"
     #s(seascape
@@ -4890,65 +4858,25 @@
              ("2222221" . #t)
              ("2222222" . #t))
        #hash())
-    (#s(trailres "toggle" "-" 575 "-" "-" "-" "-" 1494 2031 2031)
-     #s(trailres "con" "boundary" 42 46 46 46 46 1701 2031 2031)
-     #s(trailres "con" "prf_self" 6 6 6 6 6 1491 2031 2031)
-     #s(trailres "con" "prf_total" 6 6 6 6 6 1491 2031 2031)
-     #s(trailres "cost-con" "boundary" 37 43 43 43 43 1701 2031 2031)
-     #s(trailres "cost-con" "prf_self" 6 6 6 6 6 1491 2031 2031)
-     #s(trailres "cost-con" "prf_total" 6 6 6 6 6 1491 2031 2031)
-     #s(trailres "cost-opt" "boundary" 1655 1668 1819 1847 1847 1808 2031 2031)
-     #s(trailres "cost-opt" "prf_self" 1358 1522 1702 1768 1768 1663 2031 2031)
-     #s(trailres
-        "cost-opt"
-        "prf_total"
-        1200
-        1491
-        1696
-        1716
-        1716
-        1644
-        2031
-        2031)
-     #s(trailres
-        "limit-con"
-        "boundary"
-        1454
-        1460
-        1714
-        1714
-        1714
-        1794
-        2031
-        2031)
-     #s(trailres
-        "limit-con"
-        "prf_self"
-        1247
-        1378
-        1544
-        1602
-        1602
-        1608
-        2031
-        2031)
-     #s(trailres
-        "limit-con"
-        "prf_total"
-        1108
-        1351
-        1564
-        1618
-        1626
-        1637
-        2031
-        2031)
-     #s(trailres "opt" "boundary" 1680 1689 1873 1873 1873 1807 2031 2031)
-     #s(trailres "opt" "prf_self" 1358 1522 1702 1768 1768 1663 2031 2031)
-     #s(trailres "opt" "prf_total" 1200 1491 1696 1716 1716 1644 2031 2031)
-     #s(trailres "randomB" "boundary" 462 593 730 838 1253 1786 2031 2031)
-     #s(trailres "randomB" "prf_self" 476 618 745 849 1279 1795 2031 2031)
-     #s(trailres "randomB" "prf_total" 478 634 758 865 1266 1783 2031 2031)))
+    (#s(trailres "toggle" "-" 575 "-" "-" "-" "-" 1707 2031)
+     #s(trailres "con" "boundary" 42 46 46 46 46 1324 2031)
+     #s(trailres "con" "prf_self" 6 6 6 6 6 1303 2031)
+     #s(trailres "con" "prf_total" 6 6 6 6 6 1301 2031)
+     #s(trailres "cost-con" "boundary" 37 43 43 43 43 1320 2031)
+     #s(trailres "cost-con" "prf_self" 6 6 6 6 6 1303 2031)
+     #s(trailres "cost-con" "prf_total" 6 6 6 6 6 1301 2031)
+     #s(trailres "cost-opt" "boundary" 1655 1668 1819 1847 1847 2013 2031)
+     #s(trailres "cost-opt" "prf_self" 1358 1522 1702 1768 1768 1965 2031)
+     #s(trailres "cost-opt" "prf_total" 1200 1491 1696 1716 1716 1956 2031)
+     #s(trailres "limit-con" "boundary" 1454 1460 1714 1714 1714 1982 2031)
+     #s(trailres "limit-con" "prf_self" 1247 1378 1544 1602 1602 1914 2031)
+     #s(trailres "limit-con" "prf_total" 1108 1351 1564 1618 1626 1934 2031)
+     #s(trailres "opt" "boundary" 1680 1689 1873 1873 1873 2022 2031)
+     #s(trailres "opt" "prf_self" 1358 1522 1702 1768 1768 1965 2031)
+     #s(trailres "opt" "prf_total" 1200 1491 1696 1716 1716 1956 2031)
+     #s(trailres "randomB" "boundary" 462 593 730 838 1253 1733 2031)
+     #s(trailres "randomB" "prf_self" 476 618 745 849 1279 1731 2031)
+     #s(trailres "randomB" "prf_total" 478 634 758 865 1266 1723 2031)))
  #s(bmres
     "snake"
     #s(seascape
@@ -11514,35 +11442,25 @@
              ("22222221" . #t)
              ("22222222" . #t))
        #hash())
-    (#s(trailres "toggle" "-" 0 "-" "-" "-" "-" 5977 6559 6559)
-     #s(trailres "con" "boundary" 0 0 0 0 0 6058 6559 6559)
-     #s(trailres "con" "prf_self" 0 0 0 0 0 3539 6559 6559)
-     #s(trailres "con" "prf_total" 0 0 0 0 0 3545 6559 6559)
-     #s(trailres "cost-con" "boundary" 0 0 0 0 0 6046 6559 6559)
-     #s(trailres "cost-con" "prf_self" 0 0 0 0 0 3539 6559 6559)
-     #s(trailres "cost-con" "prf_total" 0 0 0 0 0 3545 6559 6559)
-     #s(trailres "cost-opt" "boundary" 1742 1897 2041 2105 2130 6390 6559 6559)
-     #s(trailres "cost-opt" "prf_self" 808 958 1049 1126 1150 4922 6559 6559)
-     #s(trailres "cost-opt" "prf_total" 707 970 1094 1171 1193 5067 6559 6559)
-     #s(trailres
-        "limit-con"
-        "boundary"
-        1621
-        1874
-        2005
-        2072
-        2092
-        6363
-        6559
-        6559)
-     #s(trailres "limit-con" "prf_self" 800 946 1035 1118 1153 4784 6559 6559)
-     #s(trailres "limit-con" "prf_total" 702 962 1082 1158 1197 4970 6559 6559)
-     #s(trailres "opt" "boundary" 1671 1927 2048 2112 2130 6390 6559 6559)
-     #s(trailres "opt" "prf_self" 808 958 1049 1126 1150 4922 6559 6559)
-     #s(trailres "opt" "prf_total" 707 970 1094 1171 1193 5067 6559 6559)
-     #s(trailres "randomB" "boundary" 48 94 137 164 533 6306 6559 6559)
-     #s(trailres "randomB" "prf_self" 39 83 124 165 539 6289 6559 6559)
-     #s(trailres "randomB" "prf_total" 44 90 126 164 525 6311 6559 6559)))
+    (#s(trailres "toggle" "-" 0 "-" "-" "-" "-" 1513 6559)
+     #s(trailres "con" "boundary" 0 0 0 0 0 98 6559)
+     #s(trailres "con" "prf_self" 0 0 0 0 0 98 6559)
+     #s(trailres "con" "prf_total" 0 0 0 0 0 98 6559)
+     #s(trailres "cost-con" "boundary" 0 0 0 0 0 98 6559)
+     #s(trailres "cost-con" "prf_self" 0 0 0 0 0 98 6559)
+     #s(trailres "cost-con" "prf_total" 0 0 0 0 0 98 6559)
+     #s(trailres "cost-opt" "boundary" 1742 1897 2041 2105 2130 1828 6559)
+     #s(trailres "cost-opt" "prf_self" 808 958 1049 1126 1150 912 6559)
+     #s(trailres "cost-opt" "prf_total" 707 970 1094 1171 1193 798 6559)
+     #s(trailres "limit-con" "boundary" 1621 1874 2005 2072 2092 1710 6559)
+     #s(trailres "limit-con" "prf_self" 800 946 1035 1118 1153 899 6559)
+     #s(trailres "limit-con" "prf_total" 702 962 1082 1158 1197 793 6559)
+     #s(trailres "opt" "boundary" 1671 1927 2048 2112 2130 1757 6559)
+     #s(trailres "opt" "prf_self" 808 958 1049 1126 1150 912 6559)
+     #s(trailres "opt" "prf_total" 707 970 1094 1171 1193 798 6559)
+     #s(trailres "randomB" "boundary" 48 94 137 164 533 194 6559)
+     #s(trailres "randomB" "prf_self" 39 83 124 165 539 191 6559)
+     #s(trailres "randomB" "prf_total" 44 90 126 164 525 191 6559)))
  #s(bmres
     "take5"
     #s(seascape
@@ -18107,25 +18025,25 @@
              ("22222220" . #t)
              ("22222221" . #t)
              ("22222222" . #t)))
-    (#s(trailres "toggle" "-" 0 "-" "-" "-" "-" 4741 0 6558)
-     #s(trailres "con" "boundary" 0 0 0 0 0 185 0 6558)
-     #s(trailres "con" "prf_self" 0 0 0 0 0 0 0 6558)
-     #s(trailres "con" "prf_total" 0 0 0 0 0 0 0 6558)
-     #s(trailres "cost-con" "boundary" 0 0 0 0 0 185 0 6558)
-     #s(trailres "cost-con" "prf_self" 0 0 0 0 0 0 0 6558)
-     #s(trailres "cost-con" "prf_total" 0 0 0 0 0 0 0 6558)
-     #s(trailres "cost-opt" "boundary" 0 0 0 0 0 152 0 6558)
-     #s(trailres "cost-opt" "prf_self" 0 0 0 0 0 0 0 6558)
-     #s(trailres "cost-opt" "prf_total" 0 0 0 0 0 0 0 6558)
-     #s(trailres "limit-con" "boundary" 0 0 0 0 0 158 0 6558)
-     #s(trailres "limit-con" "prf_self" 0 0 0 0 0 0 0 6558)
-     #s(trailres "limit-con" "prf_total" 0 0 0 0 0 0 0 6558)
-     #s(trailres "opt" "boundary" 0 0 0 0 0 152 0 6558)
-     #s(trailres "opt" "prf_self" 0 0 0 0 0 0 0 6558)
-     #s(trailres "opt" "prf_total" 0 0 0 0 0 0 0 6558)
-     #s(trailres "randomB" "boundary" 0 0 0 0 0 6077 0 6558)
-     #s(trailres "randomB" "prf_self" 0 0 0 0 0 6107 0 6558)
-     #s(trailres "randomB" "prf_total" 0 0 0 0 0 6088 0 6558)))
+    (#s(trailres "toggle" "-" 0 "-" "-" "-" "-" 0 0)
+     #s(trailres "con" "boundary" 0 0 0 0 0 0 0)
+     #s(trailres "con" "prf_self" 0 0 0 0 0 0 0)
+     #s(trailres "con" "prf_total" 0 0 0 0 0 0 0)
+     #s(trailres "cost-con" "boundary" 0 0 0 0 0 0 0)
+     #s(trailres "cost-con" "prf_self" 0 0 0 0 0 0 0)
+     #s(trailres "cost-con" "prf_total" 0 0 0 0 0 0 0)
+     #s(trailres "cost-opt" "boundary" 0 0 0 0 0 0 0)
+     #s(trailres "cost-opt" "prf_self" 0 0 0 0 0 0 0)
+     #s(trailres "cost-opt" "prf_total" 0 0 0 0 0 0 0)
+     #s(trailres "limit-con" "boundary" 0 0 0 0 0 0 0)
+     #s(trailres "limit-con" "prf_self" 0 0 0 0 0 0 0)
+     #s(trailres "limit-con" "prf_total" 0 0 0 0 0 0 0)
+     #s(trailres "opt" "boundary" 0 0 0 0 0 0 0)
+     #s(trailres "opt" "prf_self" 0 0 0 0 0 0 0)
+     #s(trailres "opt" "prf_total" 0 0 0 0 0 0 0)
+     #s(trailres "randomB" "boundary" 0 0 0 0 0 0 0)
+     #s(trailres "randomB" "prf_self" 0 0 0 0 0 0 0)
+     #s(trailres "randomB" "prf_total" 0 0 0 0 0 0 0)))
  #s(bmres
     "acquire"
     #s(seascape
@@ -37813,25 +37731,25 @@
              ("222222220" . #t)
              ("222222221" . #t)
              ("222222222" . #t)))
-    (#s(trailres "toggle" "-" 312 "-" "-" "-" "-" 16466 1064 19532)
-     #s(trailres "con" "boundary" 51 51 51 51 51 16469 1064 19532)
-     #s(trailres "con" "prf_self" 1 1 1 1 1 15016 1064 19532)
-     #s(trailres "con" "prf_total" 0 0 0 0 0 14945 1064 19532)
-     #s(trailres "cost-con" "boundary" 51 51 51 51 51 16456 1064 19532)
-     #s(trailres "cost-con" "prf_self" 1 1 1 1 1 15016 1064 19532)
-     #s(trailres "cost-con" "prf_total" 0 0 0 0 0 14945 1064 19532)
-     #s(trailres "cost-opt" "boundary" 2 2 2 2 2 16118 1064 19532)
-     #s(trailres "cost-opt" "prf_self" 1 1 1 1 1 15377 1064 19532)
-     #s(trailres "cost-opt" "prf_total" 0 0 0 0 0 15334 1064 19532)
-     #s(trailres "limit-con" "boundary" 46 46 46 46 46 16122 1064 19532)
-     #s(trailres "limit-con" "prf_self" 0 0 0 0 0 15190 1064 19532)
-     #s(trailres "limit-con" "prf_total" 0 0 0 0 0 15146 1064 19532)
-     #s(trailres "opt" "boundary" 2 2 2 2 2 16048 1064 19532)
-     #s(trailres "opt" "prf_self" 1 1 1 1 1 15377 1064 19532)
-     #s(trailres "opt" "prf_total" 0 0 0 0 0 15334 1064 19532)
-     #s(trailres "randomB" "boundary" 47 50 52 52 52 19162 1064 19532)
-     #s(trailres "randomB" "prf_self" 48 51 53 53 53 19169 1064 19532)
-     #s(trailres "randomB" "prf_total" 40 43 43 43 43 19161 1064 19532)))
+    (#s(trailres "toggle" "-" 312 "-" "-" "-" "-" 1064 1064)
+     #s(trailres "con" "boundary" 51 51 51 51 51 956 1064)
+     #s(trailres "con" "prf_self" 1 1 1 1 1 956 1064)
+     #s(trailres "con" "prf_total" 0 0 0 0 0 956 1064)
+     #s(trailres "cost-con" "boundary" 51 51 51 51 51 956 1064)
+     #s(trailres "cost-con" "prf_self" 1 1 1 1 1 956 1064)
+     #s(trailres "cost-con" "prf_total" 0 0 0 0 0 956 1064)
+     #s(trailres "cost-opt" "boundary" 2 2 2 2 2 956 1064)
+     #s(trailres "cost-opt" "prf_self" 1 1 1 1 1 956 1064)
+     #s(trailres "cost-opt" "prf_total" 0 0 0 0 0 956 1064)
+     #s(trailres "limit-con" "boundary" 46 46 46 46 46 956 1064)
+     #s(trailres "limit-con" "prf_self" 0 0 0 0 0 956 1064)
+     #s(trailres "limit-con" "prf_total" 0 0 0 0 0 956 1064)
+     #s(trailres "opt" "boundary" 2 2 2 2 2 956 1064)
+     #s(trailres "opt" "prf_self" 1 1 1 1 1 956 1064)
+     #s(trailres "opt" "prf_total" 0 0 0 0 0 956 1064)
+     #s(trailres "randomB" "boundary" 47 50 52 52 52 956 1064)
+     #s(trailres "randomB" "prf_self" 48 51 53 53 53 957 1064)
+     #s(trailres "randomB" "prf_total" 40 43 43 43 43 956 1064)))
  #s(bmres
     "tetris"
     #s(seascape
@@ -57520,13 +57438,13 @@
              ("222222221" . #t)
              ("222222222" . #t))
        #hash())
-    (#s(trailres "toggle" "-" 5574 "-" "-" "-" "-" 14027 18791 18791)
-     #s(trailres "con" "boundary" 37 37 37 37 37 13879 18791 18791)
-     #s(trailres "con" "prf_self" 4 4 4 4 4 9591 18791 18791)
-     #s(trailres "con" "prf_total" 284 284 284 284 284 9073 18791 18791)
-     #s(trailres "cost-con" "boundary" 152 153 153 153 153 13685 18791 18791)
-     #s(trailres "cost-con" "prf_self" 4 4 4 4 4 9591 18791 18791)
-     #s(trailres "cost-con" "prf_total" 284 284 284 284 284 9073 18791 18791)
+    (#s(trailres "toggle" "-" 5574 "-" "-" "-" "-" 10043 18791)
+     #s(trailres "con" "boundary" 37 37 37 37 37 2024 18791)
+     #s(trailres "con" "prf_self" 4 4 4 4 4 2024 18791)
+     #s(trailres "con" "prf_total" 284 284 284 284 284 2266 18791)
+     #s(trailres "cost-con" "boundary" 152 153 153 153 153 2107 18791)
+     #s(trailres "cost-con" "prf_self" 4 4 4 4 4 2024 18791)
+     #s(trailres "cost-con" "prf_total" 284 284 284 284 284 2266 18791)
      #s(trailres
         "cost-opt"
         "boundary"
@@ -57535,31 +57453,10 @@
         17044
         17966
         18435
-        18423
-        18791
+        14096
         18791)
-     #s(trailres
-        "cost-opt"
-        "prf_self"
-        6183
-        6336
-        6338
-        6338
-        6338
-        11866
-        18791
-        18791)
-     #s(trailres
-        "cost-opt"
-        "prf_total"
-        4789
-        5816
-        6453
-        6541
-        6546
-        11332
-        18791
-        18791)
+     #s(trailres "cost-opt" "prf_self" 6183 6336 6338 6338 6338 7865 18791)
+     #s(trailres "cost-opt" "prf_total" 4789 5816 6453 6541 6546 6453 18791)
      #s(trailres
         "limit-con"
         "boundary"
@@ -57568,77 +57465,16 @@
         16875
         17129
         17255
-        18020
-        18791
+        13311
         18791)
-     #s(trailres
-        "limit-con"
-        "prf_self"
-        5604
-        5723
-        5763
-        5763
-        5763
-        11126
-        18791
-        18791)
-     #s(trailres
-        "limit-con"
-        "prf_total"
-        4636
-        5586
-        6143
-        6201
-        6223
-        10875
-        18791
-        18791)
-     #s(trailres
-        "opt"
-        "boundary"
-        12602
-        16191
-        18265
-        18384
-        18435
-        18430
-        18791
-        18791)
-     #s(trailres "opt" "prf_self" 6183 6336 6338 6338 6338 11866 18791 18791)
-     #s(trailres "opt" "prf_total" 4789 5816 6453 6541 6546 11332 18791 18791)
-     #s(trailres
-        "randomB"
-        "boundary"
-        3220
-        4155
-        4998
-        5806
-        12193
-        17566
-        18791
-        18791)
-     #s(trailres
-        "randomB"
-        "prf_self"
-        3184
-        4089
-        4993
-        5759
-        12122
-        17585
-        18791
-        18791)
-     #s(trailres
-        "randomB"
-        "prf_total"
-        3136
-        4083
-        4942
-        5738
-        12206
-        17594
-        18791
-        18791)))
+     #s(trailres "limit-con" "prf_self" 5604 5723 5763 5763 5763 7304 18791)
+     #s(trailres "limit-con" "prf_total" 4636 5586 6143 6201 6223 6335 18791)
+     #s(trailres "opt" "boundary" 12602 16191 18265 18384 18435 14297 18791)
+     #s(trailres "opt" "prf_self" 6183 6336 6338 6338 6338 7865 18791)
+     #s(trailres "opt" "prf_total" 4789 5816 6453 6541 6546 6453 18791)
+     #s(trailres "randomB" "boundary" 3220 4155 4998 5806 12193 5673 18791)
+     #s(trailres "randomB" "prf_self" 3184 4089 4993 5759 12122 5625 18791)
+     #s(trailres "randomB" "prf_total" 3136 4083 4942 5738 12206 5591 18791)))
  #s(bmres
     "synth"
     #s(seascape
@@ -116691,13 +116527,13 @@
              ("2222222221" . #t)
              ("2222222222" . #t))
        #hash())
-    (#s(trailres "toggle" "-" 1024 "-" "-" "-" "-" 53756 59046 59046)
-     #s(trailres "con" "boundary" 0 0 0 0 0 58814 59046 59046)
-     #s(trailres "con" "prf_self" 0 0 0 0 0 37308 59046 59046)
-     #s(trailres "con" "prf_total" 0 0 0 0 0 37241 59046 59046)
-     #s(trailres "cost-con" "boundary" 0 0 0 0 0 58818 59046 59046)
-     #s(trailres "cost-con" "prf_self" 0 0 0 0 0 37308 59046 59046)
-     #s(trailres "cost-con" "prf_total" 0 0 0 0 0 37241 59046 59046)
+    (#s(trailres "toggle" "-" 1024 "-" "-" "-" "-" 18708 59046)
+     #s(trailres "con" "boundary" 0 0 0 0 0 667 59046)
+     #s(trailres "con" "prf_self" 0 0 0 0 0 667 59046)
+     #s(trailres "con" "prf_total" 0 0 0 0 0 667 59046)
+     #s(trailres "cost-con" "boundary" 0 0 0 0 0 667 59046)
+     #s(trailres "cost-con" "prf_self" 0 0 0 0 0 667 59046)
+     #s(trailres "cost-con" "prf_total" 0 0 0 0 0 667 59046)
      #s(trailres
         "cost-opt"
         "boundary"
@@ -116706,31 +116542,10 @@
         32898
         35546
         39304
-        58945
-        59046
+        25654
         59046)
-     #s(trailres
-        "cost-opt"
-        "prf_self"
-        2602
-        2970
-        3114
-        3157
-        3163
-        34019
-        59046
-        59046)
-     #s(trailres
-        "cost-opt"
-        "prf_total"
-        1728
-        2095
-        2283
-        2296
-        2303
-        34526
-        59046
-        59046)
+     #s(trailres "cost-opt" "prf_self" 2602 2970 3114 3157 3163 3261 59046)
+     #s(trailres "cost-opt" "prf_total" 1728 2095 2283 2296 2303 2390 59046)
      #s(trailres
         "limit-con"
         "boundary"
@@ -116739,74 +116554,13 @@
         35988
         37406
         39071
-        58933
-        59046
+        27349
         59046)
-     #s(trailres
-        "limit-con"
-        "prf_self"
-        2596
-        2956
-        3101
-        3148
-        3157
-        33448
-        59046
-        59046)
-     #s(trailres
-        "limit-con"
-        "prf_total"
-        1728
-        2099
-        2287
-        2297
-        2301
-        34366
-        59046
-        59046)
-     #s(trailres
-        "opt"
-        "boundary"
-        27190
-        34576
-        36898
-        38101
-        39304
-        58945
-        59046
-        59046)
-     #s(trailres "opt" "prf_self" 2602 2970 3114 3157 3163 34019 59046 59046)
-     #s(trailres "opt" "prf_total" 1728 2095 2283 2296 2303 34526 59046 59046)
-     #s(trailres
-        "randomB"
-        "boundary"
-        2076
-        3325
-        4522
-        5671
-        29637
-        58873
-        59046
-        59046)
-     #s(trailres
-        "randomB"
-        "prf_self"
-        2158
-        3385
-        4658
-        5885
-        29560
-        58868
-        59046
-        59046)
-     #s(trailres
-        "randomB"
-        "prf_total"
-        2140
-        3483
-        4767
-        5946
-        29695
-        58870
-        59046
-        59046))))
+     #s(trailres "limit-con" "prf_self" 2596 2956 3101 3148 3157 3255 59046)
+     #s(trailres "limit-con" "prf_total" 1728 2099 2287 2297 2301 2390 59046)
+     #s(trailres "opt" "boundary" 27190 34576 36898 38101 39304 27842 59046)
+     #s(trailres "opt" "prf_self" 2602 2970 3114 3157 3163 3261 59046)
+     #s(trailres "opt" "prf_total" 1728 2095 2283 2296 2303 2390 59046)
+     #s(trailres "randomB" "boundary" 2076 3325 4522 5671 29637 4153 59046)
+     #s(trailres "randomB" "prf_self" 2158 3385 4658 5885 29560 4268 59046)
+     #s(trailres "randomB" "prf_total" 2140 3483 4767 5946 29695 4278 59046))))
