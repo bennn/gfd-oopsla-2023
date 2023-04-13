@@ -1,5 +1,13 @@
 #lang racket
 
+(provide
+  (struct-out row)
+  (struct-out trailfile)
+  (struct-out trailres)
+  (struct-out bmres)
+  (struct-out seascape)
+  combine-trails)
+
 (require
   "base.rkt"
   "runtime.rkt"
@@ -48,9 +56,7 @@
                  (sort
                    (filter-not null? (group-by trailfile-bb data*))
                    < #:key (compose1 benchmark-index trailfile-bb car))))
-  (define res**
-    #;(file->value "data/success-res.rktd")
-    (map go-bm-h2h bm**))
+  (define res** (map go-bm-h2h bm**))
   (with-output-to-file+ "data/h2h.rktd" #:exists 'replace (lambda () (pretty-write res**)))
   (void))
 
@@ -369,7 +375,7 @@
                   (+ nN (->real (trailres-win-N tt)))
                   (+ nB (->real (trailres-backup-N tt)))
                   (+ nt (trailres-num-scenario tt)))))
-      (when (zero? num-scenario)
+      #;(when (zero? num-scenario)
         (raise-arguments-error 'trail-collect
                                "uhoh zero total configs"
                                "strat" strat
@@ -390,7 +396,7 @@
 (define (go)
   (go-success #:scene 'feasible)
   (go-success #:scene 'hopeful)
-  #;(go-h2h)
+  (go-h2h)
   (void))
 
 (module+ main (go))

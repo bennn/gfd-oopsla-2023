@@ -159,87 +159,104 @@
 (define (cd-sort row**)
   (sort row** < #:key (compose1 cd-strategy-index caar)))
 
-(define (f:strategy-overall #:hope? [hope? #f])
+(define (f:strategy-overall #:hope? [hope? #f] #:split-bm? [split-bm? #false])
   (define my-scene (if hope? 'hopeful 'feasible))
-  (define tbl (cadr (success-tbl my-scene)))
-  (define total-scenarios
-    (list-ref (cadr tbl) 8))
-  (printf "~a total ~a scenarios~n" (if hope? "(hopeful)" "") total-scenarios)
-  (define rect**
-    (cd-sort
-     (filter-not null?
-      (for/list ((rr* (in-list (group-by first (cdr tbl)))))
-       (filter first
-        (for/list ((rr (in-list rr*)))
-          (list (bg-strategy->cd-strategy (first rr))
-                (second rr)
-                (pct2 (third rr) total-scenarios)
-                (pct2 (fourth rr) total-scenarios)
-                (pct2 (fifth rr) total-scenarios)
-                (pct2 (sixth rr) total-scenarios)
-                (pct2 (seventh rr) total-scenarios)
-                (pct2 (eighth rr) total-scenarios))))))))
-  (define-values [rect-agnostic** -other-rect**]
-    (partition (compose1 agnostic-strategy? caar) rect**))
-  (define other-rect**
-    (if hope?
-      (filter-not (compose1 con-strategy? caar) -other-rect**)
-      -other-rect**))
-  (define x-offset 1/2)
-  (define num-mode 3)
-  (define num-ag (length rect-agnostic**))
-  (define num-other (length other-rect**))
-  (define pp
-    (parameterize ((plot-y-ticks (pct-ticks))
-                   (plot-x-far-ticks no-ticks)
-                   (plot-x-ticks (label-ticks
-                                   ;; TODO magic numbers
-                                   (append
-                                     (for/list ((rr (in-list other-rect**))
-                                                (ii (in-naturals)))
-                                       (list (+ 2 (* ii 4)) (caar rr)))
-                                     (for/list ((rr (in-list rect-agnostic**))
-                                                (ii (in-naturals)))
-                                       (list (+ (* 4 num-other) 1
-                                                ii (* ii 1/2)) (caar rr)))))))
-      (plot-pict
-        (list
-          (for/list ((y (in-range 9)))
-            (hrule (* 10 (+ y 1))
-                   #:width 1
-                   #:color "black"
-                   #:alpha 0.06))
-          (for/list ((mode-num (in-range num-mode)))
-            (for/list ((rect* (in-list other-rect**))
-                       (strat-num (in-naturals)))
-              (rrect (+ mode-num
-                        (* (+ num-mode 1) strat-num))
-                     (cddr (list-ref rect* mode-num))
-                     #:color (+ 1 mode-num)
-                     #:x0 x-offset)))
-          (for/list ((rect* (in-list rect-agnostic**))
-                     (ii (in-naturals)))
-            (rrect (+ ii (* 1/2 ii))
-                   (cddr (aggregate rect*))
-                   #:color (+ num-mode 1)
-                   #:x0 (+ x-offset (* 4 (length other-rect**))))))
-        #:x-label #f
-        #:y-label #f
-        #:x-min 0
-        #:x-max (+ (* 4 num-other) num-ag 1 1/2)
-        #:y-min 0
-        #:y-max 100
-        #:width (if hope? 500 600)
-        #:height 300)))
-  (define out-name (format "strategy-overall-~a.~a" my-scene (*out-kind*)))
-  (printf "save-pict ~a~n" out-name)
-  (save-pict
-    (build-path data-dir out-name)
-    (hc-append
-      2
-      pp
-      (legend-pict num-mode)))
+  (define stbl (success-tbl my-scene))
+  (define all-tbl (cadr stbl))
+  (define res** (if split-bm? (file->value (build-path data-dir "success-res.rktd")) #f))
+  (for ((tgt-bm (in-list (if split-bm? (map car (cdr (car stbl))) '(#f)))))
+    (define tbl (if tgt-bm
+                  (let ((res** (filter (lambda (x) (equal? tgt-bm (bmres-bb x))) res**)))
+                    (combine-trails res**))
+                  all-tbl))
+    (define total-scenarios (list-ref (cadr tbl) 8))
+    (printf "~a total ~a scenarios~n" (if hope? "(hopeful)" "") total-scenarios)
+    (define rect**
+      (if (zero? total-scenarios)
+        (begin
+          (printf "~a: empty plot, 0 scenario~n" tgt-bm)
+          '())
+      (cd-sort
+       (filter-not null?
+        (for/list ((rr* (in-list (group-by first (cdr tbl)))))
+         (filter first
+          (for/list ((rr (in-list rr*)))
+            (list (bg-strategy->cd-strategy (first rr))
+                  (second rr)
+                  (pct2 (third rr) total-scenarios)
+                  (pct2 (fourth rr) total-scenarios)
+                  (pct2 (fifth rr) total-scenarios)
+                  (pct2 (sixth rr) total-scenarios)
+                  (pct2 (seventh rr) total-scenarios)
+                  (pct2 (eighth rr) total-scenarios)))))))))
+    (define-values [rect-agnostic** -other-rect**]
+      (partition (compose1 agnostic-strategy? caar) rect**))
+    (define other-rect**
+      (if hope?
+        (filter-not (compose1 con-strategy? caar) -other-rect**)
+        -other-rect**))
+    (define x-offset 1/2)
+    (define num-mode 3)
+    (define num-ag (length rect-agnostic**))
+    (define num-other (length other-rect**))
+    (define pp
+      (parameterize ((plot-y-ticks (pct-ticks))
+                     (plot-x-far-ticks no-ticks)
+                     (plot-x-ticks (label-ticks
+                                     ;; TODO magic numbers
+                                     (append
+                                       (for/list ((rr (in-list other-rect**))
+                                                  (ii (in-naturals)))
+                                         (list (+ 2 (* ii 4)) (caar rr)))
+                                       (for/list ((rr (in-list rect-agnostic**))
+                                                  (ii (in-naturals)))
+                                         (list (+ (* 4 num-other) 1
+                                                  ii (* ii 1/2)) (caar rr)))))))
+        (plot-pict
+          (list
+            (for/list ((y (in-range 9)))
+              (hrule (* 10 (+ y 1))
+                     #:width 1
+                     #:color "black"
+                     #:alpha 0.06))
+            (for/list ((mode-num (in-range num-mode)))
+              (for/list ((rect* (in-list other-rect**))
+                         (strat-num (in-naturals)))
+                (rrect (+ mode-num
+                          (* (+ num-mode 1) strat-num))
+                       (cddr (list-ref rect* mode-num))
+                       #:color (+ 1 mode-num)
+                       #:x0 x-offset)))
+            (for/list ((rect* (in-list rect-agnostic**))
+                       (ii (in-naturals)))
+              (rrect (+ ii (* 1/2 ii))
+                     (cddr (aggregate rect*))
+                     #:color (+ num-mode 1)
+                     #:x0 (+ x-offset (* 4 (length other-rect**))))))
+          #:x-label #f
+          #:y-label #f
+          #:x-min 0
+          #:x-max (+ (* 4 num-other) num-ag 1 1/2)
+          #:y-min 0
+          #:y-max 100
+          #:width (* (if split-bm? 8/10 1) (if hope? 500 600))
+          #:height (* (if split-bm? 56/100 1) 300))))
+    (define out-name
+      (if split-bm?
+        (format "~a-~a.~a" tgt-bm my-scene (*out-kind*))
+        (format "strategy-overall-~a.~a" my-scene (*out-kind*))))
+    (define out-dir (if split-bm? (let ((dd (build-path data-dir "sky"))) (ensure-dir dd) dd) data-dir))
+    (printf "save-pict ~a~n" out-name)
+    (save-pict
+      (build-path out-dir out-name)
+      (if split-bm?
+        pp
+        (hc-append 2 pp (legend-pict num-mode))))
+    (void))
   (void))
+
+(define (app:strategy-overall)
+  (f:strategy-overall #:hope? #false #:split-bm? #true))
 
 (define (vector-add1 v k)
   (vector-set! v k (+ 1 (vector-ref v k))))
@@ -255,12 +272,17 @@
     (index-of (append (all-mode-name*) (list "")) (string-replace str "profile" "prf"))
     (raise-argument-error 'h2h-key "key" str)))
 
-(define (f:head2head #:all? [all? #f])
+(define (f:head2head #:all? [all? #f] #:split-bm? [split-bm? #f])
   (define num-sm (length all-sm-name*))
   (define fave*
     (if all? (drop-right all-sm-name* 4) '("opt_boundary")))
   (define vv (file->value (build-path data-dir "h2h.rktd")))
-  (define pp*
+  (define out-dir
+    (if split-bm?
+      (let ((dd (build-path data-dir "h2h"))) (ensure-dir dd) dd)
+      data-dir))
+  (for ((tgt-bm (in-list (if split-bm? (map car vv) '(#f)))))
+    (define pp*
       (for/list ((from-mode (in-list fave*)))
         (define from-key (sm->idx from-mode))
         (define-values [strategy mode]
@@ -271,6 +293,7 @@
         (define num-configs 0)
         (void
           (for* ((bm (in-list vv))
+                 #:when (or (not tgt-bm) (equal? (car bm) tgt-bm))
                  (res (in-hash-values (cadr bm))))
             (set! num-configs (add1 num-configs))
             (define from-win? (eq? #\1 (string-ref res from-key)))
@@ -302,7 +325,7 @@
             (sort to* << #:key (compose1 fkey car) #:cache-keys? #true)))
         (define num-gap (length (all-mode-name*)))
         (define ymin   0)
-        (define ymax 70)
+        (define ymax (if split-bm? 100 70))
         (define pp
           (parameterize ((plot-y-ticks (pct-ticks))
                          (plot-x-ticks (label-ticks
@@ -382,8 +405,8 @@
                     #:line-color cc
                     #:color (if (= 1 cc) (->pen-color cc) cc)
                     #:alpha 0.8)))
-              #:width 600
-              #:height (* 7/10 300)
+              #:width (* (if split-bm? 8/10 1) 600)
+              #:height (* (if split-bm? 8/10 1) (* 7/10 300))
               #:x-min -1/2
               #:x-max (+ 1/2 (sub1 (length x-order*)) num-gap)
               #:y-min ymin
@@ -392,101 +415,29 @@
               #:y-label #f
               #:title #f)))
         pp))
-  (save-pict
-    (build-path data-dir (format "head-to-head.~a" (*out-kind*)))
-    (cond
-      ((null? (cdr pp*))
-       (car pp*))
-      (all?
-       (ptable
-         #:ncols 3
-         #:row-sep 4
-         #:col-sep 4
-         pp*))
-      (else
-       (apply vl-append 4 pp*))))
-  (void))
-
-(define (app:head2head)
-  (define num-sm (length all-sm-name*))
-  (define fave*
-    ;; '("opt_boundary" "cost-opt_boundary" "limit-con_boundary")
-    (drop-right all-sm-name* 4))
-  (define vv (file->value (build-path data-dir "h2h.rktd")))
-  (define out-dir (build-path data-dir "h2h"))
-  (void (ensure-dir out-dir))
-  (for ((tgt-bm (in-list (map car vv))))
-    (define pp*
-      (parameterize ((plot-y-ticks (pct-ticks))
-                     #;(plot-x-ticks (exact-ticks num-sm))
-                     (plot-x-far-ticks no-ticks))
-        (for/list ((from-mode (in-list fave*)))
-          (define from-key (sm->idx from-mode))
-          (define-values [strategy mode]
-            (let* ((str* (string-split from-mode "_")))
-              (values (bg-strategy->cd-strategy (car str*))
-                      (string-join (cdr str*) "_"))))
-          (define win* (make-vector num-sm 0))
-          (define tie* (make-vector num-sm 0))
-          (define los* (make-vector num-sm 0))
-          (define num-configs 0)
-          (void
-            (for* ((bm (in-list vv))
-                   #:when (equal? (car bm) tgt-bm)
-                   (res (in-hash-values (cadr bm))))
-              (set! num-configs (add1 num-configs))
-              (define from-win? (eq? #\1 (string-ref res from-key)))
-              (for ((to-mode (in-list all-sm-name*))
-                    (to-key (in-naturals)))
-                (define to-win? (eq? #\1 (string-ref res to-key)))
-                (cond
-                  ((eq? from-win? to-win?)
-                   (vector-add1 tie* to-key))
-                  ((and from-win?  (not to-win?))
-                   (vector-add1 win* to-key))
-                  ((and to-win?  (not from-win?))
-                   (vector-add1 los* to-key))
-                  (else
-                    (error 'h2hwtf))))))
-          (define pp
-            (plot-pict
-              (for/list ((vec (in-list (list tie* los* win*)))
-                         (cc (in-naturals)))
-                (rectangles
-                  (for/list ((yy (in-vector vec))
-                             (xx (in-naturals))
-                             #:when (< 0 yy))
-                    (define x0 (+ (- xx 1/4) (* 1/4 cc)))
-                    (vector (ivl x0 (+ x0 1/4))
-                            (ivl 0 (pct2 yy num-configs))))
-                  #:line-width 1
-                  #:line-color cc
-                  #:color cc
-                  #:alpha 0.8))
-              #:width 600
-              #:height 300
-              #:y-min 0
-              #:y-max 100
-              #:x-label #f
-              #:y-label #f
-              #:title #f))
-          (define title-pict (lbltxt (format "~a ~a ~a, ~a configs" tgt-bm strategy mode num-configs)))
-          (ht-append
-            4
-            (vl-append title-pict pp)
-            (cheap-h2h-legend)))))
-    (define out-name (format "~a.~a" tgt-bm (*out-kind*)))
+    (define out-name
+      (if split-bm?
+        (format "~a.~a" tgt-bm (*out-kind*))
+        (format "head-to-head.~a" (*out-kind*))))
     (printf "save-pict ~a~n" out-name)
     (save-pict
       (build-path out-dir out-name)
-      (ptable
-        #:ncols 3
-        #:row-sep 4
-        #:col-sep 4
-        pp*)
-      #;(apply vl-append 4 pp*))
+      (cond
+        ((null? (cdr pp*))
+         (car pp*))
+        (all?
+         (ptable
+           #:ncols 3
+           #:row-sep 4
+           #:col-sep 4
+           pp*))
+        (else
+         (apply vl-append 4 pp*))))
     (void))
   (void))
+
+(define (app:head2head)
+  (f:head2head #:all? #false #:split-bm? #true))
 
 (define (cheap-h2h-legend [x-order* #f])
   (apply
@@ -728,13 +679,13 @@
 (define (go)
   (parameterize ( #;(*out-kind* 'png))
     #;(t:baseline-trouble)
-    (f:strategy-overall)
-    (f:strategy-overall #:hope? #true)
-    #;(app:strategy-overall)
-    #;(f:deathplot)
-    (f:head2head)
     #;(t:blackhole)
+    #;(f:strategy-overall)
+    #;(f:strategy-overall #:hope? #true)
+    (app:strategy-overall)
+    #;(f:head2head)
     #;(app:head2head)
+    #;(f:deathplot)
     (void)))
 
 (module+ main
