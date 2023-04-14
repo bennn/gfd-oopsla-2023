@@ -14,19 +14,19 @@ and some general threats to the validity of the data and the conclusions
      \lbl{tetris}   & \lbl{synth} \\
      \kkrow{tetris} & \kkrow{synth} \\
     \end{tabular}
-  \caption{Examples of migration lattices best navigates with optimistic strategies} \label{fig:success}
+  \caption{Examples of migration lattices best navigated with optimistic strategies} \label{fig:success}
 \end{figure}  
 
 
 \subsection{Data from Individual Benchmarks} \label{subsec:data}
 
-Figure~\label{f:strategy-overall} summarize the successes and failures across
+\Cref{f:strategy-overall} summarize the successes and failures across
 all benchmarks. Some of the results for individual benchmarks match this profile
 well. As figure~\ref{fig:success} shows, the \bmname{tetris} and \bmname{synth}
 are examples of such benchmarks. The two benchmarks share a basic characteristic. 
 They consist of numerous components with a complex dependency
 graph. Additionally, both benchmarks suffer from a double-digit average
-performance degradation~\cite{gtnffvf-jfp-2019}. 
+performance degradation with deep types~\cite{gtnffvf-jfp-2019}.
 
 \begin{figure}[ht]
   \def\lbl#1{\bmname{#1}}
@@ -41,7 +41,7 @@ performance degradation~\cite{gtnffvf-jfp-2019}.
 For some of the benchmarks, the results look extremely different. The two most
 egregious examples are shown in figure~\ref{fig:random}: \bmname{morsecode} and
 \bmname{lmn}. In contrast to the above examples, these two are relatively small
-and exhibit a rather low performance overhead of less than $2x$. 
+and exhibit a rather low worst-case overhead of less than $3$x~\cite{g-deep-shallow}.
 
 \begin{figure}[ht]
   \def\lbl#1{\bmname{#1}}
@@ -50,15 +50,16 @@ and exhibit a rather low performance overhead of less than $2x$.
      \lbl{mbta} & \lbl{take5} \\
      \kkrow{mbta} & \kkrow{take5} \\
     \end{tabular}
-  \caption{Results for navigations in migration lattices with black holes} \label{fig:bh}
+  \caption{Results for navigations in migration lattices with zero hopeful scenarios} \label{fig:bh}
 \end{figure}
 
 Finally, some benchmarks exhibit pathological obstacles. Take a look at
 figure~\ref{fig:bh}, which display empty data plots for \bmname{mbta} and
 \bmname{take5}. Neither migration lattice of these benchmarks comes with any
-hopeful performance-debugging scenarios. See section~\ref{sec:results}.  What
-these two highlight is that the working programmer does not know the complete
-migration lattice, and that general lessons must not assume so.
+hopeful performance-debugging scenarios~(\cref{t:blackhole}).
+Because a working programmer does not know the complete migration lattice
+and therefore cannot predict whether a scenario is hopeful, general lessons
+must not depend on the full lattice either.
 
 %% -----------------------------------------------------------------------------
 \subsection{Lessons for All} \label{subsec:lessons}
@@ -75,9 +76,9 @@ programmer through the migration lattice. On the other hand, for some programs a
 programmer is best off without any profiling tools.  Specifically, when a
 programmer is confronted with an intolerable performance of a large mixed-typed
 program, it is time to reach for the boundary profiler. By contrast, for a
-program with a handful of components, a programmer should toggle all existing
-types or add types to randomly chosen components until the performance is
-tolerable.
+program with a handful of components and single-digit overhead, a programmer
+should toggle all existing types or add types to randomly chosen components
+until the performance is tolerable.
 
 When a programmer has reached for the boundary profiler, the question is how the
 programmer should interpret its feedback. Again, the data implies a single
@@ -86,10 +87,10 @@ cause of the intolerable performance, the programmer is best served by
 converting both sides of the boundary to use deep types. This modification
 should prioritize toggling existing shallow types to deep before adding deep
 types to untyped components. Prioritizing in this order follows from the data
-for the optimistically cost-aware option, which is better is as good or better
-than the data for other approaches. The second-best option is to pursue the
-plainly optimistic approach; the data shows that it is equally good or even
-better in some cases, but it requires more effort from the programmer. 
+for the cost-aware optimistic mode, which is one of the most successful modes.
+The second-best option is to pursue the
+plainly optimistic approach; the data shows that it is best by a small margin,
+but it requires more effort from the programmer. 
 
 As a programmer pursues one of these two strategies, one of the resulting
 programs may suffer from performance problems that are worse than the original
@@ -106,13 +107,13 @@ is whether a mixed-typed program should run as fast as its (possibly
 non-existent) untyped variant. But, the antenna data disagrees with relaxing the
 standard. With the exceptions of low-overhead programs, a profiling strategy is
 as likely to produce an overhead-free configuration as it is to produce a
-configuration with some reasonably bounded ($3x$) overhead. 
+configuration with some reasonably bounded ($3$x) overhead.
 
-Language designers can extract a single lesson from the data. Despite the
-optimist of \citet{g-deep-shallow}, the addition of shallow type enforcement to
-Typed Racket does not seem to help with the navigation of the migration
-lattice. All conservative profiling strategies---which prioritize shallow over
-deep---are inferior to all optimistic profiling stratgies---which prefer deep
+Language designers can extract a single lesson from the data.
+The addition of shallow type enforcement to
+Typed Racket~\cite{g-deep-shallow} does not seem to help with the navigation of the migration
+lattice. All conservative profiling strategies, which prioritize shallow over
+deep, are inferior to the optimistic profiling strategies---which prefer deep
 enforcement. 
 
 %% -----------------------------------------------------------------------------
@@ -129,21 +130,21 @@ category is about extrinsic aspects of the rational-programmer method.
      \lbl{acquire}   \\
      \kkrow{acquire} \\
     \end{tabular}
-  \caption{An example of a large program with a large black-hole region} \label{fig:bh2}
+  \caption{An example of a large program with a large hopeless region} \label{fig:bh2}
 \end{figure}  
 
-As for method-internal threats, the most important one is that the GTP programs
+As for method-internal threats, the most important one is that the GTP Benchmarks
 may not be truly representative of Racket programs in the wild. Several of those
 are somewhat small with simple dependency graphs and low performance overheads.
 Since programmers typically confront performance-debugging scenarios with large,
-high-overhead programs, they will have to use the general lessons with some
-caution. The problem is that such programs may come with large black holes in
+high-overhead programs, they will have to apply the general lessons with some
+caution. The problem is that such programs may come with large hopeless regions in
 the migration lattice. Concretely, once a program belongs to the part of the
 lattice with high performance degradation, no profiling strategy will assist the
 programmer with getting out of this region of the lattice. As
 figure~\ref{fig:bh2} illustrates for the \bmname{acquire} benchmark, the random
 strategy works better for such large programs than any profiling strategy.  It
-remains an open question how often such black holes occur in the wild.
+remains an open question how often such hopeless scenarios occur in the wild.
 
 The second-most important internal threat concerns the design of the strategies.
 While the set of strategies looks large and seems to cover a wide range of
