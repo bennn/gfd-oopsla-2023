@@ -141,9 +141,14 @@ The construction of a $k$-loose successful migration path allows a strategy to
 temporarily stir migration towards worse performance. The constant $k$ is an
 upper bound on the number of missteps.
 
+%% TODO k-loose awkward, undefined for paths with fewer than k-1 modules
+
 A patient programmer may wish to relax this constraint even more.
 
 \begin{quote} \em
 A migration path is $N$-loosely successful iff for any $k, n$, $k \leq n$ it is
 \emph{$k$-loosely successful}. 
 \end{quote}
+
+%% TODO awkward, where does n come from? Can I pick n=1 for a path with 8 configurations??
+
