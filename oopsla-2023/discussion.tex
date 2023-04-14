@@ -1,5 +1,39 @@
 
+\subsection{Data from Individual Benchmarks}
+
+\begin{figure}[t]
+  \def\lbl#1{\bmname{#1}}
+  \newcommand{\kkrow}[1]{\includegraphics[width=0.39\columnwidth]{data/sky/#1-feasible.pdf}}
+    \begin{tabular}[t]{ll}
+     \lbl{tetris}   & \lbl{synth} \\
+     \kkrow{tetris} & \kkrow{synth} \\
+    \end{tabular}
+  \caption{Examples of migration lattices best navigates with optimistic strategies} \label{fig:success}
+\end{figure}  
+
+\begin{figure}[t]
+  \def\lbl#1{\bmname{#1}}
+  \newcommand{\kkrow}[1]{\includegraphics[width=0.39\columnwidth]{data/sky/#1-feasible.pdf}}
+    \begin{tabular}[t]{ll}
+     \lbl{morsecode} & \lbl{lnm} \\
+     \kkrow{morsecode} & \kkrow{lnm} \\
+    \end{tabular}
+  \caption{Examples of migration lattices best navigated with random choices} \label{fig:random}
+\end{figure}
+
+\begin{figure}[t]
+  \def\lbl#1{\bmname{#1}}
+  \newcommand{\kkrow}[1]{\includegraphics[width=0.39\columnwidth]{data/sky/#1-feasible.pdf}}
+    \begin{tabular}[t]{ll}
+     \lbl{mbta} & \lbl{take5} \\
+     \kkrow{mbta} & \kkrow{take5} \\
+    \end{tabular}
+  \caption{Results for navigations in migration lattices with black holes} \label{fig:random}    
+\end{figure}
+
 The working programmer does not know the complete migration lattice. 
+
+\subsection{Lessons for All} 
 
 Programmers should aim at approximating the performance of the completely
 untyped configuration.
