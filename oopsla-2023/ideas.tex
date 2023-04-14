@@ -38,7 +38,7 @@ highest-priority one for adding types or for toggling its run-time checking.
 Stepping back, these two insights suggest an experiment to determine which
 profiling tool combined with which strategy helps developers make progress with
 performance debugging. For this experiment, the developer must choose a
-profiling tool---statistical or feature-specific---and a modification strategy.
+profiling tool---statistical or boundary---and a modification strategy.
 To determine the best combination(s) means to have developers work through a
 large number of performance-debugging scenarios. The result should help guide a
 developer with toggling or adding types to resolve performance-related
@@ -81,7 +81,7 @@ first is strategy-agnostic; it consumes a program, measures its running time,
 and if the performance is tolerable, stops. Otherwise it faces a
 performance-debugging scenario and asks for guidance from the second,
 strategy-specific piece. This second piece profiles the given program---using
-the feature-specific profiler or the statistical profiler---and analyzes the
+the boundary profiler or the statistical profiler---and analyzes the
 profiling information. Based on this analysis, it modifies the program by adding
 types to some untyped component to eliminate a boundary or toggling the run-time
 enforcement of types for a typed component. This modified version is handed back

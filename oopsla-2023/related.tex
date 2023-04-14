@@ -113,18 +113,19 @@ profilers that collect caller-function execution time data, and paved the
 way for the development of statistical profilers in many languages,
 including (Typed) Racket.
 
-In addition to Racket's statistical profiler, the experiment in this paper
-also uses Racket's feature-specific
-profiler~\cite{astavf-feature-prf,staaf-feature-prf}. A feature-specific
-profiler allows developers to direct the profiler to group execution time
-based on (instances) of language features of their choice rather than just function calls.
-For instance, the boundary profiler that the experiment of this paper
-employs aggregates the cost of contracts in a program by the boundary that
-introduces them. 
+In addition to Racket's statistical profiler, the experiment in this
+paper also uses Racket's feature-specific
+profiler~\cite{astavf-feature-prf, staaf-feature-prf}. A
+feature-specific profiler allows developers to direct the profiler to
+group execution time based on (instances) of language features of
+their choice rather than just function calls.  For instance, the
+boundary profiler that the experiment of this paper employs aggregates
+the cost of contracts in a program by the boundary that introduces
+them.
 
 There are two prior works that have used profiler feedback to understand
 the source of the high cost of gradual types.  First,
-~\citet{astavf-feature-prf} show that the boundary profiler can detect
+~\citet{astavf-feature-prf} show that the feature-specific profiler can detect
 ``hot'' boundaries in a mixed-typed program with deep types, i.e., it can
 identify boundaries that are the origin for the most costly run-time deep
 type checks. Second, \cite{grmhn-vmil-2019} show that a statistical
@@ -132,7 +133,7 @@ profiler can help identify the most costly shallow type checks; removing
 these ``hot'' checks can render the resulting configuration of a mix-typed
 program as performant as the corresponding untyped program.  Put
 differently, the result of those papers justify the inclusion of both a
-statistical and boundary profiler in the rational programmer experiment of
+statistical and feature-specific profiler in the rational programmer experiment of
 this paper.  After all the two profiler techniques seem to have
 complementary strengths which should make their combination ideal for a
 setting that mixes deep and shallow types --- see however

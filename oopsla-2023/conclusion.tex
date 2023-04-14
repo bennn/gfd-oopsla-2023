@@ -10,9 +10,9 @@ on the results of using the novel rational-programmer evaluation method for this
 problem.
 
 At the object level, the results essentially deliver several insights. First,
-the feature-specific profiler works well if used with any ``optimistic''
+the boundary profiler works well if used with any ``optimistic''
 interpretation strategy. That is, programmers should eliminate the hottest
-boundary, as identified by the feature-specific profiler, by making both modules
+boundary, as identified by the boundary profiler, by making both modules
 use deeply checked types. Second, if a program comes with a low overhead for all
 mixed-typed variants, the statistical profiler works reasonably well;
 otherwise the statistics profiler is unhelpful for performance-debugging
@@ -36,7 +36,7 @@ involved.
 Finally, the rational-programmer experiment also suggests several ideas for
 future research. First, the experiment should be reproduced for alternative
 mixed-typed languages. Nothing else will confirm the value of the optimistic
-interpretations of feedback from the feature-specific profiler. Second, the
+interpretations of feedback from the boundary profiler. Second, the
 experiment clearly demonstrates that existing profiling tools are not enough to
 overcome the performance challenges of sound migratory typing. Unless researchers
 can construct a performant compiler for a production language with sound migratory 

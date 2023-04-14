@@ -19,11 +19,11 @@ Since the benchmarks originate from useful scripts
 and exercise a variety of types at module boundaries~\cite{gtnffvf-jfp-2019},\footnote{\gtpurl{}}
 they are an appropriate testbed for comparing navigation strategies.
 Configurations with high overhead due to deep types should benefit from
-feature-specific profiling, while configurations that suffer from shallow
+boundary profiling, while configurations that suffer from shallow
 types may benefit more from the statistical profiler.
 
 The experiment uses the v7.0 release of the GTP Benchmarks with small modifications
-to support feature-specific profiling.
+to support boundary profiling.
 Version 7.0 is outdated, but was the latest version when we began collecting
 data in Summer 2022~(\cref{sec:data}).
 The modifications add static information so that the profiler can peek through
@@ -48,9 +48,9 @@ and \bmname{sieve} because it is very small, with only four configurations.
 
 \subsubsection{Profiling Tools}
 
-Racket ships with tools for statistical~[CITE] and feature-specific
+Racket ships with tools for statistical~[CITE] and boundary
 profiling~\cite{}.
-The feature-specific profiler is aware of contracts as a default feature.
+The boundary profiler is aware of contracts as a default feature.
 Since deep gradual types compile to contracts,
 Since deep gradual types compile to contracts, this default contract
 mode is suitable for the experiment.
@@ -59,7 +59,7 @@ The experiment uses slightly-modified variants of these default tools
 to make their output easier to analyze.
 First, the modified statistical profile renders its
 findings as a JSON graph rather than as a table~(see~\cref{f:fsm-code:statistical}).
-Second, the modified feature-specific profiler groups contracts
+Second, the modified boundary profiler groups contracts
 by boundary (using the two sides of their blame objects) and sorts groups
 in descending order.
 Thus, the most expensive \emph{boundary} appears at the top rather than the single
@@ -70,7 +70,7 @@ most expensive contract~(shown in~\cref{f:fsm-code:boundary}).
 \label{sec:data}
 
 The ground-truth data for our experiment consists of running times,
-feature-specific profile output, and statistical profile output.
+boundary profile output, and statistical profile output.
 Collecting this data required three basic steps for each configuration
 of the \numgtp{} benchmarks:
 \begin{enumerate}
@@ -80,7 +80,7 @@ of the \numgtp{} benchmarks:
     In particular, we recorded {cpu time}s as reported by the Racket
     \code{time} function.
   \item
-    Install the modified feature-specific profiler and run it once,
+    Install the modified boundary profiler and run it once,
     collecting output in a file.
   \item
     Install the modified statistical profiler and run it once, collecting output.
@@ -108,7 +108,7 @@ Due to this ambitious plan and the popularity of resources on CloudLab,
 we spread our experiment across three clusters.
 \Cref{t:data-collection} (top) matches datasets to clusters.
 Most running times came from \machinename{c220g1} machines managed by the University of Wisconsin-Madison.
-Most profiler results (feature-specific and statistical) came from \machinename{m510} machines
+Most profiler results (boundary and statistical) came from \machinename{m510} machines
 managed by the University of Utah.
 The specifications of these machines are reported at the bottom of~\cref{t:data-collection}.
 
@@ -252,7 +252,7 @@ The strategies are successful in 2\% of configurations in the worst case and
 55\% in the best case:
 \begin{itemize}
   \item
-    \emph{Optimistic} navigation performs well when guided by the \emph{feature-specific} profiler,
+    \emph{Optimistic} navigation performs well when guided by the \emph{boundary} profiler,
     finding strict success in almost 40\% of all configurations.
     With a $2$-loose relaxation, success rises to above 50\%.
     The results are far worse, however, with \emph{statistical (total)} or \emph{statistical (self)}
@@ -260,7 +260,7 @@ The strategies are successful in 2\% of configurations in the worst case and
 
   \item
     \emph{Cost-aware optimistic} is almost as successful as optimistic when driven
-    by \emph{feature-specific} profiles and equally successful with \emph{statistical (total)}
+    by \emph{boundary} profiles and equally successful with \emph{statistical (total)}
     and \emph{statistical (self)}.
 
   \item
@@ -272,7 +272,7 @@ The strategies are successful in 2\% of configurations in the worst case and
 
   \item
     \emph{Configuration-aware optimistic} navigation with
-    \emph{feature-specific} profiles succeeds in approximately 36\% of all
+    \emph{boundary} profiles succeeds in approximately 36\% of all
     configurations under strict and just ovef 50\% with $3$-loose.
     With \emph{statistical (total)} and \emph{statistical (self)} profiles,
     the success rate drops to 10\% even for $N$-loose.
@@ -288,7 +288,7 @@ The strategies are successful in 2\% of configurations in the worst case and
     The other notions of success do not apply to toggling because it can step to at most one configuration.
 \end{itemize}
 
-\emph{Optimistic, feature-specific} navigation is the most likely to
+All told, \emph{optimistic, boundary} navigation is the most likely to
 succeed on an arbitrary configuration.
 \emph{Cost-aware} and \emph{configuration-aware} using the optimistic strategy
 are close behind.
