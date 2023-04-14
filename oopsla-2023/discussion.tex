@@ -1,7 +1,13 @@
+The results of the rational-programmer experiment suggest a few concrete lessons
+for the working programmer and also for language designers. Before diving into
+the details, it is necessary to look at the data for some individual benchmarks
+(section~\ref{subsec:data}). The data is illustrative of the general lessons
+(section~\ref{subsec:lessons}). Finally, readers should be aware some specific
+and some general threats to the validity of the data and the conclusions
+(section~\ref{subsec:threats}).
 
-\subsection{Data from Individual Benchmarks}
-
-\begin{figure}[t]
+%% -----------------------------------------------------------------------------
+\begin{figure}[ht]
   \def\lbl#1{\bmname{#1}}
   \newcommand{\kkrow}[1]{\includegraphics[width=0.39\columnwidth]{data/sky/#1-feasible.pdf}}
     \begin{tabular}[t]{ll}
@@ -11,7 +17,17 @@
   \caption{Examples of migration lattices best navigates with optimistic strategies} \label{fig:success}
 \end{figure}  
 
-\begin{figure}[t]
+\subsection{Data from Individual Benchmarks} \label{subsec:data}
+
+Figure~\label{f:strategy-overall} summarize the successes and failures across
+all benchmarks. Some of the results for individual benchmarks match this profile
+well. As figure~\ref{fig:success} shows, the \bmname{tetris} and \bmname{synth}
+are examples of such benchmarks. The two benchmarks share a basic characteristic. 
+They consist of numerous components with a complex dependency
+graph. Additionally, both benchmarks suffer from a double-digit average
+performance degradation~\cite{gtnffvf-jfp-2019}. 
+
+\begin{figure}[ht]
   \def\lbl#1{\bmname{#1}}
   \newcommand{\kkrow}[1]{\includegraphics[width=0.39\columnwidth]{data/sky/#1-feasible.pdf}}
     \begin{tabular}[t]{ll}
@@ -21,19 +37,30 @@
   \caption{Examples of migration lattices best navigated with random choices} \label{fig:random}
 \end{figure}
 
-\begin{figure}[t]
+For some of the benchmarks, the results look extremely different. The two most
+egregious examples are shown in figure~\ref{fig:random}: \bmname{morsecode} and
+\bmname{lmn}. In contrast to the above examples, these two are relatively small
+and exhibit a rather low performance overhead of less than $2x$. 
+
+\begin{figure}[ht]
   \def\lbl#1{\bmname{#1}}
   \newcommand{\kkrow}[1]{\includegraphics[width=0.39\columnwidth]{data/sky/#1-feasible.pdf}}
     \begin{tabular}[t]{ll}
      \lbl{mbta} & \lbl{take5} \\
      \kkrow{mbta} & \kkrow{take5} \\
     \end{tabular}
-  \caption{Results for navigations in migration lattices with black holes} \label{fig:random}    
+  \caption{Results for navigations in migration lattices with black holes} \label{fig:bh}
 \end{figure}
 
-The working programmer does not know the complete migration lattice. 
+Finally, some benchmarks exhibit pathological obstacles. Take a look at
+figure~\ref{fig:bh}, which display empty data plots for \bmname{mbta} and
+\bmname{take5}. Neither migration lattice of these benchmarks comes with any
+hopeful performance-debugging scenarios. See section~\ref{sec:results}.  What
+these two highlight is that the working programmer does not know the complete
+migration lattice, and that general lessons must not assume so.
 
-\subsection{Lessons for All} 
+%% -----------------------------------------------------------------------------
+\subsection{Lessons for All} \label{subsec:lessons}
 
 Programmers should aim at approximating the performance of the completely
 untyped configuration.
@@ -61,7 +88,7 @@ of strategies presented here will help debug the performance problem.
 
 
 %% -----------------------------------------------------------------------------
-\subsection{Threats to Validity}
+\subsection{Threats to Validity} \label{subsec:threats}
 
 
 Threats to validity:
