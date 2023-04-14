@@ -1,27 +1,58 @@
+	
+%% MF: no clue why this is here. Some of these are about plots, which
+%% mostly belong into sec. 5. Some are about scatter plots, which we
+%% abandoned. 
 
-TODO for scatterplot: x-axis = 1-20, but actual plot goes 1-30 and uses the
-last 10 to evenly spread the rest.
+% TODO for scatterplot: x-axis = 1-20, but actual plot goes 1-30 and uses the
+% last 10 to evenly spread the rest.
 
-1. boundary vs profile total vs profile self, on the whole. scatterplot too,
-   boundary usually improves, profile frequently degrades
+% 1. boundary vs profile total vs profile self, on the whole. scatterplot too,
+%    boundary usually improves, profile frequently degrades
 
-2. strategies: opt vs con vs .... who wins?
+% 2. strategies: opt vs con vs .... who wins?
 
-3. random is very successful b/c no dead ends.
-   why do the profilers have dead ends?
+% 3. random is very successful b/c no dead ends.
+%    why do the profilers have dead ends?
 
-4. (maybe) implictions of 0-dip, 1-dip, 3-dip, N-dip,
-   rare that N improves over 3
+% 4. (maybe) implictions of 0-dip, 1-dip, 3-dip, N-dip,
+%    rare that N improves over 3
 
-5. non-overlapping success / failure.
-   if you give us a configuration, can we suggest a best profiler / strategy?
-   all-shallow probably fails with boundary, etc
+% 5. non-overlapping success / failure.
+%    if you give us a configuration, can we suggest a best profiler / strategy?
+%    all-shallow probably fails with boundary, etc
 
-6. head to head plot:
-   - opts equiv
-   - con never beats opt
-   - statistical rarely beats fsm, but sometimes!
+% 6. head to head plot:
+%    - opts equiv
+%    - con never beats opt
+%    - statistical rarely beats fsm, but sometimes!
 
-7. why does random succeed N-loose when profiles fail? profiles hit dead ends
+% 7. why does random succeed N-loose when profiles fail? profiles hit dead ends
 
 
+%% -----------------------------------------------------------------------------
+
+% How successful is a strategy $X$ with the elimination of performance bottlenecks?
+
+$Q_X$
+
+- level 1: any optimistic or cost-aware strategy is more likely to
+  succeed than a conservative one; indeed, random and toggling are
+  more likely to succeed than conservative one
+
+- level 2: when feedback is successful, the feature-specific profiler
+  is far superior to all others. That's true in general as well as 
+
+- level 1: interpreting the feedback from the feature-specific
+  profiler is more likely to succeed than 
+
+%% -----------------------------------------------------------------------------
+
+% Is strategy $X$ more successful than strategy $Y$ in this context?
+
+$Q_{X/Y}$
+
+%% -----------------------------------------------------------------------------
+\subsection{Threats to Validity}
+
+
+``black holes''
