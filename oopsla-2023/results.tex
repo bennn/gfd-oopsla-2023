@@ -282,6 +282,9 @@ The strategies are successful in 2\% of configurations in the worst case and
     This is a low number, but much better than the conservative strategies.
     Allowing for 1,2,3-loose success improves the rate incrementally, and an $N$-loose search
     succeeds in nearly 40\% of configurations.
+  \subitem
+    The results for random boundary are the average success rates across three trials. The standard deviations
+    for each number were low, under $0.10$.
 
   \item
     \emph{Toggling} achieves strict success a bit more often than random, in roughly 6\% of all configurations.
@@ -342,15 +345,65 @@ an unlucky boundary and fails the ``strict'' criterion.
 Toggling improves tremendously for 3x success.
 This is in line with prior work on shallow, which reports a median worst-case overhead
 of 4.2x on the GTP Benchmarks~\cite{g-deep-shallow}.
-Evidently, about 45\% of configurations can reach a 3x overhead by using shallow types.
+Evidently, about 45\% of configurations can reach a 3x overhead by switching to
+shallow types.
 
 
-\subsubsection{Results Without Hopeless Scenarios}
+\subsubsection{Omitting Hopeless Scenarios}
 
+Some of the \emph{interesting} scenarios in the experiment cannot possibly
+achieve success given the rules that the rational programmer must follow.
+In particular, the rational programmer cannot remove types.
+If a configuration cannot reach a point with 1x overhead except by removing
+types, then its scenario is a hopeless one.
+It might be the case that hopeless scenarios explain the low success rates
+in~\cref{f:strategy-overall}.
 
+\Cref{t:blackhole} lists the number of interesting scenarios in each benchmark
+and the percent of these that can possibly reach a successful configuration.
+A low percent in the third column (\% Hopeful) of this table means that
+the experiment is stacked against the rational programmer.
+For several benchmarks, this is indeed the case.
+Worst of all are \bmname{mbta}, \bmname{dungeon}, and \bmname{take5},
+which have zero hopeful scenarios.
+Three others are only marginally better: \bmname{forth}, \bmname{zombie}, and
+\bmname{acquire}.
+
+In each of these hopeless benchmarks, the fully-deep configuration runs
+slower than the untyped configuration.
+The difference is small (<1 second), but consistent;
+the average running times for these configurations are outside one standard
+deviation of one another.
+Becaus of this failure at the top of the lattice, it follows that other
+configurations are unsuccessful too.
+Less-typed configurations incur more overhead due to mixed-typed interactions.
+
+\Cref{f:strategy-hope} therefore takes a second look at the rational programmer
+results, focusing only on hopeful scenarios.
+If a configuration starts with some overhead but cannot reach a 1x point, it
+is does not affect the counts.
+As before, the results for \emph{random boundary} are the average across three
+runs.
+The standard deviation among numbers was low, but slightly higher than before ($<0.12$).
+
+For the optimistic strategies, the results are much better.
+An additional 10\% of configurations achieve strict success
+with the \emph{optimistic, feature-specific} strategy, and
+the $N$-loose results improve along the same lines.
+With statistical profiles, the optimistic strategies improve
+slightly.
+
+Unfortunately for conservative, it performs no better.
+Very few hopeful scenarios achieve an $N$-loose success.
+Strict 3x successes are rare as well.
+Indeed the antennae in~\cref{f:strategy-overall} are shorter than the
+antennae in~\cref{f:strategy-hope}.
+This means that conservative succeeded in the 3x sense on a number
+of hopeless configurations. Such configurations cannot reach a 1x
+point, but can reach a 3x point.
 
 \begin{table}[t]
-  \caption{How scenarios can possibly reach 1x without removing types?}
+  \caption{How many scenarios can possibly reach 1x without removing types?}
   \label{t:blackhole}
   \begin{tabular}[t]{l@{\qquad}l}
     \begin{tabular}[t]{lrr}
@@ -381,7 +434,7 @@ Evidently, about 45\% of configurations can reach a 3x overhead by using shallow
 
 \begin{figure}[t]
   \includegraphics[width=\columnwidth]{data/strategy-overall-hopeful.pdf}
-  \caption{Hopeful only, 88,992 scenarios. RandomB is average of 3 runs, max stddev <0.12}
+  \caption{How many of the 88,992 hopeful scenarios does each strategy succeed in, for six notions of success.}
   \label{f:strategy-hope}
 \end{figure}
 
