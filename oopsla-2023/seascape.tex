@@ -53,14 +53,14 @@ the situation.
 At this point, the question is how to recover the performance of the untyped
 variant. The first option is to roll back the addition of types, but developers
 prefer typed code and dislike undoing the effort of adding types. The second one
-is to add types to a random module connected to \code{main}---following a
+is to add (deep or shallow) types to a random module connected to \code{main}---following a
 ``hunch'' like programmers sometimes do--but doing so can easily make things
 worse. For example, if the choice were the \code{auto} module with shallow
 types, then performance would degrade further (a 9x slowdown, to be
-precise). Finally, adding types to every module is the option that is almost
+precise). Finally, adding deep types to every module is the option that is almost
 always guaranteed to fix the situation, and in this context, it would produce a
-performance improvement over the untyped variant.  Adding types to all modules
-represents a heavy migration effort, however, which a programmer who simply
+performance improvement over the untyped variant.  However, such a choice
+represents a heavy migration effort, which a programmer who simply
 wishes to fix \code{main} and deploy again may be reluctant to invest.
 
 %% -----------------------------------------------------------------------------
@@ -173,7 +173,7 @@ Running time is 18.17% contracts
 %% -----------------------------------------------------------------------------
 
 Still, the idea to continue the migration effort is a good one, because we know
-that many of the corresponding lattices contain a fair number of well-performing
+that there is a fair number of well-performing
 variants as well as badly-performing ones. The question is how to make progress.
 
 Clearly, informed feedback is needed for a solution that recovers performance
@@ -185,16 +185,15 @@ degradation. Fortunately Racket comes with two such tools:
 \item a traditional \emph{statistical profiler}, which identifies the time spent
  in modules; and
 
-\item a \emph{boundary profiler}, which attributes the cost of contracts to
+\item a \emph{boundary profiler}, which  attributes the cost of contracts to
  module boundaries.
  
 \end{itemize}
 Both tools are potentially useful due to the mechanics of deep and shallow types.
 Deep types compile to contracts at module boundaries~\cite{tf-popl-2008}, so
-the boundary profiler should identify them expensive ones. 
+the boundary profiler should identify the expensive ones. 
 Shallow types compile to assertions within typed code~\cite{glfd-pj-2022},
-meaning the statistical profiler may uncover this additional and suggest
-toggling the module to deep types. 
+meaning the statistical profiler may uncover their cost. 
 
 The bottom half of \cref{f:fsm-code} shows the output of the statistical
 profiler and the boundary profiler for the top-right variant of \bmname{fsm} in

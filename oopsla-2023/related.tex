@@ -138,12 +138,13 @@ complementary strengths which should make their combination ideal for a
 setting that mixes deep and shallow types --- see however
 section~\ref{sec:discussion} for why this is not the case. 
 
-Unlike this paper, prior work on profilers and gradual typing do not
+Unlike this paper, prior work on profilers and gradual typing does not
 examine how profiler feedback translates to developer actions
 besides the obvious removal of type annotations from ``hot'' boundaries. 
 In general, most profiling tools do not make recommendations to
-programmers. The now defunct OS-level Zoom profiler~\cite{zoom} is one
-notable exception.  
+programmers. The now defunct Zoom profiler~\cite{zoom} is one
+notable exception, but its recommendations are phrased in 
+terms of assembly, not high-level code.  
 
 In addition to statistical and feature-specific profilers, there are a
 number of profiling and performance analysis tools that provide

@@ -11,7 +11,10 @@ practical type annotations and often among an infinite number of theoretical
 ones. But, to make a rational-programmer experiment computationally feasible, it
 is necessary to avoid this dimension.
 
-Fortunately, the GTP benchmarks come with well-chosen type annotations for all
+Fortunately, the construction of the corpus of scenarios 
+from a carefully selected set of suitable seed programs can solve the
+problem. For instance, the established
+GTP benchmarks come with well-chosen type annotations for all
 their components.  Hence, the migration lattices can be pre-constructed for all
 benchmark programs~\citep{tfgnvf-popl-2016}.  It is thus possible to start a
 rational programmer mode from any performance-debugging scenario in this
@@ -23,7 +26,7 @@ function that picks points from the migration lattice. That is, the mode
 $\mode{\strategyvar{}}$ is a partial function from a program $\program{}_0$ to a
 program $\program{}_n$. To get from $\program{}_0$ to $\program{}_n$,
 $\mode{\strategyvar{}}$ iterates \strategyvar{} on its input and applies its
-recommendations to obtain successively.  In other words, $\mode{\strategyvar{}}$
+recommendations to obtain the next $\program{}_i$.  In other words, $\mode{\strategyvar{}}$
 constructs a \emph{migration path}, a sequence of programs ${\program{}_0},
 \ldots, {\program{}_n}$ from a migration lattice. If \strategyvar{} cannot make
 a recommendation at any point in this lattice, $\mode{\strategyvar{}}$ does not

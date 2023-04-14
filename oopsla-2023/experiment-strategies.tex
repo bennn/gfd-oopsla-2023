@@ -1,6 +1,6 @@
 %% -----------------------------------------------------------------------------
 Every program \program{} is a collection of interacting components $\component$.
-Some components enforce types with deep checks, some with shallow ones, and some
+Some components enforce have deep types, some shallow ones, and some
 are untyped. Independently of their types, a component $\component{}_1$, may
 import another component $\component{}_2$, which establishes a \emph{boundary}
 between them, across which they exchange values at run time. Depending on the
@@ -86,7 +86,7 @@ At the first level, the basic strategies differ in whether they employ the
  stricter than shallow, and shallow is stricter than untyped. If the strategy
  cannot identify such a boundary, it moves on to the next costly component
  (again in terms of either \selfkw{} or \totalkw{} time). Once it eventually
- identifies a target boundary, a \statkw{} strategy decides how to migrate the
+ identifies a target boundary, the strategy decides how to migrate the
  two components.
 
 At the second level, basic strategies differ in how they migrate the two sides
@@ -179,11 +179,11 @@ Figure~\ref{f:cstrategies} lists these composite strategies. In addition to the
  effects also factor into the decisions that strategies have to make. The
  \confkw{} strategies decide whether to be \optkw{} or \conkw{} based on how
  many components are already typed.  When most components are untyped, the risk
- of a ripple effect outweighs the benefits of the \optkw{} strategy. Hence
+ of a ripple effect outweighs the benefits of an \optkw{} strategy. Hence
  strategies favor a \conkw{} approach for sparsely typed programs and an
  \optkw{} strategy for densely typed ones.
 
-\paragraph{Null Strategies} An experiment must include baselines, i.e., the
+\paragraph{Baseline Strategies} An experiment must include baselines, i.e., the
  building block for a null hypothesis. In terms of strategies, the experiment
  needs a \agnostickw{} strategy.  If this \agnostickw{ strategy is less
  successful in eliminating performance bottlenecks than the profiling ones, then
