@@ -123,32 +123,29 @@ a $k$-loose success relaxes the requirement for monotonicity $k$ times.
 
 \begin{quote} \em
 
-Given $k \leq n$, a migration path ${\program{}_0} \ldots {\program{}_n}$ in a
+A migration path ${\program{}_0} \ldots {\program{}_n}$ in a
 lattice \lattice{\program{}_u} is \emph{$k$-loosely successful}
 iff 
 \begin{enumerate}
   \item  $\program{}_0$ is a performance-debugging scenario,
   \item $\slowdown{\program{}_n}{\program{}_u} \leq \takikawa{}$  
-  \item there exists a subsequence of the path 
-    ${\program{}^\prime_0} \ldots {\program{}^\prime_m}$ such that
-     $m + k = n$ and
-      for all $0 \leq j < m$,
-      $\slowdown{\program{}_{j+1}}{\program{}^\prime_{j}} \leq 1$.
-      \subitem (This subsequence is not necessarily a path in the lattice.)
+  \item
+      for all $0 \leq i < n$ with at most $k$ exceptions,
+      $\slowdown{\program{}_{i+1}}{\program{}_{i}} \leq 1$
+      \subitem equivalently: $k \geq |\{ \slowdown{\program{}_{i+1}}{\program{}_{i}} > 1 \mid 0 \leq i < n\}|$
   \end{enumerate} 
 \end{quote}
 The construction of a $k$-loose successful migration path allows a strategy to
-temporarily stir migration towards worse performance. The constant $k$ is an
+temporarily worsen performance. The constant $k$ is an
 upper bound on the number of missteps.
-
-%% TODO k-loose awkward, undefined for paths with fewer than k-1 modules
 
 A patient programmer may wish to relax this constraint even more.
 
 \begin{quote} \em
-A migration path is $N$-loosely successful iff for any $k, n$, $k \leq n$ it is
-\emph{$k$-loosely successful}. 
+A migration path ${\program{}_0} \ldots {\program{}_n}$ is $N$-loosely successful if 
+  \begin{enumerate}
+  \item  $\program{}_0$ is a performance-debugging scenario,
+  \item $\slowdown{\program{}_n}{\program{}_u} \leq \takikawa{}$  
+  \end{enumerate}
 \end{quote}
-
-%% TODO awkward, where does n come from? Can I pick n=1 for a path with 8 configurations??
 
