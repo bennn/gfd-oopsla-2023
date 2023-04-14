@@ -86,8 +86,8 @@
 \newcommand{\code}[1]{\texttt{#1}}
 \newcommand{\stdrkt}{\code{v8.6.0.2 [cs]}}
 \newcommand{\bmname}[1]{\textsf{#1}}
-\newcommand{\totalnumconfigs}{116,163}
-\newcommand{\totalnummeasurements}{1,277,793}
+\newcommand{\totalnumconfigs}{116,154}
+\newcommand{\totalnummeasurements}{1277694}
 %% 2023-03-22 bg: configs + runs ignoring quadT
 \newcommand{\machinename}[1]{\texttt{#1}}
 \newcommand{\commitname}[2]{\texttt{#1}}
@@ -135,6 +135,7 @@ We gratefully acknowledge support from
 \appendix
 
 \section{Modifications to the GTP Benchmarks}
+\label{s:adaptor-rewrite}
 
 To support a rational programmer experiment using feature-specific profiling,
 we had to change nine of the GTP Benchmarks in a minor way.
@@ -172,7 +173,8 @@ The submodules attach client-specific names to contracts without changing
 run-time behavior.
 
 
-\section{FILL Skyline}
+\section{Benchmark Skylines}
+\label{s:bm-sky}
 
 \begin{figure}[t]
   \newcommand{\kkrow}[1]{\bmname{#1} \\ \includegraphics[width=0.39\columnwidth]{data/sky/#1-feasible.pdf}}
@@ -205,7 +207,9 @@ run-time behavior.
 \end{figure}
 
 
-\section{FILL Head to Head}
+\section{Benchmark Comparisons: Opt-FSP}
+
+TBA
 
 \begin{figure}[t]
   \newcommand{\hhrow}[1]{\bmname{#1} \\ \includegraphics[width=0.39\columnwidth]{data/h2h/#1.pdf}}
