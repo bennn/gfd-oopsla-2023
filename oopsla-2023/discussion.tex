@@ -1,35 +1,23 @@
-	
-%% MF: no clue why this is here. Some of these are about plots, which
-%% mostly belong into sec. 5. Some are about scatter plots, which we
-%% abandoned. 
 
-% TODO for scatterplot: x-axis = 1-20, but actual plot goes 1-30 and uses the
-% last 10 to evenly spread the rest.
+The working programmer does not know the complete migration lattice. 
 
-% 1. boundary vs profile total vs profile self, on the whole. scatterplot too,
-%    boundary usually improves, profile frequently degrades
+For a program with a handful of components, a programmer should randomly
+add types or toggle all existing types until the performance is tolerable.
+Other than in those cases, shallow type enforcement does not seem to
+offer any advantages. 
 
-% 2. strategies: opt vs con vs .... who wins?
+In case, a programmer thinks that a large mixed-typed program exhibits
+intolerable performance, it is time to reach for the boundary profiler.
+Furthermore, when the boundary profiler is able to identify a particular
+as a cause of the bad performance, the programmer is best served by
+converting both sides of the boundary to use deep types. In support of
+this argument, the programmer can safely ignore assessing any
+characterestic of the program or the migration step; the blindly oprimistic  
 
-% 3. random is very successful b/c no dead ends.
-%    why do the profilers have dead ends?
+If a programmer uses the boundary profiler with an optimistic approach,
+and the result is a performance degradation, then it is unlikely that any
+of strategies presented here will help debug the performance problem. 
 
-% 4. (maybe) implictions of 0-dip, 1-dip, 3-dip, N-dip,
-%    rare that N improves over 3
-
-% 5. non-overlapping success / failure.
-%    if you give us a configuration, can we suggest a best profiler / strategy?
-%    all-shallow probably fails with boundary, etc
-
-% 6. head to head plot:
-%    - opts equiv
-%    - con never beats opt
-%    - statistical rarely beats fsm, but sometimes!
-
-% 7. why does random succeed N-loose when profiles fail? profiles hit dead ends
-
-
-%% -----------------------------------------------------------------------------
 
 % How successful is a strategy $X$ with the elimination of performance bottlenecks?
 
@@ -53,6 +41,22 @@ $Q_{X/Y}$
 
 %% -----------------------------------------------------------------------------
 \subsection{Threats to Validity}
+
+
+Threats to validity:
+
+internal
+————
+benchmarks 
+profiler limitations, especially the boundary one — see classes
+typing one module at a time — maybe splitting modules is best
+
+
+external
+—————
+one language 
+real programmers may not have access to libraries etc or may not be programmers 
+
 
 
 ``black holes''
