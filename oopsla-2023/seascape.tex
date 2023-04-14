@@ -68,32 +68,35 @@ wishes to fix \code{main} and deploy again may be reluctant to invest.
 
   \begin{subfigure}[t]{\columnwidth}\centering
     \begin{tikzpicture}
-      \node (1) [draw=black!80] {\code{util}};
-      \node (1c) [draw=black!80,left=of 1.west,xshift=9mm] {\code{pop}};
-      \node (1b) [draw=black!80,left=of 1c.west,xshift=9mm] {\code{main}};
-      \node (1a) [draw=black!80,left=of 1b.west,xshift=9mm] {\code{auto}};
+      \node (1) [draw=black!80] {\cmod{util}};
+      \node (1c) [draw=black!80,left=of 1.west,xshift=9mm] {\cmod{pop}};
+      \node (1b) [draw=black!80,left=of 1c.west,xshift=9mm] {\cmod{main}};
+      \node (1a) [draw=black!80,left=of 1b.west,xshift=9mm] {\cmod{auto}};
 %      \node (0) [above of=1a,yshift=-2mm] {Program: \bmname{fsm}};
 
-      \node (2) [above of=1,yshift=2mm,xshift=3cm,draw=black!80] {\code{auto}};
-      \node (2a) [draw=black!80,right=of 2.east,xshift=-9mm] {\code{dp}~\code{main}};
-      \node (2b) [draw=black!80,right=of 2a.east,xshift=-9mm] {\code{pop}};
-      \node (2c) [draw=black!80,right=of 2b.east,xshift=-9mm] {\code{util}};
+      \node (2) [above of=1,yshift=2mm,xshift=3cm,draw=black!80] {\cmod{auto}};
+      \node (2a) [draw=black!80,line width=0.6mm,right=of 2.east,xshift=-9mm] {\cmod{main}};
+      \node (2b) [draw=black!80,right=of 2a.east,xshift=-9mm] {\cmod{pop}};
+      \node (2c) [draw=black!80,right=of 2b.east,xshift=-9mm] {\cmod{util}};
       \node (22) [right=of 2c.east,xshift=-10mm] {\textbf{2.9x} slowdown};
 %      \node (24) [above of = 22,yshift=-6mm] {Deep types};
 
-      \node (3) [below of=2,yshift=-12mm,draw=black!80] {\code{auto}};
-      \node (3a) [draw=black!80,right=of 3.east,xshift=-9mm] {\code{sw}~\code{main}};
-      \node (3b) [draw=black!80,right=of 3a.east,xshift=-9mm] {\code{pop}};
-      \node (3c) [draw=black!80,right=of 3b.east,xshift=-9mm] {\code{util}};
+      \node (3) [below of=2,yshift=-12mm,draw=black!80] {\cmod{auto}};
+      \node (3a) [draw=black!80,line width=0.6mm,right=of 3.east,xshift=-9mm] {\cmod{main}};
+      \node (3b) [draw=black!80,right=of 3a.east,xshift=-9mm] {\cmod{pop}};
+      \node (3c) [draw=black!80,right=of 3b.east,xshift=-9mm] {\cmod{util}};
       \node (33) [right=of 3c.east,xshift=-10mm] {\textbf{2.8x} slowdown};
 %      \node (34) [above of = 33,yshift=-6mm] {Shallow types};
 
-      \draw[-{Stealth[length=2mm,width=2mm]}] (1b.north) -- (2a.south);
+      \node (dlbl) [above of=2a,yshift=-5mm] {deep};
+      \node (slbl) [below of=3a,yshift=5mm] {shallow};
+
+      \draw[-{Stealth[length=2mm,width=2mm]}] (1b.north) -- (2a.south west);
       \draw[-{Stealth[length=2mm,width=2mm]}] (2a.south) -- (3a.north);
 
     \end{tikzpicture}
 
-    \caption{Adding deep (dp) or shallow (sw) types to one \bmname{fsm} module degrades performance} \label{f:fsm-code:a}
+    \caption{Adding deep or shallow types to one \bmname{fsm} module degrades performance} \label{f:fsm-code:a}
   \end{subfigure}
 
   \bigskip
