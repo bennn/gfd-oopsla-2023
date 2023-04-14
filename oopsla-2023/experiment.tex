@@ -1,20 +1,19 @@
 %% -----------------------------------------------------------------------------
 
 Turning the sketch from section~\ref{sec:ideas} into a large-scale automated
-experiment requires the formal descriptions of rational programmers. In turn,
-this task demands (1) strategy components that identify (2) the next migration
-step, plus (3) a collection of performance-debugging scenarios. As the preceding
-section implies, parts~2 and~3 are tied together. Every rational programmer
-recognizes whether a given program is a performance-debugging scenario; if so,
-it applies a strategy to the profiler feedback and migrates the program---which
-should yield a performant program or another performance-debugging scenario.
-The preceding section also implies that a strategy's response is one of three
-possibilities:  (1) to add types and to specify their
-enforcement regime (deep, shallow); (2) to toggle from one regime to
-another; or (3) to fail to act. Hence it is possible to specify strategies independently of the
-scenarios per se. Equipped with formal descriptions, it is possible to turn the
-generic research question of the introduction into questions with a quantitative
-nature.
+experiment requires formal descriptions: the modes of the rational programmer;
+the strategies that create modes from the rational programmer; and the notion of
+debugging scenario. A strategy component identifies the next migration step.
+Every mode of the rational programmer recognizes whether a given program is a
+performance-debugging scenario; if so, it applies a strategy to the profiler
+feedback and migrates the program---which should yield a performant program or
+another performance-debugging scenario.  The preceding section also implies that
+a strategy's response is one of three possibilities: (1) to add types and to
+specify their enforcement regime (deep, shallow); (2) to toggle from one regime
+to another; or (3) to fail to act. Hence it is possible to specify strategies
+independently of the scenarios per se. Equipped with formal descriptions, it is
+possible to turn the generic research question of the introduction into
+questions with a quantitative nature.
 
 This section provides the required formal descriptions.
 Section~\ref{subsec:strategies} presents the profiling strategies.
