@@ -9,27 +9,20 @@ confronted with debugging an untyped component, it takes a large mental effort
 to reconstruct the informal types of fields, functions, and methods, and to make
 this effort pay off, it is best to turn the informal types into formal
 annotations. In either case, the result is a mixed-typed software system with
-boundaries between typed and untyped components. In a sound gradually typed
-language, these boundaries impose a performance penalty, possibly a prohibitive
-one. In the latter case, the developer faces a performance-debugging scenario.
+boundaries between typed and untyped components.
 
-% \begin{itemize}
-%   \item Following the description of the example,  
-%     the section should explain how the program evaluates and connect that with the
-%     semantics of shallow and deep types. 
-%   \item Next, the section should describe the feedback from the statistical
-%     profiler, introduce the boundary profiler  and 
-%     describe its feedback too. 
-%   \item As the feedback of each profiler is shown, the section should 
-%     explain that it provides hints about where to look for
-%     possible improvements. It would be great, if the section shows how
-%     actin on two hints plays out.  
-%   \item As a final piece, the section should discuss that the
-%     interpretation
-%     of the feedback to hints is two dimentional (identify component and
-%     identify change to component), and that how a developer can itnerepret
-%     it reliably needs a careful and systematic look.
-% \end{itemize}
+In a sound language, these boundaries impose a performance penalty.  Languages can
+enforce types with deep or shallow checks. A deep check means that types are
+translated to higher-order contracts~\cite{ff-icfp-2002,tf-dls-2006,st-sfp-2006}.
+Higher-order contracts impose many kinds of performance penalties: they check all
+compound values when they cross a boundary; they wrap all higher-order values with
+proxies to delay checks; and such proxies also raise memory consumption. By
+contrast, a shallow check means that types are enforced only with tag-level
+assertions and only inside of typed components~\cite{vss-popl-2017,
+vksb-dls-2014}. Each check is inexpensive, but the more type annotations a
+programmer adds, the more run-time checks the compiler inserts for typed
+components. As a result, the performance penalty can become prohibitive in
+either case. If so, the developer faces a performance-debugging scenario.
 
 To make this concrete, consider the \bmname{fsm} program from the GTP benchmark
 suite~\cite{gtp-benchmarks}. The program is the creation of \citet{fsm},
