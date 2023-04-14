@@ -178,15 +178,16 @@ degradation. Fortunately Racket comes with two such tools:
 \item a traditional \emph{statistical profiler}, which identifies the time spent
  in modules; and
 
-\item a \emph{boundary profiler}, which  attributes the cost of contracts to
- module boundaries.
+\item a \emph{boundary profiler}, which  attributes the cost of types-as-contracts to
+ specific module boundaries~\cite{astavf-feature-prf, staaf-feature-prf}.
  
 \end{itemize}
 Both tools are potentially useful due to the mechanics of deep and shallow types.
-Deep types compile to contracts at module boundaries~\cite{tf-popl-2008}, so
-the boundary profiler should identify the expensive ones. 
-Shallow types compile to assertions within typed code~\cite{glfd-pj-2022},
-meaning the statistical profiler may uncover their cost. 
+In Racket, deep types compile to contracts at module
+boundaries~\cite{tf-popl-2008}, so the boundary profiler should identify the
+expensive ones.  Shallow types compile to assertions within typed
+code~\cite{glfd-pj-2022}, meaning the statistical profiler may uncover their
+cost.
 
 The bottom half of \cref{f:fsm-code} shows the output of the statistical
 profiler and the boundary profiler for the top-right variant of \bmname{fsm} in
