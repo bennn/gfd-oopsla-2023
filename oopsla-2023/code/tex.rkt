@@ -56,7 +56,7 @@
   (("con") "conservative")
   (("cost-con") "cost-aware conservative")
   (("limit-opt") #f)
-  (("randomB") "random boundary")
+  (("randomB") "null")
   #;(("randomD") "random optimistic")
   #;(("randomS") "random conservative")
   (else (raise-argument-error 'bg-strategy->cd-strategy  "unknown" str))))
@@ -68,7 +68,7 @@
     "conservative"
     "cost-aware conservative"
     "configuration-aware"
-    "random boundary"
+    "null"
     ;;"random optimistic"
     ;;"random conservative"
     "toggling"))
@@ -332,7 +332,7 @@
                         (list to-mode to-key)))
                  (fkey (lambda (str)
                          (define-values [strategy mode] (h2hstr->sm str))
-                         (list (if (string-contains? strategy "random")
+                         (list (if (or (string-contains? strategy "random") (string-contains? strategy "null"))
                                  (length to*)
                                  (if (string-contains? strategy "togg")
                                    (add1 (length to*))
@@ -353,6 +353,7 @@
                                                         ((string-contains? smode "prf_t") 1)
                                                         ((string-contains? smode "prf_s") 2)
                                                         ((string-contains? smode "random") 3)
+                                                        ((string-contains? smode "null") 3)
                                                         ((string-contains? smode "togg") 3)
                                                         (else 0)))
                                                    strategy))))
@@ -398,7 +399,7 @@
                       (define smode (car ni))
                       (define ii (cadr ni))
                       (define yy
-                        (if (string-contains? smode "randomB")
+                        (if (or (string-contains? smode "randomB") (string-contains? smode "null"))
                           (mean (list (vector-ref vec ii)
                                       (vector-ref vec (+ ii 1))
                                       (vector-ref vec (+ ii 2))))
@@ -408,6 +409,7 @@
                                       ((string-contains? smode "prf_t") 1)
                                       ((string-contains? smode "prf_s") 2)
                                       ((string-contains? smode "random") 3)
+                                      ((string-contains? smode "null") 3)
                                       ((string-contains? smode "togg") 3)
                                       (else 0))
                                     (* 1/4 (sub1 cc))))
@@ -700,12 +702,12 @@
 (define (go)
   (parameterize ( #;(*out-kind* 'png))
     #;(t:baseline-trouble)
-    (t:blackhole)
+    #;(t:blackhole)
     #;(f:strategy-overall)
     #;(f:strategy-overall #:hope? #true)
     #;(app:strategy-overall)
-    #;(f:head2head)
-    #;(app:head2head)
+    (f:head2head)
+    (app:head2head)
     #;(f:deathplot)
     (void)))
 
