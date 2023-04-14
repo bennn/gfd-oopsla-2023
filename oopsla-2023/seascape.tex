@@ -11,8 +11,8 @@ this effort pay off, it is best to turn the informal types into formal
 annotations. In either case, the result is a mixed-typed software system with
 boundaries between typed and untyped components.
 
-In a sound language, these boundaries impose a performance penalty.  Languages can
-enforce types with deep or shallow checks. A deep check means that types are
+In a sound gradual language, these boundaries impose a performance penalty.  Languages can
+enforce sound types with deep or shallow checks. A deep check means that types are
 translated to higher-order contracts~\cite{ff-icfp-2002,tf-dls-2006,st-sfp-2006}.
 Higher-order contracts impose many kinds of performance penalties: they check all
 compound values when they cross a boundary; they wrap all higher-order values with
@@ -47,7 +47,7 @@ At this point, the question is how to recover the performance of the untyped
 variant. The first option is to roll back the addition of types, but developers
 prefer typed code and dislike undoing the effort of adding types. The second one
 is to add (deep or shallow) types to a random module connected to \code{main}---following a
-``hunch'' like programmers sometimes do--but doing so can easily make things
+``hunch'' like programmers sometimes do---but doing so can easily make things
 worse. For example, if the choice were the \code{auto} module with shallow
 types, then performance would degrade further (a 9x slowdown, to be
 precise). Finally, adding deep types to every module is the option that is almost
@@ -166,7 +166,7 @@ Running time is 18.17% contracts
 %% -----------------------------------------------------------------------------
 
 Still, the idea to continue the migration effort is a good one, because we know
-that there is a fair number of well-performing
+that there are a fair number of well-performing
 variants as well as badly-performing ones. The question is how to make progress.
 
 Clearly, informed feedback is needed for a solution that recovers performance
@@ -190,11 +190,11 @@ code~\cite{glfd-pj-2022}, meaning the statistical profiler may uncover their
 cost.
 
 The bottom half of \cref{f:fsm-code} shows the output of the statistical
-profiler and the boundary profiler for the top-right variant of \bmname{fsm} in
+profiler and the boundary profiler for the top-right (deep) variant of \bmname{fsm} in
 figure~\ref{f:fsm-code:a}, respectively.
 
-\paragraph{Statistical profiler} \Cref{f:fsm-code:statistical} lists two the
-first two rows from the statistical profiler; the full output has 28 rows.  The
+\paragraph{Statistical profiler} \Cref{f:fsm-code:statistical} lists two
+rows from the statistical profiler; the full output has 28 rows.  The
 first row, labeled \code{[17]}, covers a large percentage (\code{68\%}) of the
 total running time, and it refers to a function named \code{evolve}, which is
 defined in the \code{main} module. The line suggests that calls from
@@ -209,11 +209,11 @@ contributor to the overall cost.
 This conclusion, however, is one of many that could be drawn from the full
 statistical profiler output.  The \code{util} module also appears in the output,
 and may be more of a performance problem that the \code{pop} module.  Equally
-unclear is whether the time the column labeled \code{Total} is a better guide than
-the percentages listed in the column labeled \code{Self} or vice versa.  High
+unclear is whether the column labeled \code{Total} is a better guide than
+the column labeled \code{Self} or vice versa.  High
 total times point to a context that dominates the expensive parts.  High self
 times point to expensive parts, but these costs might be from the actual
-computation rather than the type-checking.
+computation rather than the overhead of type-checking.
 
 \paragraph{Boundary profiler} \Cref{f:fsm-code:boundary} shows nearly-complete
 output from the boundary profiler; only two contracts are omitted.  This
@@ -229,13 +229,14 @@ suffers from a 1.2x slowdown.  If this overhead is acceptable, the developer is
 done; otherwise, it might be necessary to continue with another round of
 profiling, searching, and typing.
 
-\medskip
+
+\paragraph{Summary}
 
 At first glance, the effort of eliminating a performance problem seems
 straightforward. Several factors complicate the search, however. First, a
 programmer has two typing options not just one. Second, for programs with more
 than four modules, the output of profiling tools is much more complex;
-identifying the next step in this context is hard. Finally, adding types to the
+identifying the next step in such a context is hard. Finally, adding types to the
 profiler-identified module may degrade the performance even more, in which case
 the programmer may wish to give up. In sum, navigating a migration lattice with
 $3^N$ program configuration is a non-trivial effort, and developers deserve to

@@ -40,7 +40,7 @@ ${\program{}_i}$ but all its components are untyped. The bottom element of
 ${\program{}_u}$'s fully typed versions $\program{}_t$ (with some combination of
 deep and shallow). In between these extreme points are all the remaining
 \emph{configurations} of $\program{}_u$. The $3^N$ configurations of
-\lattice{\program{}_u} are ordered:$\ordered{\program{}_i}{\program{}_j}$ iff
+\lattice{\program{}_u} are ordered: $\ordered{\program{}_i}{\program{}_j}$ iff
 $\program{}_j$ has at least one component that is untyped in
 $\program{}_j$. Hence the lattice is organized in \emph{levels} of incomparable
 configurations, each of which lacks types for the same components but differs
@@ -108,7 +108,7 @@ iff
 \begin{enumerate}
   \item $\program{}_0$ is a performance-debugging scenario,
   \item $\slowdown{\program{}_n}{\program{}_u} \leq \takikawa{}$, and 
-  \item for all $0 \leq i < n$, $\slowdown{\program{}_i}{\program{}_{i+1}} \leq 1$.
+  \item for all $0 \leq i < n$, $\slowdown{\program{}_{i+1}}{\program{}_{i}} \leq 1$.
  \end{enumerate} 
 \end{quote}
 The construction of a strictly successful migration path requires a strategy
@@ -131,15 +131,15 @@ iff
     ${\program{}^\prime_0} \ldots {\program{}^\prime_m}$ such that
      $m + k = n$ and
       for all $0 \leq j < m$,
-      $\slowdown{\program{}^\prime_j}{\program{}^\prime_{j+1}} \leq 1$.
-      (This subsequence is not necessarily a path in the lattice.)
+      $\slowdown{\program{}_{j+1}}{\program{}^\prime_{j}} \leq 1$.
+      \subitem (This subsequence is not necessarily a path in the lattice.)
   \end{enumerate} 
 \end{quote}
 The construction of a $k$-loose successful migration path allows a strategy to
 temporarily stir migration towards worse performance. The constant $k$ is an
-upper on the number of such missteps.
+upper bound on the number of missteps.
 
-An infinitely patient programmer may wish to relax this constraint even more.
+A patient programmer may wish to relax this constraint even more.
 
 \begin{quote} \em
 A migration path is $N$-loosely successful iff for any $k, n$, $k \leq n$ it is

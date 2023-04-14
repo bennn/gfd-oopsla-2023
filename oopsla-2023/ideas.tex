@@ -3,7 +3,7 @@
 When a developer confronts a newly created performance-debugging scenario, one
 possible response is to erase the types and to return to the {\em status quo
 ante\/}.  Another one is to use a profiling tool to reduce the overhead. If the
-second alternative is chosen, the question arises 
+second alternative is chosen, the question arises:
 \begin{quote} \em
 
  how the developer should modify the program to obtain tolerable performance.
@@ -12,12 +12,12 @@ second alternative is chosen, the question arises
 The type-migration lattice suggests two answers.  The developer should either
 add types to an untyped component or toggle the run-time checks for a typed one
 from deep to shallow or vice versa.  After all, the fully typed program with
-deep run-time checks is known to be at least as performant as its untyped
-counterpart, and therefore migration is guaranteed to eliminate any performance
+deep types is often faster than its untyped
+counterpart; if so, migration is guaranteed to eliminate any performance
 problem sooner or later.
 
 Deciding which of the alternatives to pursue in a given situation poses the
-follow-up question 
+follow-up question:
 \begin{quote} \em
 
 how a developer should interpret the feedback from a profiling tool to
@@ -83,7 +83,7 @@ performance-debugging scenario and asks for guidance from the second,
 strategy-specific piece. This second piece profiles the given program---using
 the boundary profiler or the statistical profiler---and analyzes the
 profiling information. Based on this analysis, it modifies the program by adding
-types to some untyped component to eliminate a boundary or toggling the run-time
+types to some untyped component to eliminate a boundary or by toggling the run-time
 enforcement of types for a typed component. This modified version is handed back
 to the first piece of the rational programmer. 
 
@@ -92,8 +92,9 @@ programmer that differ in their strategy-specific piece. Each such version,
 dubbed a \emph{mode}, can be applied to realistic performance-debugging
 scenarios and use its specific strategy to resolve the problems.  For any given
 scenario, the mode either succeeds in eliminating the performance overhead or
-fails because the strategy cannot propose a program modification or because the
-chosen modification worsens the performance of the program.
+fails.
+Failure may occur either because the strategy cannot propose a program modification, or
+because the chosen modification worsens the performance of the program.
 
 Data about successes and failures for different modes can shed light on the
 usefulness of one profiling strategy compared to another. Intuitively, the

@@ -1,6 +1,6 @@
 %% -----------------------------------------------------------------------------
 Every program \program{} is a collection of interacting components $\component$.
-Some components enforce have deep types, some shallow ones, and some
+Some components have deep types, some shallow ones, and some
 are untyped. Independently of their types, a component $\component{}_1$, may
 import another component $\component{}_2$, which establishes a \emph{boundary}
 between them, across which they exchange values at run time. Depending on the
@@ -60,7 +60,7 @@ At the second level, basic strategies differ in how they migrate the two sides
 
 \paragraph{Composite strategies.} While the basic strategies ignore the cost of
  adding types to an untyped components, developers do not. Adding types to an
- entire module in Typed Racket may impose a significant effort. Hence, the
+ entire module in Typed Racket may require a significant effort. Hence, the
  experiment includes composite strategies that account for this cost.
 
 Figure~\ref{f:cstrategies} lists these composite strategies. In addition to the
