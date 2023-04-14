@@ -1,10 +1,42 @@
 
 
-FILL experiment should be repeated in other settings
+object level:
 
-Shallow / transient gets no benefit from boundary profiling,
-some benefit from statistical.
-How about a shallow FSP?
-Would a simpler approach work just as well [CITE vmil]?
+- the fsp works well if used with an optimistic strategy
+- the statistical profiler with optimistic works well when the
+    performance overhead is small for all configurations of the
+    program
+
+- shallow/transient have almost no benefit except for special
+  situations and small programs 
+
+meta level:
+
+- the rational programmer method has once again shows its value for
+  the evaluation of programming-language-tool pragmatics
+
+future work:
+
+- shallow fsp?
+
+- how this all changes when the compiler knows more optimizations 
+
+- profiling is not enough
+  - black holes
+  - even when we ignore black holes, profiling information does not
+    get the rational programmer to tolerable performance from a
+    performance-debugging scenario
+
+
+- rational programmer: experiment should be repeated in other settings
+
+
+% Shallow / transient gets no benefit from boundary profiling,
+% some benefit from statistical.
+% How about a shallow FSP?
+
+
+%% MF what does this mean? 
+%% Would a simpler approach work just as well [CITE vmil]?
 
 
