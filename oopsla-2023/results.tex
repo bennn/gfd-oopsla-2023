@@ -157,25 +157,31 @@ The goal for each scenario is to find another configuration
 with at least as many typed modules that runs no slower than the
 untyped configuration.
 
-Naturally, some configurations are uninteresting as starting
+Naturally, some configurations are \emph{uninteresting} as starting
 points because they already run fast enough.
-The untyped configuration is one, by definition.
+The untyped configuration is one of these by definition.
+Uninteresting configurations are important to have because they
+are the possible endpoints for a successful navigation.
+But if all or most configurations are uninteresting, then
+navigation becomes trivial.
+
 There should ideally be many interesting points in a benchmark
 and a handful of uninteresting ones to navigate to.
 \Cref{t:baseline-trouble} tabulates this landscape for the benchmarks.
 All but two have plenty of interesting scenarios: over 80\% of
 all configurations have some overhead relative to untyped.
-Navigating to a successful configuration is likely to be
-challenging for the rational programmer.
+Navigating to a successful configuration is therefore a challenge
+for the rational programmer.
 
 The other two benchmarks, \bmname{fsm} and \bmname{lnm}, have
-fewer intesting scenarios.
-In \bmname{lnm}, only 40\% of the configurations
-are interesting.
-This suggests that the rational programmer will have an easier
-time navigating to a successful configuration in \bmname{lnm}
-because there are many to choose from.
-
+fewer interesting scenarios.
+In \bmname{fsm} the number is somewhat low, at 76\% (62 configurations),
+which raises some doubt about its usefulness as a benchmark.
+In \bmname{lnm} the situation is worse.
+Only 40\% of the configurations are interesting; the rest run within a 1x
+overhead.
+Navigation is not a serious issue for \bmname{lnm}; its overall
+performance is good.
 
 \begin{table}[t]
   \caption{How many of the $3^N$ configurations have any overhead to begin with?}
@@ -212,8 +218,18 @@ because there are many to choose from.
 
 We have instantiated the 17 strategies from~\cref{subsec:strategies} as
 programs that navigate toward fast configurations.
-Fifteen strategies use profile information as decribed in~\cref{f:bstrategies} and~\cref{f:cstrategies}.
+Fifteen strategies use profile information as described in~\cref{f:bstrategies,f:cstrategies}.
 The remaining two are profile agnostic: random boundary and toggling.
+
+These programs navigate relentlessly toward a successful configuration,
+accepting any number of setbacks~($N$-loose,~\cref{subsec:questions}).
+At each step, they consult the performance data for the current configuration.
+If it is not fast enough, they follow a profiler in accordance with a strategy.
+For example, the \emph{conservative, statistically (self)} rational programmer
+uses the ``self\%'' running times reported by the statistical profiler to
+identify a costly boundary, and then converts the boundary to use shallow types.
+When analyzing this data, we impose limits such as strict success and
+$2$-loose success by dropping a suffix of the recorded trails.
 
 \Cref{f:strategy-overall} presents the results of running all strategies on all
 interesting scenarios.
@@ -225,15 +241,15 @@ This data lets us answer the first (parameterized) research question:
 \end{itemize}
 
 Each stacked bar in the ``skyline'' of \cref{f:strategy-overall} provides
-several answers.
+several answers to the question for increasingly-loose notions of success.
 The lowest, widest part of each bar counts how many configurations
 achieved a strict success.
 The next three stories count $1$-loose, $2$-loose, and $3$-loose successes.
 The striped spire counts $N$-loose successes.
-And the antenna uses an even weaker notion, strict 3x success, which we return
-to in a moment.
+The antenna uses an even weaker notion, strict 3x success, which we discuss below~(\cref{s:antenna}).
 
-Turning now to the various strategies:
+The strategies are successful in 2\% of configurations in the worst case and
+55\% in the best case:
 \begin{itemize}
   \item
     \emph{Optimistic} navigation performs well when guided by the \emph{feature-specific} profiler,
@@ -248,11 +264,11 @@ Turning now to the various strategies:
     and \emph{statistical (self)}.
 
   \item
-    \emph{Conservative} navigation is unsuccessful, no matter what profiler it uses.
+    \emph{Conservative} navigation is unsuccessful no matter what profiler it uses.
 
   \item
     \emph{Cost-aware conservative} is unsuccessful as well.
-    Even with $N$-loose relaxation, only a handful of configurations achieve success.
+    Even with $N$-loose relaxation, only a handful of configurations (2\%) achieve success.
 
   \item
     \emph{Configuration-aware optimistic} navigation with
@@ -262,30 +278,22 @@ Turning now to the various strategies:
     the success rate drops to 10\% even for $N$-loose.
 
   \item
-    \emph{Random boundary} succeeds in 5\% of all configuration---far more than the conservative strategies.
+    \emph{Random boundary} succeeds in 5\% of all configuration.
+    This is a low number, but much better than the conservative strategies.
     Allowing for 1,2,3-loose success improves the rate incrementally, and an $N$-loose search
     succeeds in nearly 40\% of configurations.
 
   \item
-    \emph{Toggling} achieves strict success more often than random, in roughly 6\% of all configurations.
-    ($N$-loose is meaningless for toggle because it steps to at most one configuration.)
+    \emph{Toggling} achieves strict success a bit more often than random, in roughly 6\% of all configurations.
+    The other notions of success do not apply to toggling because it can step to at most one configuration.
 \end{itemize}
 
-All told, \emph{optimistic, feature-specific} navigation is the most likely to
+\emph{Optimistic, feature-specific} navigation is the most likely to
 succeed on an arbitrary configuration.
-In the context of a single benchmark the results may vary~(\cref{s:bm-sky}),
-but not for most of them.
-
-Now, back to the antennae.
-An antenna rises above a bar when there exists scenarios that can reach a 3x overhead
-relative to untyped without any degredations along the path.
-The number 3x is the classic Takikawa constant for acceptable gradual typing
-overhead~\cite{tfgnvf-popl-2016,vss-popl-2017,bbst-oopsla-2017}.
-We use it to allow some wiggle room for shallow types, which rarely achieve a
-1x overhead in Typed Racket~\cite{g-deep-shallow}.
-
-FILL
-
+\emph{Cost-aware} and \emph{configuration-aware} using the optimistic strategy
+are close behind.
+The conservative strategies are least likely to find a successful configuration
+no matter what profiler they use.
 
 \begin{figure}[t]
   \includegraphics[width=\columnwidth]{data/strategy-overall-feasible.pdf}
@@ -293,8 +301,53 @@ FILL
   \label{f:strategy-overall}
 \end{figure}
 
+\subsubsection{Antenna: 3x Strict Success}
+\label{s:antenna}
 
-\subsection{Black Holes}
+There are two possible reasons for the poor performance of the conservative
+strategies.
+One is that they are entirely unproductive: they lead to worse performance, end
+of story.
+The other possibility is that they do improve performance, but are unable
+to achieve a 1x overhead because there are no such configurations with
+mostly shallow types.
+This second possibility is likely due to the current implementation of shallow
+types~\cite{g-deep-shallow}, which almost always add some overhead (but much
+less than deep types).
+
+The bars in \cref{f:strategy-overall}, however, do not show whether conservative
+is improving or degrading performance.
+Hence the thin lines above each bar (antenna), which count configurations that see
+a strict success when a 3x slowdown is acceptable.
+The number 3x is the classic Takikawa constant for ``acceptable'' gradual typing
+overhead~\cite{tfgnvf-popl-2016,vss-popl-2017,bbst-oopsla-2017}.
+We use it to give a small amount of wiggle room.
+Changing to 2x or 4x does not significantly change the outcome.
+
+For \emph{conservative} and \emph{cost-aware conservative}, allowing a 3x overhead
+improves results across the profilers.
+An additional 10\% of configurations succeed.
+%% TODO how many are immediate with 3x?
+While some of these configurations are uninteresting scenarios at the 3x level,
+others are not; thus, conservative can improve performance.
+
+The optimistic strategies with statistical profiles improve in a similar way
+for 3x success.
+Optimistic with feature profiles does not improve.
+This means that every configuration that can achieve a 3x success with statistical
+profiles is able to achieve a 1x success with feature-specific profiles.
+
+Random boundary does not improve for 3x strict success, likely because it chooses
+an unlucky boundary and fails the ``strict'' criterion.
+Toggling improves tremendously for 3x success.
+This is in line with prior work on shallow, which reports a median worst-case overhead
+of 4.2x on the GTP Benchmarks~\cite{g-deep-shallow}.
+Evidently, about 45\% of configurations can reach a 3x overhead by using shallow types.
+
+
+\subsubsection{Results Without Hopeless Scenarios}
+
+
 
 \begin{table}[t]
   \caption{How scenarios can possibly reach 1x without removing types?}
