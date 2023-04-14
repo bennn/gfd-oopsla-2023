@@ -89,6 +89,30 @@ Complications arose because of the large scale of the experiment, and because
 we discovered and fixed two issues in Typed Racket along the way.
 
 
+\begin{table}[ht]
+  \caption{Datasets, their origin, and server details}
+  \label{t:data-collection}
+
+  \begin{tabular}{llll}
+    Dataset           & Server & Racket & Typed Racket \\\midrule
+    dungeon           & \machinename{c220g2} & \stdrkt{} &  \commitname{29ea3c10}{29ea3c105e0bd60b88c1fd195b54fa716863f690} \\
+    morsecode         & \machinename{m510}   & same & \commitname{700506ca}{700506ca01393f211229101c47d8420f6d535de9} (cherry pick) \\
+ %% quadT runtime  & \machinename{m510}   & same & same \\
+    other runtime     & \machinename{c220g1} & same & default \\
+    other profile      & \machinename{m510}   & same & same
+  \end{tabular}
+
+  \bigskip
+
+  \begin{tabular}{llrrr}
+    %% multi-cpu, multi-core machines .. but we didn't use that, right?
+    Server & Site & CPU Speed & RAM & Disk \\\midrule
+    \machinename{c220g1} & Wisconsin & 2.4GHz & 128GB & 480GB SSD \\
+    \machinename{c220g2} & Wisconsin & 2.6GHz & 160GB & 480GB SSD \\
+    \machinename{m510}   & Utah      & 2.0GHz &  64GB & 256GB SSD
+  \end{tabular}
+\end{table}
+
 In total, we analyzed 116,154 configurations
 and recorded 1,277,694 measurements.
 %% $11 * \totalnumconfigs{} = \totalnummeasurements{}$
@@ -124,30 +148,37 @@ for Racket v8.6.0.2 (to be available in our artifact).
 Fixing these issues \emph{was not necessary} for the rational programmer experiment.
 The only reason for re-running was to stay current with major changes to Typed Racket.
 
-\begin{table}[t]
-  \caption{Datasets, their origin, and server details}
-  \label{t:data-collection}
 
-  \begin{tabular}{llll}
-    Dataset           & Server & Racket & Typed Racket \\\midrule
-    dungeon           & \machinename{c220g2} & \stdrkt{} &  \commitname{29ea3c10}{29ea3c105e0bd60b88c1fd195b54fa716863f690} \\
-    morsecode         & \machinename{m510}   & same & \commitname{700506ca}{700506ca01393f211229101c47d8420f6d535de9} (cherry pick) \\
- %% quadT runtime  & \machinename{m510}   & same & same \\
-    other runtime     & \machinename{c220g1} & same & default \\
-    other profile      & \machinename{m510}   & same & same
-  \end{tabular}
 
-  \bigskip
-
-  \begin{tabular}{llrrr}
-    %% multi-cpu, multi-core machines .. but we didn't use that, right?
-    Server & Site & CPU Speed & RAM & Disk \\\midrule
-    \machinename{c220g1} & Wisconsin & 2.4GHz & 128GB & 480GB SSD \\
-    \machinename{c220g2} & Wisconsin & 2.6GHz & 160GB & 480GB SSD \\
-    \machinename{m510}   & Utah      & 2.0GHz &  64GB & 256GB SSD
+\begin{table}[ht]
+  \caption{How many of the $3^N$ configurations have any overhead to begin with?}
+  \label{t:baseline-trouble}
+  \begin{tabular}[t]{l@{\qquad}l}
+    \begin{tabular}[t]{lrr}
+      Benchmark           & $3^N$ & \% Interesting \\\midrule
+      \bmname{morsecode}  &    81 & 82.72\% \\
+      \bmname{forth}      &    81 & 93.83\% \\
+      \ycell{\bmname{fsm}}        &    \ycell{81} & \ycell{76.54\%} \\
+      \bmname{fsmoo}      &    81 & 83.95\% \\
+      \bmname{mbta}       &    81 & 88.89\% \\
+      \bmname{zombie}     &    81 & 91.36\% \\
+      \bmname{dungeon}    &   243 & 99.59\% \\
+      \bmname{jpeg}       &   243 & 94.65\% \\
+    \end{tabular}
+    &
+    \begin{tabular}[t]{lrr}
+      Benchmark           & $3^N$ & \% Interesting \\\midrule
+      \ycell{\bmname{lnm}}        &   \ycell{729} & \ycell{40.47\%} \\
+      \bmname{suffixtree} &   729 & 98.49\% \\
+      \bmname{kcfa}       &  2,187 & 92.87\% \\
+      \bmname{snake}      &  6,561 & 99.97\% \\
+      \bmname{take5}      &  6,561 & 99.95\% \\
+      \bmname{acquire}    & 19,683 & 99.23\% \\
+      \bmname{tetris}     & 19,683 & 95.47\% \\
+      \bmname{synth}      & 59,049 & 99.99\%
+    \end{tabular}
   \end{tabular}
 \end{table}
-
 
 \subsection{Interesting Scenarios}
 
@@ -183,35 +214,6 @@ overhead.
 Navigation is not a serious issue for \bmname{lnm}; its overall
 performance is good.
 
-\begin{table}[t]
-  \caption{How many of the $3^N$ configurations have any overhead to begin with?}
-  \label{t:baseline-trouble}
-  \begin{tabular}[t]{l@{\qquad}l}
-    \begin{tabular}[t]{lrr}
-      Benchmark           & $3^N$ & \% Interesting \\\midrule
-      \bmname{morsecode}  &    81 & 82.72\% \\
-      \bmname{forth}      &    81 & 93.83\% \\
-      \ycell{\bmname{fsm}}        &    \ycell{81} & \ycell{76.54\%} \\
-      \bmname{fsmoo}      &    81 & 83.95\% \\
-      \bmname{mbta}       &    81 & 88.89\% \\
-      \bmname{zombie}     &    81 & 91.36\% \\
-      \bmname{dungeon}    &   243 & 99.59\% \\
-      \bmname{jpeg}       &   243 & 94.65\% \\
-    \end{tabular}
-    &
-    \begin{tabular}[t]{lrr}
-      Benchmark           & $3^N$ & \% Interesting \\\midrule
-      \ycell{\bmname{lnm}}        &   \ycell{729} & \ycell{40.47\%} \\
-      \bmname{suffixtree} &   729 & 98.49\% \\
-      \bmname{kcfa}       &  2,187 & 92.87\% \\
-      \bmname{snake}      &  6,561 & 99.97\% \\
-      \bmname{take5}      &  6,561 & 99.95\% \\
-      \bmname{acquire}    & 19,683 & 99.23\% \\
-      \bmname{tetris}     & 19,683 & 95.47\% \\
-      \bmname{synth}      & 59,049 & 99.99\%
-    \end{tabular}
-  \end{tabular}
-\end{table}
 
 
 \subsection{Running a Rational Programmer}
@@ -298,6 +300,12 @@ These findings provide a coarse answer to our second research question~(\cref{s:
   context?
 \end{itemize}
 
+\begin{figure}[ht]
+  \includegraphics[width=\columnwidth]{data/strategy-overall-feasible.pdf}
+  \caption{How many of the 114,428 scenarios does each strategy succeed in, for six notions of success.}
+  \label{f:strategy-overall}
+\end{figure}
+
 \emph{Optimistic, feature-specific} navigation is the most likely to
 succeed on an arbitrary configuration.
 \emph{Cost-aware} and \emph{configuration-aware} using the optimistic strategy
@@ -305,12 +313,6 @@ are close behind.
 The conservative strategies are least likely to find a successful configuration
 no matter what profiler they use.
 Feature-specific profiling is always more successful than statistical profiling.
-
-\begin{figure}[t]
-  \includegraphics[width=\columnwidth]{data/strategy-overall-feasible.pdf}
-  \caption{How many of the 114,428 scenarios does each strategy succeed in, for six notions of success.}
-  \label{f:strategy-overall}
-\end{figure}
 
 \subsubsection{Antenna: 3x Strict Success}
 \label{s:antenna}
@@ -356,6 +358,42 @@ of 4.2x on the GTP Benchmarks~\cite{g-deep-shallow}.
 Evidently, about 45\% of configurations can reach a 3x overhead by switching to
 shallow types.
 
+
+\begin{table}[ht]
+  \caption{How many scenarios can possibly reach 1x without removing types?}
+  \label{t:blackhole}
+  \begin{tabular}[t]{l@{\qquad}l}
+    \begin{tabular}[t]{lrr}
+      Benchmark                &  \# Scenario &  \% Hopeful \\\midrule
+      \bmname{morsecode}       &           67 &    100\% \\
+      \bmname{forth}           &           76 &     36.84\% \\
+      \bmname{fsm}             &           62 &    100\% \\
+      \bmname{fsmoo}           &           68 &    100\% \\
+      \rcell{\bmname{mbta}}    &   \rcell{72} & \rcell{0\%} \\
+      \bmname{zombie}          &           74 &     35.14\% \\
+      \rcell{\bmname{dungeon}} &  \rcell{242} & \rcell{0\%} \\
+      \bmname{jpeg}            &          230 &    100\%
+    \end{tabular}
+    &
+    \begin{tabular}[t]{lrr}
+      Benchmark                &   \# Scenario &  \% Hopeful \\\midrule
+      \bmname{lnm}             &           295 &    100\% \\
+      \bmname{suffixtree}      &           718 &    100\% \\
+      \bmname{kcfa}            &         2,031 &    100\% \\
+      \bmname{snake}           &         6,559 &    100\% \\
+      \rcell{\bmname{take5}}   & \rcell{6,558} & \rcell{0\%} \\
+      \bmname{acquire}         &        19,532 &      5.45\% \\
+      \bmname{tetris}          &        18,791 &    100\% \\
+      \bmname{synth}           &        59,046 &    100\%
+    \end{tabular}
+  \end{tabular}
+\end{table}
+
+\begin{figure}[ht]
+  \includegraphics[width=\columnwidth]{data/strategy-overall-hopeful.pdf}
+  \caption{How many of the 88,992 hopeful scenarios does each strategy succeed in, for six notions of success.}
+  \label{f:strategy-hope}
+\end{figure}
 
 \subsubsection{Omitting Hopeless Scenarios}
 
@@ -410,42 +448,12 @@ This means that conservative succeeded in the 3x sense on a number
 of hopeless configurations. Such configurations cannot reach a 1x
 point, but can reach a 3x point.
 
-\begin{table}[t]
-  \caption{How many scenarios can possibly reach 1x without removing types?}
-  \label{t:blackhole}
-  \begin{tabular}[t]{l@{\qquad}l}
-    \begin{tabular}[t]{lrr}
-      Benchmark                &  \# Scenario &  \% Hopeful \\\midrule
-      \bmname{morsecode}       &           67 &    100\% \\
-      \bmname{forth}           &           76 &     36.84\% \\
-      \bmname{fsm}             &           62 &    100\% \\
-      \bmname{fsmoo}           &           68 &    100\% \\
-      \rcell{\bmname{mbta}}    &   \rcell{72} & \rcell{0\%} \\
-      \bmname{zombie}          &           74 &     35.14\% \\
-      \rcell{\bmname{dungeon}} &  \rcell{242} & \rcell{0\%} \\
-      \bmname{jpeg}            &          230 &    100\%
-    \end{tabular}
-    &
-    \begin{tabular}[t]{lrr}
-      Benchmark                &   \# Scenario &  \% Hopeful \\\midrule
-      \bmname{lnm}             &           295 &    100\% \\
-      \bmname{suffixtree}      &           718 &    100\% \\
-      \bmname{kcfa}            &         2,031 &    100\% \\
-      \bmname{snake}           &         6,559 &    100\% \\
-      \rcell{\bmname{take5}}   & \rcell{6,558} & \rcell{0\%} \\
-      \bmname{acquire}         &        19,532 &      5.45\% \\
-      \bmname{tetris}          &        18,791 &    100\% \\
-      \bmname{synth}           &        59,046 &    100\%
-    \end{tabular}
-  \end{tabular}
-\end{table}
 
-\begin{figure}[t]
-  \includegraphics[width=\columnwidth]{data/strategy-overall-hopeful.pdf}
-  \caption{How many of the 88,992 hopeful scenarios does each strategy succeed in, for six notions of success.}
-  \label{f:strategy-hope}
+\begin{figure}[ht]
+  \includegraphics[width=0.9\columnwidth]{data/head-to-head.pdf}
+  \caption{Optimistic vs. the rest, strict success: losses (red bars) and wins (green bars) on all interesting scenarios.}
+  \label{f:head-to-head}
 \end{figure}
-
 
 \subsection{Head to Head: Comparing Strategies}
 \label{s:hh}
@@ -478,11 +486,3 @@ At a glance, the tiny red bars and tall green bars give a negative answer to our
 Other strategies rarely succeed where opt-fsp fails.
 This is true even for the composite strategies \emph{cost-aware} and \emph{configuration-aware}.
 For all but a few configurations, opt-fsp is the winner.
-
-\begin{figure}[t]
-  \includegraphics[width=0.9\columnwidth]{data/head-to-head.pdf}
-  \caption{Optimistic vs. the rest, strict success: losses (red bars) and wins (green bars) on all interesting scenarios.}
-  \label{f:head-to-head}
-\end{figure}
-
-
