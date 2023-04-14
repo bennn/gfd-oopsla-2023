@@ -14,7 +14,7 @@ add types to an untyped component or toggle the run-time checks for a typed one
 from deep to shallow or vice versa.  After all, the fully typed program with
 deep run-time checks is known to be at least as performant as its untyped
 counterpart, and therefore migration is guaranteed to eliminate any performance
-bottlenecks sooner or later.
+problem sooner or later.
 
 Deciding which of the alternatives to pursue in a given situation poses the
 follow-up question 
@@ -92,10 +92,10 @@ programmer stops.
 In fact, as the discussion implies, there are numerous versions of the rational
 programmer that differ in their strategy-specific piece. Each such version,
 dubbed a \emph{mode}, can be applied to realistic performance-debugging
-scenarios and use its specific strategy to resolve the bottleneck.  For any
-given scenario, the mode either succeeds in eliminating the bottleneck or fails
-because the strategy cannot propose a program modification or because the chosen
-modification worsens the performance of the program. 
+scenarios and use its specific strategy to resolve the problems.  For any given
+scenario, the mode either succeeds in eliminating the performance overhead or
+fails because the strategy cannot propose a program modification or because the
+chosen modification worsens the performance of the program.
 
 Data about successes and failures for different modes can shed light on the
 usefulness of one profiling strategy compared to another. Intuitively, the
