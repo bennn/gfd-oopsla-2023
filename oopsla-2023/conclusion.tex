@@ -1,34 +1,57 @@
 
+%% -----------------------------------------------------------------------------
 
-object level:
+Sound gradual typing comes with several advantages~\cite{lgfd-icfp-2021,
+lgfd-icfp-2023} but also poses a serious performance-debugging challenge to
+programmers who wish to use it. To overcome performance-debugging problems,
+programmers tend to use profiling tools. Using such tools, however, also assumes
+that programmers know how to best interpret their feedback. This paper reports
+on the results of using the novel rational-programmer evaluation method for this
+problem.
 
-- the fsp works well if used with an optimistic strategy
-- the statistical profiler with optimistic works well when the
-    performance overhead is small for all configurations of the
-    program
+At the object level, the results essentially deliver several insights. First,
+the feature-specific profiler works well if used with any ``optimistic''
+interpretation strategy. That is, programmers should eliminate the hottest
+boundary, as identified by the feature-specific profiler, by making both modules
+use deeply checked types. Second, if a program comes with a low overhead for all
+gradually typed variants, the statistical profiler works reasonably well;
+otherwise the statistics profiler is unhelpful for performance-debugging
+problems in this context. Third, while profiling tools help with debugging
+problematic performance scenarios, the data collection also clarifies that for
+certain kinds of programs, the migration lattice contains a huge ``black hole''
+of performance scenario, rendering any of the considered strategies
+useless. In other words, profiling tools used with the proposed strategies do
+not suffice. Finally, the results weaken \citet{g-deep-shallow}'s report that
+adding shallow type enforcement is helpful; except for rare scenarios, none of
+the results reported here confirm his report.
 
-- shallow/transient have almost no benefit except for special
-  situations and small programs 
+At the meta level, the experiment once again confirms the value of the
+rational-programmer method. Massive simulations of satisficing rational
+programmers deliver indicative results that clearly contradict anecdotal reports
+of human programmers. As mentioned, a rational programmer is {\em not\/} an
+idealized human developer. It remains an open question whether and how the
+results apply to actual performance-debugging scenarios when human beings are
+involved.
 
-meta level:
-
-- the rational programmer method has once again shows its value for
-  the evaluation of programming-language-tool pragmatics
-
-future work:
-
-- shallow fsp?
-
-- how this all changes when the compiler knows more optimizations 
-
-- profiling is not enough
-  - black holes
-  - even when we ignore black holes, profiling information does not
-    get the rational programmer to tolerable performance from a
-    performance-debugging scenario
+Finally, the rational-programmer experiment also suggests several ideas for
+future research. First, the experiment should be reproduced for alternative
+gradually typed languages. Nothing else will confirm the value of the optimistic
+interpretations of feedback from the feature-specific profiler. Second, the
+experiment clearly demonstrates that profiling tools are not enough to overcome
+the performance challenges of sound gradual typing. Unless researchers can
+construct a performant compiler for a production language with sound gradual
+typing, the community must search for alternative ways to navigate the migration
+lattice. 
 
 
-- rational programmer: experiment should be repeated in other settings
+
+% future work:
+
+% - shallow fsp?
+
+% - how this all changes when the compiler knows more optimizations 
+
+% - rational programmer: experiment should be repeated in other settings
 
 
 % Shallow / transient gets no benefit from boundary profiling,
