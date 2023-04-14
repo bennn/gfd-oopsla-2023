@@ -1,6 +1,10 @@
 
 The working programmer does not know the complete migration lattice. 
 
+Programmers should aim at approximating the performance of the completely
+untyped configuration.
+
+
 For a program with a handful of components, a programmer should randomly
 add types or toggle all existing types until the performance is tolerable.
 Other than in those cases, shallow type enforcement does not seem to
@@ -10,34 +14,17 @@ In case, a programmer thinks that a large mixed-typed program exhibits
 intolerable performance, it is time to reach for the boundary profiler.
 Furthermore, when the boundary profiler is able to identify a particular
 as a cause of the bad performance, the programmer is best served by
-converting both sides of the boundary to use deep types. In support of
-this argument, the programmer can safely ignore assessing any
-characterestic of the program or the migration step; the blindly oprimistic  
+converting both sides of the boundary to use deep types.  This should be
+done by toggling existing shallow types to deep, if possible; otherwise,
+adding deep types to the untyped module.  In support of this argument, the
+programmer can safely ignore assessing any characterestic of the program
+or the migration step; the blindly optimistic approach is as good or
+better than approaches that require additional effort. 
 
 If a programmer uses the boundary profiler with an optimistic approach,
 and the result is a performance degradation, then it is unlikely that any
 of strategies presented here will help debug the performance problem. 
 
-
-% How successful is a strategy $X$ with the elimination of performance bottlenecks?
-
-$Q_X$
-
-- level 1: any optimistic or cost-aware strategy is more likely to
-  succeed than a conservative one; indeed, random and toggling are
-  more likely to succeed than conservative one
-
-- level 2: when feedback is successful, the boundary profiler
-  is far superior to all others. That's true in general as well as 
-
-- level 1: interpreting the feedback from the boundary
-  profiler is more likely to succeed than 
-
-%% -----------------------------------------------------------------------------
-
-% Is strategy $X$ more successful than strategy $Y$ in this context?
-
-$Q_{X/Y}$
 
 %% -----------------------------------------------------------------------------
 \subsection{Threats to Validity}
@@ -47,16 +34,25 @@ Threats to validity:
 
 internal
 ————
-benchmarks 
-profiler limitations, especially the boundary one — see classes
-typing one module at a time — maybe splitting modules is best
+representative benchmarks: black holes, what happens in the wild 
+
+
+profiler limitations, especially the boundary one — see class-based
+programs
+
+migration steps: (1) typing one module at a time 
+                 (2) splitting large modules is perhaps better
+
+strategies: missing strategies
 
 
 external
 —————
-one language 
-real programmers may not have access to libraries etc or may not be programmers 
+one language and its toolset 
+
+real programmers may not have access to libraries etc
+
+real programmers may not have the patience to act as rational programmers
+but may have ``hunches'' that pay off in realistic scenarios 
 
 
-
-``black holes''
