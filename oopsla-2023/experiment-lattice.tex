@@ -1,3 +1,4 @@
+\newcommand{\gtpurl}{\url{https://docs.racket-lang.org/gtp-benchmarks/index.html}}
 %% -----------------------------------------------------------------------------
 
 Gradual type migration is an open and challenging problem for realistic
@@ -11,15 +12,16 @@ practical type annotations and often among an infinite number of theoretical
 ones. But, to make a rational-programmer experiment computationally feasible, it
 is necessary to avoid this dimension.
 
-Fortunately, the construction of the corpus of scenarios 
-from a carefully selected set of suitable seed programs can solve the
-problem. For instance, the established
-GTP benchmarks come with well-chosen type annotations for all
-their components.  Hence, the migration lattices can be pre-constructed for all
-benchmark programs~\citep{tfgnvf-popl-2016}.  It is thus possible to start a
-rational programmer mode from any performance-debugging scenario in this
-lattice---a program with intolerable performance---and make it use the known
-types of the components to chart a path through the program's migration lattice.
+Fortunately, the construction of the corpus of scenarios from a carefully
+selected set of suitable seed programs can solve the problem. For instance, the
+established GTP benchmarks~\cite{gtnffvf-jfp-2019}\footnote{\gtpurl{}} are
+representative of the programming styles in the Racket world, and they come with
+well-chosen type annotations for all their components.  Hence, the migration
+lattices can be pre-constructed for all benchmark programs.  It is thus possible
+to start a rational programmer mode from any performance-debugging scenario in
+this lattice---a program with intolerable performance---and make it use the
+known types of the components to chart a path through the program's migration
+lattice.
 
 A rational-programmer mode thus combines a strategy \strategyvar{} with a
 function that picks points from the migration lattice. That is, the mode

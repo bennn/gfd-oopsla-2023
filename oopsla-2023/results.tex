@@ -1,23 +1,23 @@
 \newcommand{\numgtp}{16}
-\newcommand{\gtpurl}{\url{https://docs.racket-lang.org/gtp-benchmarks/index.html}}
 \newcommand{\boundaryMB}{536} % 536244 kb
 \newcommand{\statisticalMB}{4645} % 4645788 kb
 \newcommand{\runtimeMB}{44}
 
-This section presents the results of a rational programmer
-experiment that compares 17 strategies on programs from
-the GTP benchmark suite~\cite{gtp-benchmarks}.
+%% -----------------------------------------------------------------------------
+Running the rational-programmer experiment requires a large pool of computing
+resources.  To begin with, it demands reliable measurements for all complete
+migration lattices. Then, it needs to use the measurements to compute the
+outcome of applying the various modes of the rational programmer to the
+now-identifiable performance-debugging scenarios. This section starts with a
+description of the measurement process (section~\ref{subsec:experiment}). The
+remaining two subsections (sections~\ref{subsec:qx} and~\ref{s:hh}) explain how
+the outcome of the experiment answers the two research questions from the
+preceding section.
 
+%% -----------------------------------------------------------------------------
+\subsection{Experiment} \label{subsec:experiment} \label{sec:data}
 
-\subsection{Experiment}
-
-\subsubsection{Benchmarks}
-
-The GTP benchmarks are a collection of small to mid-sized Typed Racket programs
-that support a full lattice of mixed-typed interactions.
-Since the benchmarks originate from useful scripts
-and exercise a variety of types at module boundaries~\cite{gtnffvf-jfp-2019},\footnote{\gtpurl{}}
-they are an appropriate testbed for comparing navigation strategies.
+The GTP benchmarks are a collection of small to mid-sized Typed Racket programs.
 Configurations with high overhead due to deep types should benefit from
 feature-specific profiling, while configurations that suffer from shallow
 types may benefit more from the statistical profiler.
@@ -46,7 +46,7 @@ collect profile results in the coming weeks.  We have no plans to measure
 and \bmname{sieve} because it is very small, with only four configurations.
 
 
-\subsubsection{Profiling Tools}
+\paragraph{Profiling Tools}
 
 Racket ships with tools for statistical~[CITE] and feature-specific
 profiling~\cite{}.
@@ -66,8 +66,7 @@ Thus, the most expensive \emph{boundary} appears at the top rather than the sing
 most expensive contract~(shown in~\cref{f:fsm-code:boundary}).
 
 
-\subsubsection{Data}
-\label{sec:data}
+\paragraph{Data} 
 
 The ground-truth data for our experiment consists of running times,
 feature-specific profile output, and statistical profile output.
@@ -180,7 +179,7 @@ The only reason for re-running was to stay current with major changes to Typed R
   \end{tabular}
 \end{table}
 
-\subsection{Interesting Scenarios}
+\subsection{Interesting Scenarios} 
 
 For our experiment, we consider every configuration as a potential
 performance debugging scenario.
@@ -216,7 +215,7 @@ performance is good.
 
 
 
-\subsection{Running a Rational Programmer}
+\subsection{Running a Rational Programmer} \label{subsec:qx}
 
 We have instantiated the 17 strategies from~\cref{subsec:strategies} as
 programs that navigate toward fast configurations.
@@ -314,7 +313,7 @@ The conservative strategies are least likely to find a successful configuration
 no matter what profiler they use.
 Feature-specific profiling is always more successful than statistical profiling.
 
-\subsubsection{Antenna: 3x Strict Success}
+\paragraph{Antenna: 3x Strict Success}
 \label{s:antenna}
 
 There are two possible reasons for the poor performance of the conservative
@@ -395,7 +394,7 @@ shallow types.
   \label{f:strategy-hope}
 \end{figure}
 
-\subsubsection{Omitting Hopeless Scenarios}
+\paragraph{Omitting Hopeless Scenarios}
 
 Some of the \emph{interesting} scenarios in the experiment cannot possibly
 achieve success given the rules that the rational programmer must follow.
@@ -455,8 +454,7 @@ point, but can reach a 3x point.
   \label{f:head-to-head}
 \end{figure}
 
-\subsection{Head to Head: Comparing Strategies}
-\label{s:hh}
+\subsection{Head to Head: Comparing Strategies} \label{s:hh}
 
 The results so far show that the \emph{optimistic} strategy
 with \emph{feature-specific} profiles (opt-fsp) achieves the highest rate
