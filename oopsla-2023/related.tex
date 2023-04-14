@@ -3,90 +3,68 @@
 
 This work touches a range of existing strands of research. At
 the object-level, the main motivation for this paper is prior research on
-the performance issues of sound gradual typing; while two significant
+the performance issues of sound gradual typing.
+Two significant
 sources of inspiration are research on gradual type migration and
 profiling technique.  At the meta-level, this work builds on and extends
-prior results on the rational programmer method.   
-
-\paragraph{The Rational Programmer}
-
- \citet{lksfd-popl-2020,lgfd-icfp-2021} propose the rational programmer as
- an empirical method for evaluating the role of blame in debugging coding
- mistakes with software contracts and gradual types. However, the ideas
- behind the rational programmer go beyond debugging such mistakes. In
- essence, the rational programmer is a general methodological framework
- for the systematic investigation of the pragmatics of programming
- languages and tools. That is, it can quantify the value of the various
- aspects of a language or a tool in the context of a specific task. In
- that sense, Lazarek et al.'s work focuses on a single context: debugging
- coding mistakes. This paper shows how the rational programmer applies
- to another context: performance tuning and debugging of performance
- problem. Hence, it shares the language feature it studies, gradual
- typing, with part of Lazarek's work, but it looks at a different aspect
- of its pragmatics. As a result, besides contributing to the understanding
- of the value of gradual types, it also provides evidence for the
- generality of the rational programmer method itself.  
+prior results on the rational programmer method.
 
 \paragraph{Performance Tuning and Gradual Typing} 
 
-\citet{gtnffvf-jfp-2019} give definite proof of the grim performance
-problems of deep gradual types; adding deep types to just a few components
-can make a program prohibitively slow. Moreover, it may take adding deep
-types to almost every component for performance to get back to an
-acceptable level. This observation sets the stage for the work in this
-paper; the experimental approach of Greenman et al. provides the
+\citet{gtnffvf-jfp-2019} demonstrate the grim performance problems of deep
+gradual types.
+Adding deep types to just a few components can make a program prohibitively
+slow, and the slowdown may remain until nearly every component has types.
+This observation sets the stage for the work in this paper.
+Furthermore, the experimental approach of that work provides the
 motivation together with the benchmarks and the migration lattices that
-are key elements of the rational programmer experiment herein.  
+are key elements of the rational programmer experiment herein.
 
-Even before Greenman et al.'s empirical results however, the research
-community on gradual typing had observed the negative impact of deep types
-on time and space program performance, and had looked for ways to mitigate
-it.  Roughly, the mitigation approaches fall in two groups. The first
+Earlier work observed the negative implications of deep types
+and proposed mitigation techniques.
+Roughly, the techniques fall in two groups. The first
 group proposes the design of alternative run-time checking strategies that
 aim to control the time and space cost of checks while providing
-some soundness guarantees (e.g.
-~\citep{sgt-esop-2009,rmhn-ecoop-2019,glfd-pj-2022,lgmvpk-pj-2023,svctg-esop-2015,rat-oopsla-2017,sfrbcsb-popl-2014,rsfbv-popl-2015,coersion-passing-style}).
-From these different strategies, the transient
-strategy~\cite{vksb-dls-2014,vss-popl-2017,v-thesis-2019} and its
-so-called shallow types play an important role in this work (see
-section~\ref{sec:seascape}).  ~\citet{type-untyped} provide a
-comprehensive analysis and comparison of the different points of the
+some type guarantees (e.g.~\citep{sgt-esop-2009,rmhn-ecoop-2019,glfd-pj-2022,lgmvpk-pj-2023,g-popl-2015,svctg-esop-2015,rat-oopsla-2017,sfrbcsb-popl-2014,rsfbv-popl-2015,coersion-passing-style}).
+One notable strategy is transient, which was developed for Reticulated
+Python~\cite{vksb-dls-2014,vss-popl-2017,vsc-dls-2019,v-thesis-2019}
+and later characterized as providing \emph{shallow} types that offer
+type soundness but not complete monitoring~\cite{gfd-oopsla-2019}.
+\citet{type-untyped} provide a detailed analysis and comparison of the
 overall checking strategy landscape.
 
-The second group of mitigation approaches targets the time and space optimization of
-existing checking strategies by removing unnecessary
-checks~\cite{collapsible,corpse-reviver, kas-pldi-2019,grmhn-vmil-2019,
-rat-oopsla-2017,pycket,bbst-oopsla-2017}. While this is a promising line
-of work, some of the proposed techniques focus on specific pathologies,
-while others do not scale yet to full-fledged production languages.
-Hence, the problem of performant sound gradual typing is still largely
-open.   
+The second group of mitigations reduce the time and space required
+by deep types without changing their
+semantics~\cite{htf-hosc-2010,stw-jfp-2021,stw-pldi-2015,collapsible,corpse-reviver,
+kas-pldi-2019, rat-oopsla-2017,pycket,bbst-oopsla-2017}.
+This is a promising line of work.
+In the context of Pycket, for example, the navigation problem is easier
+than Typed Racket because many more configurations run efficiently.
+But, pathologies still remain.
+Navigation techniques are an important complement to performance improvements.
 
-Indeed, exactly because of this open problem, many existing language
-designs exhibit a hybrid approach when it comes to the kind of gradual
-checks they perform. For instance, Thorn and StrongScript use a mixture of
-optional types and so-called concrete
-types~\citep{wzlov-popl-2010,rzv-ecoop-2015}. The first result in no
-run-time checks (same as TypeScript's unsound optional types), while the second
-perform cheap nominal type checking but limit the values that components
-can exchange.  As a way to ease this expressiveness issue, Static Python
-combines deep with concrete types~\citep{lgmvpk-pj-2023}.  Pyret uses deep
-checks for fixed-size data and shallow checks for recursive data and
-functions.  Older versions of
-\href{https://medium.com/dartlang/dart-2-stable-and-the-dart-web-platform-3775d5f8eac7}{Dart}
-allowed developers to switch between  deep and optional types.
-Following~\citet{g-deep-shallow}'s work, Typed Racket's recent versions
-offer to programmers a choice between deep and shallow checks. The work in
-this paper investigates that latter hybrid setting. 
+Several language designs take a hybrid approach to gradual types
+so that programmers can avoid the costs of deep types.
+For instance, Thorn and StrongScript use a mixture of
+\emph{optional} and \emph{concrete} types~\citep{wzlov-popl-2010,rzv-ecoop-2015}.
+Optional types never introduce run-time checks (same as TypeScript~\cite{bat-ecoop-2014} or Flow~\cite{cvgrl-oopsla-2017}).
+Concrete types perform cheap nominal type checking but limit the values that components
+can exchange~(Nom~\cite{mt-oopsla-2017,mt-oopsla-2021} and SafeTS~\cite{rsfbv-popl-2015} also use concrete types).
+Dart 2 explores a similar combination of optional and concrete.\footnote{\url{https://dart.dev/language/type-system\#runtime-checks}}
+Static Python combines concrete and shallow types to ease the limits
+of concrete without losing type soundness and the optimizations that soundness enables~\citep{lgmvpk-pj-2023}.
+Pyret uses deep checks for fixed-size data and shallow checks for recursive
+data and functions.\footnote{\url{http://www.pyret.org}}
+Typed Racket recently added shallow and optional types as alternatives to its deep
+semantics~\cite{g-deep-shallow}.
 
-\paragraph{Gradual Type Migration} Besides laying bare the performance
-issues of sound gradual typing, \citet{gtnffvf-jfp-2019}'s result show
-that a programmer who persists with migration will eventually revert the
-negative impact of adding types to a code base in most cases. In fact, in
-many cases, the programmer can even manage to unlock type-driven
-optimizations that make a typed code base more performant than its untyped
-counterpart. This insight offers the justification for the behavior of 
-different modes of the rational programmer in this paper. 
+\paragraph{Gradual Type Migration} Besides laying bare the performance issues
+of deep types, \citet{gtnffvf-jfp-2019} shows that fully-typed code usually
+runs efficiently.
+In fact, type-drived optimizations can improve the performance of typed code
+beyond the untyped baseline.
+This insight offers the justification for the behavior of different modes of
+the rational programmer in this paper.
 
 Research on gradual type migration can be split in three broad directions:
 static techniques~\cite{rch:in-out-infer-gt, km:ts-type-evo,
@@ -99,11 +77,12 @@ and those based on machine learning
 and ML-based techniques exhibit the most scalable results so far as they
 can produce accurate annotations for a range of components in the wild,
 such as JavaScript libraries. However, as the authors of the latest
-ML-based work~\cite{ml-ts} note ``automatically predicting type annotations is a
-challenging task and much work remains to be done.'' Moreover, no existing
-technique takes into account feedback from profilers to guide migration.
-In other words,  the profiling strategies in this paper can combine
-with mature migration techniques in the context of automatic or
+ML-based work~\cite{ml-ts} note, the problem is far from solved.
+% ``automatically predicting type annotations is a challenging task and much work remains to be done.''
+Moreover, no existing technique takes into account feedback from profilers to
+guide migration.
+One opportunity for future work is to combine the profiling strategies in this
+paper with migration techniques in the context of automatic or
 human-in-the-loop tools.
  
 \paragraph{Performance Tuning with Profilers} Profilers are the de facto
@@ -111,61 +90,69 @@ tool that developers use to understand the causes of performance bugs.
 Tools such as GNU gprof~\cite{gprof} established statistical (sampling) 
 profilers that collect caller-function execution time data, and paved the
 way for the development of statistical profilers in many languages,
-including (Typed) Racket.
+including Racket.
 
 In addition to Racket's statistical profiler, the experiment in this
 paper also uses Racket's feature-specific
 profiler~\cite{astavf-feature-prf, staaf-feature-prf}. A
-feature-specific profiler allows developers to direct the profiler to
-group execution time based on (instances) of language features of
-their choice rather than just function calls.  For instance, the
+feature-specific profiler
+groups execution time based on (instances) of language features of
+developers' choosing rather than by function calls.  For instance, the
 boundary profiler that the experiment of this paper employs aggregates
 the cost of contracts in a program by the boundary that introduces
 them.
 
 There are two prior works that have used profiler feedback to understand
-the source of the high cost of gradual types.  First,
-~\citet{astavf-feature-prf} show that the feature-specific profiler can detect
-``hot'' boundaries in a mixed-typed program with deep types, i.e., it can
-identify boundaries that are the origin for the most costly run-time deep
-type checks. Second, \cite{grmhn-vmil-2019} show that a statistical
-profiler can help identify the most costly shallow type checks; removing
-these ``hot'' checks can render the resulting configuration of a mix-typed
-program as performant as the corresponding untyped program.  Put
-differently, the result of those papers justify the inclusion of both a
-statistical and feature-specific profiler in the rational programmer experiment of
-this paper.  After all the two profiler techniques seem to have
-complementary strengths which should make their combination ideal for a
-setting that mixes deep and shallow types --- see however
-section~\ref{sec:discussion} for why this is not the case. 
+the source of the high cost of gradual types.
+First,~\citet{astavf-feature-prf} show that the Racket feature-specific profiler can detect
+hot boundaries in programs that use deep types, i.e., it can
+identify boundaries that are the origin of costly deep checks.
+Second, \citet{grmhn-vmil-2019} use end-to-end timing information
+to identify costly shallow types.
+We conjecture that using a statistical profile could lead to similar
+conclusions with fewer runs of the program.
 
 Unlike this paper, prior work on profilers and gradual typing does not
-examine how profiler feedback translates to developer actions
-besides the obvious removal of type annotations from ``hot'' boundaries. 
+examine how to translate profiler feedback to developer actions.
+The suggested repair is to remove expensive types.
 In general, most profiling tools do not make recommendations to
-programmers. The now defunct Zoom profiler~\cite{zoom} is one
-notable exception, but its recommendations are phrased in 
-terms of assembly, not high-level code.  
+programmers. The Zoom profiler~\cite{zoom} was one
+notable exception; though, its recommendations were phrased in
+terms of assembly language rather than high-level code.
 
 In addition to statistical and feature-specific profilers, there are a
 number of profiling and performance analysis tools that provide
-alternative views of the performance of a program. Two of the most recent
-such tools are \citet{vertical-profiler}'s vertical profiler and
-\citet{java-profile-concepts}'s concept-based profiler. Both profile JAVA
-programs, but differ on what feedback they present to programmers. A
-vertical profiler splits performance analysis data   along different
+alternative views of the performance of a program. Two recent tools include
+a vertical profiler~\cite{vertical-profiler} and a
+concept-based profiler~\cite{java-profile-concepts}.
+Both target Java programs.
+A vertical profiler splits performance analysis data   along different
 levels of abstraction, such as VM cost, system calls cost, and application
 code cost. A concept-based profiler groups performance costs based on
 user-defined portions of a code-based called concepts~\cite{concepts}.
-While it would be interesting for a rational-programmer experiment to
-investigate alternative profiling and performance analysis
-techniques, only the statistical and the feature-specific (boundary)
-profiler are available for measuring the run time cost of gradual
-types in a production mix-typed language.
+It would be interesting to study alternative profiling and performance
+analysis techniques in future rational-programmer experiments.
 
 
+\paragraph{The Rational Programmer}
 
+ \citet{lksfd-popl-2020,lgfd-icfp-2021} propose the rational programmer as
+ an empirical method for evaluating the role of blame in debugging coding
+ mistakes with software contracts and gradual types. However, the ideas
+ behind the rational programmer go beyond debugging such mistakes. In
+ essence, the rational programmer is a general methodological framework
+ for the systematic investigation of the pragmatics of programming
+ languages and tools. That is, it can quantify the value of the various
+ aspects of a language or a tool in the context of a specific task. In
+ that sense, the prior work work focuses on a single context: debugging
+ coding mistakes.
 
-
+ This paper shows how the rational programmer applies
+ to another context: performance tuning and debugging of performance
+ problem. Hence, it shares the language feature it studies, gradual
+ typing, with prior work. But it looks at a different aspect
+ of its pragmatics. As a result, besides contributing to the understanding
+ of the value of gradual types, it also provides evidence for the
+ generality of the rational programmer method itself.
 
 
