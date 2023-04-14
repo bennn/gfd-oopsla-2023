@@ -118,30 +118,83 @@ enforcement.
 %% -----------------------------------------------------------------------------
 \subsection{Threats to Validity} \label{subsec:threats}
 
+The validity of the conclusions may suffer from two kinds of threats to their
+general validity.  The first one concerns the experimental setup. The second
+category is about extrinsic aspects of the rational-programmer method.
 
-Threats to validity:
+\begin{figure}[ht]
+  \def\lbl#1{\bmname{#1}}
+  \newcommand{\kkrow}[1]{\includegraphics[width=0.39\columnwidth]{data/sky/#1-feasible.pdf}}
+    \begin{tabular}[t]{ll}
+     \lbl{acquire}   \\
+     \kkrow{acquire} \\
+    \end{tabular}
+  \caption{An example of a large program with a large black-hole region} \label{fig:bh2}
+\end{figure}  
 
-internal
-————
-representative benchmarks: black holes, what happens in the wild 
+As for method-internal threats, the most important one is that the GTP programs
+may not be truly representative of Racket programs in the wild. Several of those
+are somewhat small with simple dependency graphs and low performance overheads.
+Since programmers typically confront performance-debugging scenarios with large,
+high-overhead programs, they will have to use the general lessons with some
+caution. The problem is that such programs may come with large black holes in
+the migration lattice. Concretely, once a program belongs to the part of the
+lattice with high performance degradation, no profiling strategy will assist the
+programmer with getting out of this region of the lattice. As
+figure~\ref{fig:bh2} illustrates for the \bmname{acquire} benchmark, the random
+strategy works better for such large programs than any profiling strategy.  It
+remains an open question how often such black holes occur in the wild.
 
+The second-most important internal threat concerns the design of the strategies.
+While the set of strategies looks large and seems to cover a wide range of
+approaches, it is far from complete. For example, certain combinations of the
+chosen strategies---say, the optimistically cost-aware one with the random
+one---might deliver better results than pursuing a pure strategy.  Another
+weakness of the strategies is that their migration steps apply to single,
+complete modules. One alternative is to migrate more than one module at a time. A
+second alternative is to split modules into several typed and untyped
+submodules~\cite{f:submodules}.  
 
-profiler limitations, especially the boundary one — see class-based
-programs
+The design of the experiment attempts to mitigate all of the method-internal
+threats. Specifically, the experiment setup pays tribute to these threats with
+the use of the most standard suite of usable benchmarks and the careful design of
+the strategies.  Still, the reader must keep them in mind when drawing
+conclusions.
 
-migration steps: (1) typing one module at a time 
-                 (2) splitting large modules is perhaps better
+As for the method-external threats, the most important one is that the experiment
+relies on a single language and is eco-system. While this choice is necessary for
+an apples-to-apples comparison of strategies, it is unclear how the results apply
+to other language and tool settings. Another aspect of this threat is that the
+experiment involves only two profilers. While the statistical one is like those
+found in most language eco-systems, the boundary profiler is unique to Racket. It
+is possible that other language eco-systems come with profiling tools that might
+just perform better than those two for some performance-debugging scenarios.
 
-strategies: missing strategies
+Stepping back, a reader may also question the entire rational-programmer idea as
+an overly simplistic approximation of performance-debugging work in the real
+world. But, programming language researchers know quite well that simplified
+models have an illuminating power.  Similarly, empirical PL research has also
+relied on highly simplified mental models of program execution for a long
+time. As \citet{mdhs:wrong-data} report, ignorance of these simplifications can
+produce wrong data---and did so for decades. Despite this problem, the simplistic
+model acted as a compass that helped compiler writers improve their product
+substantially over the same time period.
 
+Like such models, the rational programmer is a simplified one.  While the
+rational programmer experiment assumes that a programmer takes all
+information into account and sticks to a well-defined, possibly costly
+process, a human programmer may make guesses, follow hunches, and take
+shortcuts. Hence, the conclusions from the rational-programmer
+investigation may not match the experience of working programmers. Further
+research that goes beyond the scope of this paper is necessary to
+establish a connection between the behavior of rational and human
+programmers.  
 
-external
-—————
-one language and its toolset 
-
-real programmers may not have access to libraries etc
-
-real programmers may not have the patience to act as rational programmers
-but may have ``hunches'' that pay off in realistic scenarios 
-
-
+That said, the behavioral simplifications of the rational programmer are
+analogous to the strategic simplifications that theoretical and practical models
+make, and like those, they are necessary to make the rational programmer
+experiment feasible. Despite all simplifications, section~\ref{sec:results}
+demonstrates that the rational programmer method produces results that offer a
+valuable lens for the community to understand some pragmatic aspects of
+performance debugging of mixed-typed programs, and it does so at scale and in a
+quantifiable manner.
