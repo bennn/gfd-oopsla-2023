@@ -43,7 +43,7 @@ granularity is a module.
 
 The variant of \bmname{fsm} on the left of figure~\ref{f:fsm-code:a} is untyped.
 If a developer adds deep types to the \code{main} module, performance is
-significantly degraded. The gradually-typed variant runs almost three times
+significantly degraded. The mixed-typed variant runs almost three times
 ($3x$) slower than the untyped one.  Switching to shallow types does not remedy
 the situation. 
 
@@ -168,7 +168,7 @@ Running time is 18.17% contracts
     \caption{Boundary profiler output for the same variant} \label{f:fsm-code:boundary}
   \end{subfigure}
 
-  \caption{Profiling during gradual-type migration} \label{f:fsm-code}
+  \caption{Profiling during type migration} \label{f:fsm-code}
 \end{figure}
 %% -----------------------------------------------------------------------------
 

@@ -1,7 +1,7 @@
 
 %% -----------------------------------------------------------------------------
 
-Sound gradual typing comes with several advantages~\cite{lgfd-icfp-2021,
+Sound migratory typing comes with several advantages~\cite{lgfd-icfp-2021,
 lgfd-icfp-2023} but also poses a serious performance-debugging challenge to
 programmers who wish to use it. To overcome performance-debugging problems,
 programmers tend to use profiling tools. Using such tools, however, also assumes
@@ -14,7 +14,7 @@ the feature-specific profiler works well if used with any ``optimistic''
 interpretation strategy. That is, programmers should eliminate the hottest
 boundary, as identified by the feature-specific profiler, by making both modules
 use deeply checked types. Second, if a program comes with a low overhead for all
-gradually typed variants, the statistical profiler works reasonably well;
+mixed-typed variants, the statistical profiler works reasonably well;
 otherwise the statistics profiler is unhelpful for performance-debugging
 problems in this context. Third, while profiling tools help with debugging
 problematic performance scenarios, the data collection also clarifies that for
@@ -35,13 +35,13 @@ involved.
 
 Finally, the rational-programmer experiment also suggests several ideas for
 future research. First, the experiment should be reproduced for alternative
-gradually typed languages. Nothing else will confirm the value of the optimistic
+mixed-typed languages. Nothing else will confirm the value of the optimistic
 interpretations of feedback from the feature-specific profiler. Second, the
-experiment clearly demonstrates that profiling tools are not enough to overcome
-the performance challenges of sound gradual typing. Unless researchers can
-construct a performant compiler for a production language with sound gradual
-typing, the community must search for alternative ways to navigate the migration
-lattice. 
+experiment clearly demonstrates that existing profiling tools are not enough to
+overcome the performance challenges of sound migratory typing. Unless researchers
+can construct a performant compiler for a production language with sound migratory 
+typing, the community must improve the available profiling tools to navigate the
+migration lattice or invent new ones.
 
 
 
