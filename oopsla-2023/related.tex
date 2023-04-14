@@ -94,18 +94,28 @@ static techniques~\cite{rch:in-out-infer-gt, km:ts-type-evo,
 mp:gt-decidable, ccew:gt-migrate, gc:gt-infer,
 cagg-solver-based-migration,clps-popl-2020,js-infer,ruby-static-infer,unif-infer};
 dynamic
-ones~\cite{msi:gt-infer-hm,dyn-infer-ruby,profile-guided-typing,jstrace},
+ones~\cite{msi:gt-infer-hm, dyn-infer-ruby, profile-guided-typing, gen-ts-decl, jstrace},
 and those based on machine learning
-(ML)~\cite{lambdanet,nl2ptype,learn-types-big-data,ml-ts}. The latter are
-the ones that have provided so far the most scalable results as they can
-produce accurate annotations for a range of Javascript components in the
-wild. However, as the authors of the latest ML-based work note
-``automatically predicting type annotations is a challenging task and much
-work remains to be done.''
+(ML)~\cite{lambdanet,nl2ptype,learn-types-big-data,ml-ts}. The dynamic
+and ML-based techniques exhibit the most scalable results so far as they
+can produce accurate annotations for a range of components in the wild,
+such as Javascript libraries. However, as the authors of the latest
+ML-based work note ``automatically predicting type annotations is a
+challenging task and much work remains to be done.'' Moreover, no existing
+technique takes into account feedback from profilers to guide migration.
+In other words,  the profiling strategies in this paper can combine
+with mature migration techniques in the context of automatic or
+human-in-the-loop tools.
  
 \paragraph{Performance Tuning with Profilers}
 
-grmhn-vmil-2019;
+\cite{gprof}
+
+\cite{zoom}
+
+\cite{vertical-profiler}
+
+\cite{grmhn-vmil-2019};
 profiling strategy for transient: run once for each type, set of hot types => hot config;
 mention too when discussing FSP for transient
 
