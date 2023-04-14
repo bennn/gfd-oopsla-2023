@@ -115,131 +115,14 @@
 \sec{conclusion}  {Where to Go from Here}
 %% -----------------------------------------------------------------------------
 
-
-\begin{acks}
-  Thanks to Cloudlab for hosting our experiments [CITE].
-
-We gratefully acknowledge support from
-  \grantsponsor{NSF}{NSF}{https://www.nsf.gov}
- grants
-  (?) \href{"https://www.nsf.gov/awardsearch/showAward?AWD_ID=1763922"}{\grantnum{NSF}{CCF 1763922}},
-  (?) \href{"https://www.nsf.gov/awardsearch/showAward?AWD_ID=1823244"}{\grantnum{NSF}{CNS 1823244}},
- and
- \href{"https://www.nsf.gov/awardsearch/showAward?AWD_ID=2030859"}{\grantnum{NSF}{CCF 2030859}}
-  to the CRA for the \href{https://cifellows2020.org}{CIFellows} project.
-\end{acks}
+\input{ackn}
 
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{bib}
 
 \appendix
 
-\section{Modifications to the GTP Benchmarks}
-\label{s:adaptor-rewrite}
-
-To support a rational programmer experiment using feature-specific profiling,
-we had to change nine of the GTP Benchmarks in a minor way.
-The change lets the profiler peek through \emph{adaptor modules}.
-Adaptor modules are a layer of indirection that lets benchmark with
-generative types (structs)support a lattice of mixed-typed
-configurations~\cite{gtp-benchmarks,tfgnvf-popl-2016}.
-The benchmarks are:
-\bmname{acquire}, \bmname{kcfa},
-\bmname{snake}, \bmname{suffixtree}, \bmname{synth}, \bmname{take5},
-\bmname{tetris}, and \bmname{zombie}.
-%% FILL also quadT
-
-In short, the trouble with an adaptor is that its name appears
-in contracts instead of the name of its clients.
-If one adaptor has three clients, then profiling will attribute costs to one
-library--adaptor boundary instead of three library--client boundaries.
-
-The change is to add client-specific submodules to each adaptor.
-Using an adaptor with three clients as an example, the changes are:
-\begin{enumerate}
-  \item
-    define generative types at the top level of the adaptor;
-  \item
-    export the generative types \emph{unsafely}, without any contract;
-  \item
-    create three submodules, one for each client, each of which imports
-    the generative types and provides them safely; and
-  \item
-    modify the clients to import from the newly-created submodules rather
-    than the top level.
-\end{enumerate}
-%
-The submodules attach client-specific names to contracts without changing
-run-time behavior.
-
-
-\section{Benchmark Skylines}
-\label{s:bm-sky}
-
-\begin{figure}[t]
-  \newcommand{\kkrow}[1]{\bmname{#1} \\ \includegraphics[width=0.39\columnwidth]{data/sky/#1-feasible.pdf}}
-  \begin{tabular}[t]{ll}
-    \begin{tabular}[t]{l}
-      \kkrow{morsecode} \\
-      \kkrow{forth} \\
-      \kkrow{fsm} \\
-      \kkrow{fsmoo} \\
-      \kkrow{mbta} \\
-      \kkrow{zombie} \\
-      \kkrow{dungeon} \\
-      \kkrow{jpeg} \\
-    \end{tabular}
-    &
-    \begin{tabular}[t]{l}
-      \kkrow{lnm} \\
-      \kkrow{suffixtree} \\
-      \kkrow{kcfa} \\
-      \kkrow{snake} \\
-      \kkrow{take5} \\
-      \kkrow{acquire} \\
-      \kkrow{tetris} \\
-      \kkrow{synth}
-    \end{tabular}
-  \end{tabular}
-
-  \caption{FILL skyline}
-  \label{f:skyline:bm}
-\end{figure}
-
-
-\section{Benchmark Comparisons: Opt-FSP}
-
-TBA
-
-\begin{figure}[t]
-  \newcommand{\hhrow}[1]{\bmname{#1} \\ \includegraphics[width=0.39\columnwidth]{data/h2h/#1.pdf}}
-  \begin{tabular}[t]{ll}
-    \begin{tabular}[t]{l}
-      \hhrow{morsecode} \\
-      \hhrow{forth} \\
-      \hhrow{fsm} \\
-      \hhrow{fsmoo} \\
-      \hhrow{mbta} \\
-      \hhrow{zombie} \\
-      \hhrow{dungeon} \\
-      \hhrow{jpeg} \\
-    \end{tabular}
-    &
-    \begin{tabular}[t]{l}
-      \hhrow{lnm} \\
-      \hhrow{suffixtree} \\
-      \hhrow{kcfa} \\
-      \hhrow{snake} \\
-      \hhrow{take5} \\
-      \hhrow{acquire} \\
-      \hhrow{tetris} \\
-      \hhrow{synth}
-    \end{tabular}
-  \end{tabular}
-
-  \caption{FILL Head to head, per benchmark}
-  \label{f:h2h:bm}
-\end{figure}
+\input{appendix}
 
 \end{document}
-\endinput
+

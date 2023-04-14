@@ -1,0 +1,49 @@
+%% -----------------------------------------------------------------------------
+
+\def\with{with {\em total\/} in place of {\em self\/}}
+
+\begin{figure}[htb]
+
+  \newcommand{\desc}[1]{\parbox[t]{24em}{#1\\[-2mm]}}
+  
+  \def\desca{\desc{Uses the feature-specific profiler to identify the most
+    expensive boundary in the given program. Then it directs the mode to equip
+    both sides of the target boundary with deep types.}}
+
+  \def\descb{\desc{Like \featopt{} but with shallow types for both
+    sides of the target boundary.}}
+
+  \def\descc{\desc{Uses the statistical profiler to identify the component
+    $\component{}_1$ with the highest self time in the given program that has a
+    boundary with at least one component $\component{}_2$ that has stricter
+    types than $\component{}_1$.  Then it picks the component $\component{}_2$
+    that has the highest self time, and directs the mode to equip both
+    $\component{}_1$ and $\component{}_2$ with deep types.}}
+
+  \def\descd{\desc{Like \statselfopt{} \with}}
+
+  \def\desce{\desc{Like \statselfopt{}, with shallow types for $\component{}_1$, $\component{}_2$}}
+
+  \def\descf{\desc{Like \statselfcon{} with {\em total\/} in place of {\em self\/}}}
+
+ \begin{tabular}{l l l}
+    {\bf Profiler} & {\bf Strategy} & {\bf Description} \\ \hline
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \multirow[b]{2}[+5]{*}{{\em feature-specific\/}} & 
+        \optkw{}          &   \desca          \\ \relax
+     &	\conkw{}          &   \descb          \\ \hline
+
+    \multirow[b]{2}[+7]{*}{{\em statistically\/} ({\em self\/})} &
+	\optkw{}      &   \descc          \\ \relax
+     &	\conkw{}      &   \desce          \\ \hline
+
+    \multirow{2}{*}{{\em statistically\/} ({\em total\/})} & 
+	\conkw{}     &   \descf           \\ \relax
+     &	\optkw{}     &   \descd           % \\ \relax
+ \end{tabular}
+
+ 
+  \caption{The Basic Strategies of the Experiment and their Descriptions}
+  \label{f:bstrategies}
+\end{figure}
+%% -----------------------------------------------------------------------------

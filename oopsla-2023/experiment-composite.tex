@@ -1,0 +1,60 @@
+%% -----------------------------------------------------------------------------
+\begin{figure}[b]
+ 
+  \newcommand{\desc}[1]{\parbox[t]{19.5em}{#1\\[-2mm]}}
+ 
+  \def\desca{\desc{Splits the boundaries in the given program to those between
+    typed components and the rest.  Delegates to \featopt{} to produce a
+    modification for the given program, but rank boundaries in the first group
+    higher than those in the second group while determining the most expensive
+    boundary.}}
+
+  \def\descb{\desc{Like \featcostopt{} but it delegates to \featcon{}.}}
+
+  \def\descc{\desc{Separates the typed components that have boundaries with
+    other typed components from the rest of the components in the given
+    program. Delegates to \statselfopt{} to produce a modification for the given
+    program, but rank boundaries between components in the first group higher
+    than the rest while determining the most expensive boundary.}}
+
+   \def\descd{\desc{Like \statselfcostopt{} but it delegates to \stattotalopt{}.}}
+
+   \def\desce{\desc{Like \statselfcostopt{} but it delegates to \statselfcon{}.}}
+
+   \def\descf{\desc{Like \statselfcostopt{} but it delegates to \stattotalcon{}.}}
+
+   \def\descg{\desc{If the number of typed components in the given program is
+     above a threshold $N$, it delegates to \featopt{}. Otherwise, it delegates
+     to \featcon{}.}}
+
+   \def\desch{\desc{Like \featconf{}; it delegates to \statselfopt{}
+     or \statselfcon{} instead.}}
+
+  \def\descj{\desc{Like \featconf{}; it delegates to \stattotalopt{}
+     or \stattotalcon{} instead.}}
+
+ \begin{tabular}{l l l}
+    {\bf Profile} & {\bf Strategy Name} & {\bf Description}  \\ \hline
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \multirow[b]{2}[+19]{*}{{\em feature-specific\/}} & 
+    \costoptkw{}      &   \desca           \\ \relax
+    & \costconkw{}      &   \descb           \\ \relax
+    & \confkw{}         &   \descg           \\ \hline
+
+    \multirow[b]{2}[+17]{*}{{\em statistically\/} ({\em self\/})} &
+    \costoptkw{}   &   \descc           \\ \relax
+    & \costconkw{}   &   \desce           \\ \relax
+    & \confkw{}      &   \desch           \\ \hline
+
+    \multirow{2}[+17]{*}{{\em statistically\/} ({\em total\/})} & 
+    \costoptkw{} &   \descd           \\ \relax
+    & \costconkw{} &   \descf           \\ \relax
+    & \confkw{}    &   \descj           % \\ \relax
+
+ \end{tabular}
+
+ 
+  \caption{The Composite Strategies of the Experiment and their Descriptions}
+  \label{f:cstrategies}
+\end{figure}
+%% -----------------------------------------------------------------------------

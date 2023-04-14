@@ -18,55 +18,7 @@ and set its enforcement strategy to deep; if $c$ is typed, it just requests
 toggling from shallow to deep.  If a strategy's result is the empty set, it
 cannot figure out how to proceed.
 
-%% -----------------------------------------------------------------------------
-
-\def\with{with {\em total\/} in place of {\em self\/}}
-
-\begin{figure}[htb]
-
-  \newcommand{\desc}[1]{\parbox[t]{24em}{#1\\[-2mm]}}
-  
-  \def\desca{\desc{Uses the feature-specific profiler to identify the most
-    expensive boundary in the given program. Then it directs the mode to equip
-    both sides of the target boundary with deep types.}}
-
-  \def\descb{\desc{Like \featopt{} but with shallow types for both
-    sides of the target boundary.}}
-
-  \def\descc{\desc{Uses the statistical profiler to identify the component
-    $\component{}_1$ with the highest self time in the given program that has a
-    boundary with at least one component $\component{}_2$ that has stricter
-    types than $\component{}_1$.  Then it picks the component $\component{}_2$
-    that has the highest self time, and directs the mode to equip both
-    $\component{}_1$ and $\component{}_2$ with deep types.}}
-
-  \def\descd{\desc{Like \statselfopt{} \with}}
-
-  \def\desce{\desc{Like \statselfopt{}, with shallow types for $\component{}_1$, $\component{}_2$}}
-
-  \def\descf{\desc{Like \statselfcon{} with {\em total\/} in place of {\em self\/}}}
-
- \begin{tabular}{l l l}
-    {\bf Profiler} & {\bf Strategy} & {\bf Description} \\ \hline
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    \multirow[b]{2}[+5]{*}{{\em feature-specific\/}} & 
-        \optkw{}          &   \desca          \\ \relax
-     &	\conkw{}          &   \descb          \\ \hline
-
-    \multirow[b]{2}[+7]{*}{{\em statistically\/} ({\em self\/})} &
-	\optkw{}      &   \descc          \\ \relax
-     &	\conkw{}      &   \desce          \\ \hline
-
-    \multirow{2}{*}{{\em statistically\/} ({\em total\/})} & 
-	\conkw{}     &   \descf           \\ \relax
-     &	\optkw{}     &   \descd           % \\ \relax
- \end{tabular}
-
- 
-  \caption{The Basic Strategies of the Experiment and their Descriptions}
-  \label{f:bstrategies}
-\end{figure}
-%% -----------------------------------------------------------------------------
+\input{experiment-basics}
 
 \paragraph{Basic strategies.}  Figure~\ref{f:bstrategies} describes six basic
  strategies that rational programmers may use. 
@@ -104,66 +56,7 @@ At the second level, basic strategies differ in how they migrate the two sides
  than if only one is deep and, at the same time, unlike with \optkw{}
  strategies, there is no risk of a ripple effect.
 
-%% -----------------------------------------------------------------------------
-\begin{figure}[b]
- 
-  \newcommand{\desc}[1]{\parbox[t]{19.5em}{#1\\[-2mm]}}
- 
-  \def\desca{\desc{Splits the boundaries in the given program to those between
-    typed components and the rest.  Delegates to \featopt{} to produce a
-    modification for the given program, but rank boundaries in the first group
-    higher than those in the second group while determining the most expensive
-    boundary.}}
-
-  \def\descb{\desc{Like \featcostopt{} but it delegates to \featcon{}.}}
-
-  \def\descc{\desc{Separates the typed components that have boundaries with
-    other typed components from the rest of the components in the given
-    program. Delegates to \statselfopt{} to produce a modification for the given
-    program, but rank boundaries between components in the first group higher
-    than the rest while determining the most expensive boundary.}}
-
-   \def\descd{\desc{Like \statselfcostopt{} but it delegates to \stattotalopt{}.}}
-
-   \def\desce{\desc{Like \statselfcostopt{} but it delegates to \statselfcon{}.}}
-
-   \def\descf{\desc{Like \statselfcostopt{} but it delegates to \stattotalcon{}.}}
-
-   \def\descg{\desc{If the number of typed components in the given program is
-     above a threshold $N$, it delegates to \featopt{}. Otherwise, it delegates
-     to \featcon{}.}}
-
-   \def\desch{\desc{Like \featconf{}; it delegates to \statselfopt{}
-     or \statselfcon{} instead.}}
-
-  \def\descj{\desc{Like \featconf{}; it delegates to \stattotalopt{}
-     or \stattotalcon{} instead.}}
-
- \begin{tabular}{l l l}
-    {\bf Profile} & {\bf Strategy Name} & {\bf Description}  \\ \hline
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    \multirow[b]{2}[+19]{*}{{\em feature-specific\/}} & 
-    \costoptkw{}      &   \desca           \\ \relax
-    & \costconkw{}      &   \descb           \\ \relax
-    & \confkw{}         &   \descg           \\ \hline
-
-    \multirow[b]{2}[+17]{*}{{\em statistically\/} ({\em self\/})} &
-    \costoptkw{}   &   \descc           \\ \relax
-    & \costconkw{}   &   \desce           \\ \relax
-    & \confkw{}      &   \desch           \\ \hline
-
-    \multirow{2}[+17]{*}{{\em statistically\/} ({\em total\/})} & 
-    \costoptkw{} &   \descd           \\ \relax
-    & \costconkw{} &   \descf           \\ \relax
-    & \confkw{}    &   \descj           % \\ \relax
-
- \end{tabular}
-
- 
-  \caption{The Composite Strategies of the Experiment and their Descriptions}
-  \label{f:cstrategies}
-\end{figure}
-%% -----------------------------------------------------------------------------
+\input{experiment-composite.tex}
 
 \paragraph{Composite strategies.} While the basic strategies ignore the cost of
  adding types to an untyped components, developers do not. Adding types to an
@@ -185,7 +78,7 @@ Figure~\ref{f:cstrategies} lists these composite strategies. In addition to the
 
 \paragraph{Baseline Strategies} An experiment must include baselines, i.e., the
  building block for a null hypothesis. In terms of strategies, the experiment
- needs a \agnostickw{} strategy.  If this \agnostickw{ strategy is less
+ needs a \agnostickw{} strategy.  If this \agnostickw{} strategy is less
  successful in eliminating performance bottlenecks than the profiling ones, then
  the feedback from the profiler plays a meaningful role; otherwise, the
  experiment is meaningless.
@@ -201,4 +94,3 @@ The results presented in the next section include two rational programmers using
  enforcement, the strategy directs its rational-programmer mode to equip all
  typed components with deep enforcement. If all components already use deep, it
  instructs the mode to toggle the enforcement to shallow.
-
