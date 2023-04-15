@@ -17,80 +17,59 @@ preceding section.
 %% -----------------------------------------------------------------------------
 \subsection{Experiment} \label{subsec:experiment} \label{sec:data}
 
-The GTP benchmarks are a collection of small to mid-sized Typed Racket programs.
-Configurations with high overhead due to deep types should benefit from
-feature-specific profiling, while configurations that suffer from shallow
-types may benefit more from the statistical profiler.
-
-The experiment uses the v7.0 release of the GTP Benchmarks with small modifications
-to support feature-specific profiling.
-Version 7.0 is outdated, but was the latest version when we began collecting
-data in Summer 2022~(\cref{sec:data}).
-The modifications add static information so that the profiler can peek through
-\emph{adaptor modules} in specific benchmarks.
-They do not change the run-time behavior of the code.
-In total, nine benchmarks are affected~(\cref{sec:adaptor-rewrite}).
-Source code for the original benchmarks and our modified ones will be available
-in the artifact for this paper.
-
-We omit four of the 21 benchmarks:
-\bmname{zordoz} because it currently cannot run all deep/shallow/untyped configurations
-due to a known issue;\footnote{\url{https://github.com/bennn/gtp-benchmarks/issues/46}}
+The experiment uses the v7.0 release of the GTP Benchmarks. The programs are
+modified so that the boundary profiler can measure the cost of boundary crossing
+in some benchmarks. See appendix~\ref{s:adaptor-rewrite} for details.  The
+modifications do not affect the run-time behavior of the programs.  Also the
+collection used for the experiment omits four of the twenty-one benchmarks:
+\bmname{zordoz}, because it currently cannot run all deep/shallow/untyped
+configurations due to a known issue;\footnote{
+\url{https://github.com/bennn/gtp-benchmarks/issues/46}}
 \bmname{gregor},\bmname{quadT}, and \bmname{quadU} because each has over 1.5
-million configurations and we lack the resources to run a full experiment;\footnote{
-\textbf{To OOPSLA reviewers}: we have collected performance data for
-\bmname{quadT} (which has the worst performance of the three) and hope to
-collect profile results in the coming weeks.  We have no plans to measure
-\bmname{gregor} or \bmname{quadU}.
-}
-and \bmname{sieve} because it is very small, with only four configurations.
+million configurations, which makes it infeasible to measure their complete
+migration lattices; and \bmname{sieve} because it has just two modules.
 
+The other two benchmarks, \bmname{fsm} and \bmname{lnm}, have
+fewer interesting scenarios.
+In \bmname{fsm} the number is somewhat low, at 76\% (62 configurations),
+which raises some doubt about its usefulness as a benchmark.
+In \bmname{lnm} the situation is worse.
+Only 40\% of the configurations are interesting; the rest run within a 1x
+overhead.
+Navigation is not a serious issue for \bmname{lnm}; its overall
+performance is good.
 
-\paragraph{Profiling Tools}
+\paragraph{Measurements} 
 
-Racket ships with tools for statistical~[CITE] and feature-specific
-profiling~\cite{}.
-The feature-specific profiler is aware of contracts as a default feature.
-Since deep gradual types compile to contracts,
-Since deep gradual types compile to contracts, this default contract
-mode is suitable for the experiment.
-
-The experiment uses slightly-modified variants of these default tools
-to make their output easier to analyze.
-First, the modified statistical profile renders its
-findings as a JSON graph rather than as a table~(see~\cref{f:fsm-code:statistical}).
-Second, the modified feature-specific profiler groups contracts
-by boundary (using the two sides of their blame objects) and sorts groups
-in descending order.
-Thus, the most expensive \emph{boundary} appears at the top rather than the single
-most expensive contract~(shown in~\cref{f:fsm-code:boundary}).
-
-
-\paragraph{Data} 
-
-The ground-truth data for our experiment consists of running times,
-feature-specific profile output, and statistical profile output.
-Collecting this data required three basic steps for each configuration
-of the \numgtp{} benchmarks:
+The ground-truth measurements consist of running times, boundary-profile output,
+and statistical-profile output.  Collecting this data required three basic steps
+for each configuration of the \numgtp{} benchmarks:
 \begin{enumerate}
-  \item
-    Run the configuration once, ignoring the result, to warm up the JIT.
-    Then run eight more times measuring performance.
-    In particular, we recorded {cpu time}s as reported by the Racket
-    \code{time} function.
-  \item
-    Install the modified feature-specific profiler and run it once,
-    collecting output in a file.
-  \item
-    Install the modified statistical profiler and run it once, collecting output.
-\end{enumerate}
-Complications arose because of the large scale of the experiment, and because
-we discovered and fixed two issues in Typed Racket along the way.
 
+\item Run the configuration once, ignoring the result, to warm up the JIT.  Run
+    eight more times measuring performance.  In particular, the recorded {cpu
+    time}s is from the Racket \code{time} function.
+
+\item Install and run the boundary profiler and run it once, collecting output.
+
+\item Install and run the statistical profiler and run it once, collecting
+output.
+
+\end{enumerate}
 
 \begin{table}[ht]
   \caption{Datasets, their origin, and server details}
   \label{t:data-collection}
+
+  \begin{tabular}{llrrr}
+    %% multi-cpu, multi-core machines .. but we didn't use that, right?
+    Server & Site & CPU Speed & RAM & Disk \\\midrule
+    \machinename{c220g1} & Wisconsin & 2.4GHz & 128GB & 480GB SSD \\
+    \machinename{c220g2} & Wisconsin & 2.6GHz & 160GB & 480GB SSD \\
+    \machinename{m510}   & Utah      & 2.0GHz &  64GB & 256GB SSD
+  \end{tabular}
+
+  \bigskip
 
   \begin{tabular}{llll}
     Dataset           & Server & Racket & Typed Racket \\\midrule
@@ -101,60 +80,40 @@ we discovered and fixed two issues in Typed Racket along the way.
     other profile      & \machinename{m510}   & same & same
   \end{tabular}
 
-  \bigskip
-
-  \begin{tabular}{llrrr}
-    %% multi-cpu, multi-core machines .. but we didn't use that, right?
-    Server & Site & CPU Speed & RAM & Disk \\\midrule
-    \machinename{c220g1} & Wisconsin & 2.4GHz & 128GB & 480GB SSD \\
-    \machinename{c220g2} & Wisconsin & 2.6GHz & 160GB & 480GB SSD \\
-    \machinename{m510}   & Utah      & 2.0GHz &  64GB & 256GB SSD
-  \end{tabular}
 \end{table}
 
-In total, we analyzed 116,154 configurations
-and recorded 1,277,694 measurements.
 %% $11 * \totalnumconfigs{} = \totalnummeasurements{}$
-All collection took place on CloudLab~\cite{cloudlab} servers using a recent
+
+The large scale of the experiment complicates the management of this vast
+measurement collection.  The 1,277,694 measurements come from 116,154
+configurations.  The measurement processes ran on CloudLab~\cite{cloudlab}
+servers using a recent
 %% https://github.com/racket/typed-racket/pull/1316
-version of Racket (as of July 2022).
-We utilized one core per server in an effort to obtain reliable performance
-measurements.
-The dataset takes up 5GB overall, most of which is due to the statistical
-profiler (4.6GB).
-Measurements began in July 2022 and have continued to the present (April 2023)
-because we are working on the 4.7 million configurations of \bmname{quadT}.
+version of Racket.
+The specifications of these machines are reported in~\cref{t:data-collection} (top).
+\Cref{t:data-collection} (bottom) matches datasets to clusters.
+The processes utilized one core per server in an effort to obtain reliable performance
+results, which take up 5GB of disk space.
+Measurements began in July 2022 and finished only in April 2023.
 
-Initially, we planned to collect running times for all configurations including
-those of \bmname{quadT} before moving on to the profilers.
-Due to this ambitious plan and the popularity of resources on CloudLab,
-we spread our experiment across three clusters.
-\Cref{t:data-collection} (top) matches datasets to clusters.
-Most running times came from \machinename{c220g1} machines managed by the University of Wisconsin-Madison.
-Most profiler results (feature-specific and statistical) came from \machinename{m510} machines
-managed by the University of Utah.
-The specifications of these machines are reported at the bottom of~\cref{t:data-collection}.
-
-Both the \bmname{dungeon} and \bmname{morsecode} benchmarks took a different
-path and used only one machine type: \machinename{c220g2} and
-\machinename{m510}, respectively.
-This is because we collected their data much later than the other benchmarks,
-after discovering and fixing two issues in Typed Racket that significantly
-affected their performance.\footnote{\url{https://github.com/racket/typed-racket/pull/1282}, \url{https://github.com/racket/typed-racket/pull/1316}}
-For \bmname{dungeon}, we used a newer Typed Racket commit.
-For \bmname{morsecode}, we cherry-picked one small commit onto the default Typed Racket
-for Racket v8.6.0.2 (to be available in our artifact).
-Fixing these issues \emph{was not necessary} for the rational programmer experiment.
-The only reason for re-running was to stay current with major changes to Typed Racket.
-
-
+% Both the \bmname{dungeon} and \bmname{morsecode} benchmarks took a different
+% path and used only one machine type: \machinename{c220g2} and
+% \machinename{m510}, respectively.
+% This is because we collected their data much later than the other benchmarks,
+% after discovering and fixing two issues in Typed Racket that significantly
+% affected their performance.\footnote{\url{https://github.com/racket/typed-racket/pull/1282}, \url{https://github.com/racket/typed-racket/pull/1316}}
+% For \bmname{dungeon}, we used a newer Typed Racket commit.
+% For \bmname{morsecode}, we cherry-picked one small commit onto the default Typed Racket
+% for Racket v8.6.0.2 (to be available in our artifact).
+% Fixing these issues \emph{was not necessary} for the rational programmer experiment.
+% The only reason for re-running was to stay current with major changes to Typed Racket.
 
 \begin{table}[ht]
   \caption{How many of the $3^N$ configurations have any overhead to begin with?}
   \label{t:baseline-trouble}
   \begin{tabular}[t]{l@{\qquad}l}
     \begin{tabular}[t]{lrr}
-      Benchmark           & $3^N$ & \% Interesting \\\midrule
+      Benchmark           & $3^N$ & \% Scenario \\\midrule
       \bmname{morsecode}  &    81 & 82.72\% \\
       \bmname{forth}      &    81 & 93.83\% \\
       \ycell{\bmname{fsm}}        &    \ycell{81} & \ycell{76.54\%} \\
@@ -166,7 +125,7 @@ The only reason for re-running was to stay current with major changes to Typed R
     \end{tabular}
     &
     \begin{tabular}[t]{lrr}
-      Benchmark           & $3^N$ & \% Interesting \\\midrule
+      Benchmark           & $3^N$ & \% Scenario \\\midrule
       \ycell{\bmname{lnm}}        &   \ycell{729} & \ycell{40.47\%} \\
       \bmname{suffixtree} &   729 & 98.49\% \\
       \bmname{kcfa}       &  2,187 & 92.87\% \\
@@ -179,89 +138,48 @@ The only reason for re-running was to stay current with major changes to Typed R
   \end{tabular}
 \end{table}
 
-\subsection{Interesting Scenarios} 
+\paragraph{Basic Measurements}
 
-For our experiment, we consider every configuration as a potential
-performance debugging scenario.
-The goal for each scenario is to find another configuration
-with at least as many typed modules that runs no slower than the
-untyped configuration.
+Collecting the measurements confirms that the GTP benchmark suite is useful for
+the rational-programmer experiment. \Cref{t:baseline-trouble} tabulates the
+landscape of benchmarks.  All but two have plenty of scenarios; over 80\% of all
+configurations have some overhead relative to untyped.  Navigating to a
+successful configuration is therefore a challenge.
 
-Naturally, some configurations are \emph{uninteresting} as starting
-points because they already run fast enough.
-The untyped configuration is one of these by definition.
-Uninteresting configurations are important to have because they
-are the possible endpoints for a successful navigation.
-But if all or most configurations are uninteresting, then
-navigation becomes trivial.
+%% -----------------------------------------------------------------------------
+\begin{figure}[ht]
+  \includegraphics[width=\columnwidth]{data/strategy-overall-feasible.pdf}
+  \caption{How many of the 114,428 scenarios does each strategy succeed in, for six notions of success.}
+  \label{f:strategy-overall}
+\end{figure}
 
-There should ideally be many interesting points in a benchmark
-and a handful of uninteresting ones to navigate to.
-\Cref{t:baseline-trouble} tabulates this landscape for the benchmarks.
-All but two have plenty of interesting scenarios: over 80\% of
-all configurations have some overhead relative to untyped.
-Navigating to a successful configuration is therefore a challenge
-for the rational programmer.
+\subsection{Answering $Q_X$} \label{subsec:qx}
 
-The other two benchmarks, \bmname{fsm} and \bmname{lnm}, have
-fewer interesting scenarios.
-In \bmname{fsm} the number is somewhat low, at 76\% (62 configurations),
-which raises some doubt about its usefulness as a benchmark.
-In \bmname{lnm} the situation is worse.
-Only 40\% of the configurations are interesting; the rest run within a 1x
-overhead.
-Navigation is not a serious issue for \bmname{lnm}; its overall
-performance is good.
+\Cref{f:strategy-overall} presents the results of running all modes of the
+rational programmer from the preceding section on all scenarios. It answers
+research question $Q_X$. 
 
+Each stacked bar in the ``skyline'' of \cref{f:strategy-overall} corresponds to
+a different mode of the rational programmer. Concretely, it reports the success
+rate of the mode for increasingly-loose notions of success for $T = 1$.  The
+lowest, widest part of each bar represents the percentage of scenarios where the
+mode is strictly successful. The next three levels represent $1$-loose,
+$2$-loose, and $3$-loose success percentages.  The striped spire is for
+$N$-loose successes.  And finally, the antenna uses an even weaker notion of
+strict success for $T = 3$.
 
-
-\subsection{Running a Rational Programmer} \label{subsec:qx}
-
-We have instantiated the 17 strategies from~\cref{subsec:strategies} as
-programs that navigate toward fast configurations.
-Fifteen strategies use profile information as described in~\cref{f:bstrategies,f:cstrategies}.
-The remaining two are profile agnostic: random boundary and toggling.
-
-These programs navigate relentlessly toward a successful configuration,
-accepting any number of setbacks~($N$-loose,~\cref{subsec:questions}).
-At each step, they consult the performance data for the current configuration.
-If it is not fast enough, they follow a profiler in accordance with a strategy.
-For example, the \emph{conservative, statistically (self)} rational programmer
-uses the ``self\%'' running times reported by the statistical profiler to
-identify a costly boundary, and then converts the boundary to use shallow types.
-When analyzing this data, we impose limits such as strict success and
-$2$-loose success by dropping a suffix of the recorded trails.
-
-\Cref{f:strategy-overall} presents the results of running all strategies on all
-interesting scenarios.
-This data lets us answer the first (parameterized) research question:
-
-\begin{itemize}
-  \item[$Q_X$] How successful is a strategy $X$ with the elimination of
-    performance problems?
-\end{itemize}
-
-Each stacked bar in the ``skyline'' of \cref{f:strategy-overall} provides
-several answers to the question for increasingly-loose notions of success.
-The lowest, widest part of each bar counts how many configurations
-achieved a strict success.
-The next three stories count $1$-loose, $2$-loose, and $3$-loose successes.
-The striped spire counts $N$-loose successes.
-The antenna uses an even weaker notion, strict 3x success, which we discuss below~(\cref{s:antenna}).
-
-The strategies are successful in 2\% of configurations in the worst case and
-55\% in the best case:
+The modes come with a wide range of success rates: 
 \begin{itemize}
   \item
-    \emph{Optimistic} navigation performs well when guided by the \emph{feature-specific} profiler,
-    finding strict success in almost 40\% of all configurations.
+    \emph{Optimistic} navigation performs well when guided by the \emph{boundary} profiler,
+    finding strict success in almost 40\% of all scenarios. 
     With a $2$-loose relaxation, success rises to above 50\%.
     The results are far worse, however, with \emph{statistical (total)} or \emph{statistical (self)}
     profiles, both of which perform comparably.
 
   \item
     \emph{Cost-aware optimistic} is almost as successful as optimistic when driven
-    by \emph{feature-specific} profiles and equally successful with \emph{statistical (total)}
+    by \emph{boundary} profiles and equally successful with \emph{statistical (total)}
     and \emph{statistical (self)}.
 
   \item
@@ -269,94 +187,57 @@ The strategies are successful in 2\% of configurations in the worst case and
 
   \item
     \emph{Cost-aware conservative} is unsuccessful as well.
-    Even with $N$-loose relaxation, only a handful of configurations (2\%) achieve success.
+    Even with $N$-loose relaxation, it is successful in only a handful of scenarios (2\%).
 
   \item
     \emph{Configuration-aware optimistic} navigation with
-    \emph{feature-specific} profiles succeeds in approximately 36\% of all
+    \emph{boundary} profiles succeeds in approximately 36\% of all
     configurations under strict and just ovef 50\% with $3$-loose.
     With \emph{statistical (total)} and \emph{statistical (self)} profiles,
     the success rate drops to 10\% even for $N$-loose.
 
   \item
-    \emph{Random boundary} succeeds in 5\% of all configuration.
+    \emph{Null} navigation succeeds for 5\% of all scenarios.
     This is a low number, but much better than the conservative strategies.
-    Allowing for 1,2,3-loose success improves the rate incrementally, and an $N$-loose search
-    succeeds in nearly 40\% of configurations.
+    Allowing for 1,2,3-loose success improves the rate incrementally and with an
+    $N$-loose notion of success, it goes up to nearly 40\%.
   \subitem
-    The results for random boundary are the average success rates across three trials. The standard deviations
+    The results are the average success rates across three trials. The standard deviations
     for each number were low, under $0.10$.
 
   \item
-    \emph{Toggling} achieves strict success a bit more often than random, in roughly 6\% of all configurations.
+    \emph{Toggling} achieves strict success a bit more often than random, for
+    roughly 6\% of all scenarios.
     The other notions of success do not apply to toggling because it can step to at most one configuration.
 \end{itemize}
 
-These findings provide a coarse answer to our second research question~(\cref{s:hh} gives a detailed comparison):
+\paragraph{Antenna: 3x Strict Success} \label{s:antenna}
 
-\begin{itemize}
-\item[$Q_{X/Y}$] Is strategy $X$ more successful than strategy $Y$ in this
-  context?
-\end{itemize}
-
-\begin{figure}[ht]
-  \includegraphics[width=\columnwidth]{data/strategy-overall-feasible.pdf}
-  \caption{How many of the 114,428 scenarios does each strategy succeed in, for six notions of success.}
-  \label{f:strategy-overall}
-\end{figure}
-
-\emph{Optimistic, feature-specific} navigation is the most likely to
-succeed on an arbitrary configuration.
-\emph{Cost-aware} and \emph{configuration-aware} using the optimistic strategy
-are close behind.
-The conservative strategies are least likely to find a successful configuration
-no matter what profiler they use.
-Feature-specific profiling is always more successful than statistical profiling.
-
-\paragraph{Antenna: 3x Strict Success}
-\label{s:antenna}
-
-There are two possible reasons for the poor performance of the conservative
+There are two possible reasons for the poor success rate of the conservative
 strategies.
-One is that they are entirely unproductive: they lead to worse performance, end
-of story.
-The other possibility is that they do improve performance, but are unable
-to achieve a 1x overhead because there are no such configurations with
+One is that they are entirely unproductive; they lead to worse performance.
+The other possibility is that they do improve performance but are unable
+to achieve a $T$ overhead because there are no such configurations with
 mostly shallow types.
-This second possibility is likely due to the current implementation of shallow
-types~\cite{g-deep-shallow}, which almost always add some overhead (but much
-less than deep types).
+This second possibility would likely be due to the current implementation of shallow
+types~\cite{g-deep-shallow}, which almost always add some overhead.
 
-The bars in \cref{f:strategy-overall}, however, do not show whether conservative
-is improving or degrading performance.
-Hence the thin lines above each bar (antenna), which count configurations that see
-a strict success when a 3x slowdown is acceptable.
-The number 3x is the classic Takikawa constant for ``acceptable'' gradual typing
-overhead~\cite{tfgnvf-popl-2016,vss-popl-2017,bbst-oopsla-2017}.
-We use it to give a small amount of wiggle room.
-Changing to 2x or 4x does not significantly change the outcome.
+To distinguish between these two possibilities, figure~\ref{f:strategy-overall}
+reports the success rates with antennas. These thin lines atop each ``building''
+represent scenarios for which a strict success when $T = 3$ is acceptable.  The
+number 3x is the classic Takikawa constant for ``acceptable'' gradual typing
+overhead~\cite{vss-popl-2017,bbst-oopsla-2017}.  Changing to 2x or 4x does not
+significantly change the outcome.
 
-For \emph{conservative} and \emph{cost-aware conservative}, allowing a 3x overhead
-improves results across the profilers.
-An additional 10\% of configurations succeed.
-%% TODO how many are immediate with 3x?
-While some of these configurations are uninteresting scenarios at the 3x level,
-others are not; thus, conservative can improve performance.
-
-The optimistic strategies with statistical profiles improve in a similar way
-for 3x success.
-Optimistic with feature profiles does not improve.
-This means that every configuration that can achieve a 3x success with statistical
-profiles is able to achieve a 1x success with feature-specific profiles.
-
-Random boundary does not improve for 3x strict success, likely because it chooses
-an unlucky boundary and fails the ``strict'' criterion.
-Toggling improves tremendously for 3x success.
-This is in line with prior work on shallow, which reports a median worst-case overhead
-of 4.2x on the GTP Benchmarks~\cite{g-deep-shallow}.
-Evidently, about 45\% of configurations can reach a 3x overhead by switching to
-shallow types.
-
+For \emph{conservative} and \emph{cost-aware conservative}, allowing a 3x
+overhead improves results across the profilers. The modes succeed on an
+additional 10\% of scenarios.  The optimistic modes with statistical profiles
+improve in a similar way for 3x success.  Optimistic with feature profiles does
+not improve.  The null mode does not improve for 3x strict success.  Toggling
+improves tremendously for 3x success, in line with prior work on shallow, which
+reports a median worst-case overhead of 4.2x on the GTP
+Benchmarks~\cite{g-deep-shallow}.  Evidently, about 45\% of configurations can
+reach a 3x overhead by switching to shallow types.
 
 \begin{table}[ht]
   \caption{How many scenarios can possibly reach 1x without removing types?}
@@ -394,93 +275,72 @@ shallow types.
   \label{f:strategy-hope}
 \end{figure}
 
-\paragraph{Omitting Hopeless Scenarios}
+\paragraph{Omitting Hopeless Scenarios} From the perspective of type migration,
+some scenarios are hopeless. No matter how the modes of the rational programmer
+add types to these scenarios, the performance will degrade and will keep
+degrading for more than three steps. In other words, a lattice may contain a
+\emph{black hole} of performance. 
 
-Some of the \emph{interesting} scenarios in the experiment cannot possibly
-achieve success given the rules that the rational programmer must follow.
-In particular, the rational programmer cannot remove types.
-If a configuration cannot reach a point with 1x overhead except by removing
-types, then its scenario is a hopeless one.
-It might be the case that hopeless scenarios explain the low success rates
-in~\cref{f:strategy-overall}.
+\Cref{t:blackhole} lists the number of scenarios in each benchmark and the
+percentage of hopeful ones. A low percentage in the third column (labeled \%
+Hopeful) of this table means that the experiment is stacked against the rational
+programmer.  For several benchmarks, this is indeed the case.  Worst of all are
+\bmname{mbta}, \bmname{dungeon}, and \bmname{take5}, which have zero hopeful
+scenarios.  Three others are only marginally better: \bmname{forth},
+\bmname{zombie}, and \bmname{acquire}.
 
-\Cref{t:blackhole} lists the number of interesting scenarios in each benchmark
-and the percent of these that can possibly reach a successful configuration.
-A low percent in the third column (\% Hopeful) of this table means that
-the experiment is stacked against the rational programmer.
-For several benchmarks, this is indeed the case.
-Worst of all are \bmname{mbta}, \bmname{dungeon}, and \bmname{take5},
-which have zero hopeful scenarios.
-Three others are only marginally better: \bmname{forth}, \bmname{zombie}, and
-\bmname{acquire}.
+\Cref{f:strategy-hope} therefore revisits the measurements reported in
+\cref{f:strategy-overall}, focusing on hopeful scenarios only.  If there is no
+migration path from a scenario to a configuration with a tolerable overhead, the
+scenario is excluded as hopeless.  As before, the results for \emph{random
+boundary} are the average across three runs.  The standard deviation is slightly
+higher than before ($<0.12$).
 
-In each of these hopeless benchmarks, the fully-deep configuration runs
-slower than the untyped configuration.
-The difference is small (<1 second), but consistent;
-the average running times for these configurations are outside one standard
-deviation of one another.
-Becaus of this failure at the top of the lattice, it follows that other
-configurations are unsuccessful too.
-Less-typed configurations incur more overhead due to mixed-typed interactions.
+For the optimistic modes, the results are much better.  They succeed on an
+additional 10\% of scenarios under strict success with the \emph{optimistic,
+boundary} strategy, and the $N$-loose results improve along the same lines.
+With statistical profiles, the optimistic strategies improve slightly.
 
-\Cref{f:strategy-hope} therefore takes a second look at the rational programmer
-results, focusing only on hopeful scenarios.
-If a configuration starts with some overhead but cannot reach a 1x point, it
-is does not affect the counts.
-As before, the results for \emph{random boundary} are the average across three
-runs.
-The standard deviation among numbers was low, but slightly higher than before ($<0.12$).
-
-For the optimistic strategies, the results are much better.
-An additional 10\% of configurations achieve strict success
-with the \emph{optimistic, feature-specific} strategy, and
-the $N$-loose results improve along the same lines.
-With statistical profiles, the optimistic strategies improve
-slightly.
-
-Unfortunately for conservative, it performs no better.
-Very few hopeful scenarios achieve an $N$-loose success.
-Strict 3x successes are rare as well.
-Indeed the antennae in~\cref{f:strategy-overall} are shorter than the
-antennae in~\cref{f:strategy-hope}.
-This means that conservative succeeded in the 3x sense on a number
-of hopeless configurations. Such configurations cannot reach a 1x
-point, but can reach a 3x point.
+Unfortunately the conservative modes perform no better.  They improve on few
+hopeful scenarios according to the notion of $N$-loose success.  Strict 3x
+successes are rare as well.  Indeed the antennae in~\cref{f:strategy-overall}
+are shorter than the antennae in~\cref{f:strategy-hope}.  This means that
+conservative succeeded in the 3x sense on a number of hopeless configurations;
+such configurations cannot reach a 1x point, but they can reach a 3x point.
 
 
 \begin{figure}[ht]
   \includegraphics[width=0.9\columnwidth]{data/head-to-head.pdf}
-  \caption{Optimistic vs. the rest, strict success: losses (red bars) and wins (green bars) on all interesting scenarios.}
+  \caption{Boundary optimistic vs. the rest, strict success: losses (red bars) and wins (green bars) on all scenarios.}
   \label{f:head-to-head}
 \end{figure}
 
-\subsection{Head to Head: Comparing Strategies} \label{s:hh}
+%% -----------------------------------------------------------------------------
+\subsection{Answering $Q_{X/Y}$} \label{subsec:hh} \label{s:hh}
 
-The results so far show that the \emph{optimistic} strategy
-with \emph{feature-specific} profiles (opt-fsp) achieves the highest rate
-of success.
-An unanswered question is whether there are particular cases in which
-the other strategies succeed and opt-fsp fails.
+The preceding subsection hints at how the strategies compare to each other.
+\emph{Optimistic, boundary} navigation is the most likely to succeed on an
+arbitrary configuration.  \emph{Cost-aware} and \emph{configuration-aware} using
+the optimistic strategy are close behind.  The conservative strategies are least
+likely to find a successful configuration no matter what profiler they use.
+Boundary profiling is always more successful than statistical profiling.
 
-Based of \cref{f:strategy-overall}, it seems likely that opt-fsp will do
-worse in some scenarios.
-It fails to achieve strict success for over half the starting points;
-perhaps statistical profiling or another navigation strategy succeeds
-for these points.
+The results so far show that the \emph{optimistic} strategy with \emph{boundary}
+profiles (optimistic-boundary) achieves the highest rate of success.  However,
+an unanswered question is whether there are particular cases in which the other
+strategies succeed and optimistic-boundary fails.
 
-\Cref{f:head-to-head} thus compares opt-fsp to the other strategies.
-The $y$-axis counts configurations.
-The $x$-axis lists all strategies including opt-fsp (on the left).
-For each strategy, there are at most two vertical bars.
-A red bar appears when the other strategy succeeds on configurations
-where opt-fsp fails.
-A green bar appears for the reverse situation, where opt-fsp succeeds
-but the other fails.
-Ties do not count.
-The red and green bars do not combine to 100\% because there are always configurations
-in which both strategies succeed or both fail.
+\Cref{f:head-to-head} thus compares the optimistic-boundary strategy to all
+others, and it thus answers research question $Q_X$.  The $y$-axis reports
+percentages of scenarios.  The $x$-axis lists all strategies including
+optimistic-boundary (on the left).  For each strategy, there are at most two
+vertical bars.  A red bar appears when the other strategy succeeds on
+configurations where optimistic-boundary fails.  A green bar appears for the
+reverse situation, where optimistic-boundary succeeds but the other fails.  Ties
+do not count.  Hence, the red and green bars do not combine to 100\%.
 
-At a glance, the tiny red bars and tall green bars give a negative answer to our question.
-Other strategies rarely succeed where opt-fsp fails.
-This is true even for the composite strategies \emph{cost-aware} and \emph{configuration-aware}.
-For all but a few configurations, opt-fsp is the winner.
+The figure also answers the question concerning cases where the
+boundary-optimistic strategy fails but some other strategy succeeds.
+Specifically, the tiny red bars and tall green bars give a negative answer to
+this question.  Other strategies rarely succeed where optimistic-boundary fails.
+For all but a few scenarios, optimistic-boundary is the winner.
