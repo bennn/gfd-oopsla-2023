@@ -29,16 +29,6 @@ configurations due to a known issue;\footnote{
 million configurations, which makes it infeasible to measure their complete
 migration lattices; and \bmname{sieve} because it has just two modules.
 
-The other two benchmarks, \bmname{fsm} and \bmname{lnm}, have
-fewer interesting scenarios.
-In \bmname{fsm} the number is somewhat low, at 76\% (62 configurations),
-which raises some doubt about its usefulness as a benchmark.
-In \bmname{lnm} the situation is worse.
-Only 40\% of the configurations are interesting; the rest run within a 1x
-overhead.
-Navigation is not a serious issue for \bmname{lnm}; its overall
-performance is good.
-
 \paragraph{Measurements} 
 
 The ground-truth measurements consist of running times, boundary-profile output,
@@ -93,7 +83,8 @@ version of Racket.
 The specifications of these machines are reported in~\cref{t:data-collection} (top).
 \Cref{t:data-collection} (bottom) matches datasets to clusters.
 The processes utilized one core per server in an effort to obtain reliable performance
-results, which take up 5GB of disk space.
+results.
+In total, the results take up 5GB of disk space.
 Measurements began in July 2022 and finished only in April 2023.
 
 % Both the \bmname{dungeon} and \bmname{morsecode} benchmarks took a different
@@ -138,13 +129,13 @@ Measurements began in July 2022 and finished only in April 2023.
   \end{tabular}
 \end{table}
 
-\paragraph{Basic Measurements}
+\paragraph{Basic Observations}
 
 Collecting the measurements confirms that the GTP benchmark suite is useful for
 the rational-programmer experiment. \Cref{t:baseline-trouble} tabulates the
 landscape of benchmarks.  All but two have plenty of scenarios; over 80\% of all
 configurations have some overhead relative to untyped.  Navigating to a
-successful configuration is therefore a challenge.
+successful configuration is therefore a challenge overall.
 
 %% -----------------------------------------------------------------------------
 \begin{figure}[ht]
@@ -165,7 +156,7 @@ rate of the mode for increasingly-loose notions of success for $T = 1$.  The
 lowest, widest part of each bar represents the percentage of scenarios where the
 mode is strictly successful. The next three levels represent $1$-loose,
 $2$-loose, and $3$-loose success percentages.  The striped spire is for
-$N$-loose successes.  And finally, the antenna uses an even weaker notion of
+$N$-loose successes.  And finally, the antenna uses the even weaker notion of
 strict success for $T = 3$.
 
 The modes come with a wide range of success rates: 
@@ -192,7 +183,7 @@ The modes come with a wide range of success rates:
   \item
     \emph{Configuration-aware optimistic} navigation with
     \emph{boundary} profiles succeeds in approximately 36\% of all
-    configurations under strict and just ovef 50\% with $3$-loose.
+    configurations under strict and just over 50\% with $3$-loose.
     With \emph{statistical (total)} and \emph{statistical (self)} profiles,
     the success rate drops to 10\% even for $N$-loose.
 
@@ -201,9 +192,8 @@ The modes come with a wide range of success rates:
     This is a low number, but much better than the conservative strategies.
     Allowing for 1,2,3-loose success improves the rate incrementally and with an
     $N$-loose notion of success, it goes up to nearly 40\%.
-  \subitem
-    The results are the average success rates across three trials. The standard deviations
-    for each number were low, under $0.10$.
+    (These results are the average success rates across three trials. The standard deviations
+    for each number were low, under $0.10\%$.)
 
   \item
     \emph{Toggling} achieves strict success a bit more often than random, for
@@ -217,10 +207,10 @@ There are two possible reasons for the poor success rate of the conservative
 strategies.
 One is that they are entirely unproductive; they lead to worse performance.
 The other possibility is that they do improve performance but are unable
-to achieve a $T$ overhead because there are no such configurations with
-mostly shallow types.
-This second possibility would likely be due to the current implementation of shallow
-types~\cite{g-deep-shallow}, which almost always add some overhead.
+to achieve a $T$x overhead because there are no such configurations that
+consist mostly of shallow types.
+This second possibility is likely due to the current implementation of shallow
+types~\cite{g-deep-shallow}, which almost always adds some overhead.
 
 To distinguish between these two possibilities, figure~\ref{f:strategy-overall}
 reports the success rates with antennas. These thin lines atop each ``building''
@@ -232,8 +222,8 @@ significantly change the outcome.
 For \emph{conservative} and \emph{cost-aware conservative}, allowing a 3x
 overhead improves results across the profilers. The modes succeed on an
 additional 10\% of scenarios.  The optimistic modes with statistical profiles
-improve in a similar way for 3x success.  Optimistic with feature profiles does
-not improve.  The null mode does not improve for 3x strict success.  Toggling
+improve in a similar way for 3x success.  Optimistic with boundary profiles does
+not improve, and neither does the null mode.  Toggling
 improves tremendously for 3x success, in line with prior work on shallow, which
 reports a median worst-case overhead of 4.2x on the GTP
 Benchmarks~\cite{g-deep-shallow}.  Evidently, about 45\% of configurations can
@@ -277,13 +267,11 @@ reach a 3x overhead by switching to shallow types.
 
 \paragraph{Omitting Hopeless Scenarios} From the perspective of type migration,
 some scenarios are hopeless. No matter how the modes of the rational programmer
-add types to these scenarios, the performance will degrade and will keep
-degrading for more than three steps. In other words, a lattice may contain a
-\emph{black hole} of performance. 
+add types to these scenarios, the performance cannot improve to the $T=1$ goal.
 
 \Cref{t:blackhole} lists the number of scenarios in each benchmark and the
-percentage of hopeful ones. A low percentage in the third column (labeled \%
-Hopeful) of this table means that the experiment is stacked against the rational
+percentage of hopeful ones. A low percentage in the third column (labeled ``\%
+Hopeful'') of this table means that the experiment is stacked against the rational
 programmer.  For several benchmarks, this is indeed the case.  Worst of all are
 \bmname{mbta}, \bmname{dungeon}, and \bmname{take5}, which have zero hopeful
 scenarios.  Three others are only marginally better: \bmname{forth},
@@ -294,7 +282,7 @@ scenarios.  Three others are only marginally better: \bmname{forth},
 migration path from a scenario to a configuration with a tolerable overhead, the
 scenario is excluded as hopeless.  As before, the results for \emph{random
 boundary} are the average across three runs.  The standard deviation is slightly
-higher than before ($<0.12$).
+higher than before ($<0.12\%$).
 
 For the optimistic modes, the results are much better.  They succeed on an
 additional 10\% of scenarios under strict success with the \emph{optimistic,
@@ -303,8 +291,8 @@ With statistical profiles, the optimistic strategies improve slightly.
 
 Unfortunately the conservative modes perform no better.  They improve on few
 hopeful scenarios according to the notion of $N$-loose success.  Strict 3x
-successes are rare as well.  Indeed the antennae in~\cref{f:strategy-overall}
-are shorter than the antennae in~\cref{f:strategy-hope}.  This means that
+successes are rare as well.  Indeed the antennae in~\cref{f:strategy-hope}
+are shorter than the antennae in~\cref{f:strategy-overall}.  This means that
 conservative succeeded in the 3x sense on a number of hopeless configurations;
 such configurations cannot reach a 1x point, but they can reach a 3x point.
 
@@ -319,19 +307,17 @@ such configurations cannot reach a 1x point, but they can reach a 3x point.
 \subsection{Answering $Q_{X/Y}$} \label{subsec:hh} \label{s:hh}
 
 The preceding subsection hints at how the strategies compare to each other.
-\emph{Optimistic, boundary} navigation is the most likely to succeed on an
+\emph{Optimistic-boundary} navigation is the most likely to succeed on an
 arbitrary configuration.  \emph{Cost-aware} and \emph{configuration-aware} using
 the optimistic strategy are close behind.  The conservative strategies are least
 likely to find a successful configuration no matter what profiler they use.
 Boundary profiling is always more successful than statistical profiling.
 
-The results so far show that the \emph{optimistic} strategy with \emph{boundary}
-profiles (optimistic-boundary) achieves the highest rate of success.  However,
+However,
 an unanswered question is whether there are particular cases in which the other
 strategies succeed and optimistic-boundary fails.
-
-\Cref{f:head-to-head} thus compares the optimistic-boundary strategy to all
-others, and it thus answers research question $Q_X$.  The $y$-axis reports
+\Cref{f:head-to-head} thus compares the \emph{optimistic-boundary} strategy to all
+others, and it thus answers research question $Q_{X/Y}$.  The $y$-axis reports
 percentages of scenarios.  The $x$-axis lists all strategies including
 optimistic-boundary (on the left).  For each strategy, there are at most two
 vertical bars.  A red bar appears when the other strategy succeeds on
@@ -343,4 +329,4 @@ The figure also answers the question concerning cases where the
 boundary-optimistic strategy fails but some other strategy succeeds.
 Specifically, the tiny red bars and tall green bars give a negative answer to
 this question.  Other strategies rarely succeed where optimistic-boundary fails.
-For all but a few scenarios, optimistic-boundary is the winner.
+
