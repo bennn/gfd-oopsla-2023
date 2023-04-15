@@ -2,6 +2,8 @@
 
 %\settopmatter{printfolios=true,printccs=false,printacmref=false}
 
+\let\showappendix\relax
+%% comment out to hide appendix + refs
 
 \overfullrule=3mm
 \citestyle{acmauthoryear}
@@ -83,6 +85,7 @@
 \ccsdesc[100]{Software and its engineering~Constraints}
 \ccsdesc[100]{Software and its engineering~Functional languages}
 
+\newcommand{\ifappendix}[2]{\ifdef{\showappendix}{#1}{#2}}
 \newcommand{\code}[1]{\texttt{#1}}
 \newcommand{\cmod}[1]{\parbox[c][1.4ex]{2em}{\code{#1}}}
 \newcommand{\stdrkt}{\code{v8.6.0.2 [cs]}}
@@ -121,9 +124,7 @@
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{bib}
 
-\appendix
-
-\input{appendix}
+\ifappendix{\appendix \input{appendix}}{}
 
 \end{document}
 
