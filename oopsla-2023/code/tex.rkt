@@ -38,7 +38,7 @@
 (define-runtime-path data-dir "../data")
 (define *out-kind* (make-parameter 'pdf))
 
-(define mode-name-for-plot* '("feature-specific" "statistical (total)" "statistical (self)" "agnostic"))
+(define mode-name-for-plot* '("boundary" "statistical (total)" "statistical (self)" "agnostic"))
 
 (define (mode->idx str)
   (case str
