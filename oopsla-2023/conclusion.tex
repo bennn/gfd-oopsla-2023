@@ -13,13 +13,13 @@ At the object level, the results essentially deliver several insights. First,
 the boundary profiler works well if used with any ``optimistic''
 interpretation strategy. That is, programmers should eliminate the hottest
 boundary, as identified by the boundary profiler, by making both modules
-use deeply checked types. Second, if a program comes with a low overhead for all
+use deep types. Second, if a program comes with a low overhead for all
 mixed-typed variants, the statistical profiler works reasonably well;
-otherwise the statistics profiler is unhelpful for performance-debugging
+otherwise the statistical profiler is unhelpful for performance-debugging
 problems in this context. Third, while profiling tools help with debugging
 problematic performance scenarios, the data collection also clarifies that for
-certain kinds of programs, the migration lattice contains a huge ``black hole''
-of performance scenario, rendering any of the considered strategies
+certain kinds of programs, the migration lattice contains a huge region
+of ``hopeless'' performance scenarios, rendering all strategies
 useless. In other words, profiling tools used with the proposed strategies do
 not suffice. Finally, the results weaken \citet{g-deep-shallow}'s report that
 adding shallow type enforcement is helpful; except for rare scenarios, none of
@@ -41,7 +41,7 @@ experiment clearly demonstrates that existing profiling tools are not enough to
 overcome the performance challenges of sound migratory typing. Unless researchers
 can construct a performant compiler for a production language with sound migratory 
 typing, the community must improve the available profiling tools to navigate the
-migration lattice or invent new ones.
+migration lattice or invent new tools.
 
 
 
