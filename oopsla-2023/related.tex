@@ -6,7 +6,7 @@ the object-level, the main motivation for this paper is prior research on
 the performance issues of sound gradual typing.
 Two significant
 sources of inspiration are research on gradual type migration and
-profiling technique.  At the meta-level, this work builds on and extends
+profiling techniques.  At the meta-level, this work builds on and extends
 prior results on the rational programmer method.
 
 \paragraph{Performance Tuning and Gradual Typing} 
@@ -49,7 +49,8 @@ For instance, Thorn and StrongScript use a mixture of
 \emph{optional} and \emph{concrete} types~\citep{wzlov-popl-2010,rzv-ecoop-2015}.
 Optional types never introduce run-time checks (same as TypeScript~\cite{bat-ecoop-2014} or Flow~\cite{cvgrl-oopsla-2017}).
 Concrete types perform cheap nominal type checking but limit the values that components
-can exchange~(Nom~\cite{mt-oopsla-2017,mt-oopsla-2021} and SafeTS~\cite{rsfbv-popl-2015} also use concrete types).
+can exchange.
+(Nom~\cite{mt-oopsla-2017,mt-oopsla-2021} and SafeTS~\cite{rsfbv-popl-2015} also use concrete types.)
 Dart 2 explores a similar combination of optional and concrete.\footnote{\url{https://dart.dev/language/type-system\#runtime-checks}}
 Static Python combines concrete and shallow types to ease the limits
 of concrete without losing type soundness and the optimizations that soundness enables~\citep{lgmvpk-pj-2023}.
@@ -76,7 +77,7 @@ and those based on machine learning
 (ML)~\cite{lambdanet,nl2ptype,learn-types-big-data,ml-ts}. The dynamic
 and ML-based techniques exhibit the most scalable results so far as they
 can produce accurate annotations for a range of components in the wild,
-such as JavaScript libraries. However, as the authors of the latest
+such as JavaScript libraries. However, as the authors of a recent
 ML-based work~\cite{ml-ts} note, the problem is far from solved.
 % ``automatically predicting type annotations is a challenging task and much work remains to be done.''
 Moreover, no existing technique takes into account feedback from profilers to
@@ -117,7 +118,7 @@ examine how to translate profiler feedback to developer actions.
 The suggested repair is to remove expensive types.
 In general, most profiling tools do not make recommendations to
 programmers. The Zoom profiler~\cite{zoom} was one
-notable exception; though, its recommendations were phrased in
+notable exception, though its recommendations were phrased in
 terms of assembly language rather than high-level code.
 
 In addition to statistical and feature-specific profilers, there are a
