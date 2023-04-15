@@ -66,7 +66,7 @@ must not depend on the full lattice either.
 
 Given the general results from the preceding section and the data from the
 individual benchmarks (see preceding subsection and appendix), the experiment
-suggests four lessons for working programmers and one for language designers. 
+suggests three lessons for working programmers and one for language designers. 
 
 When a programmer faces a performance-debugging scenario, the question is
 whether to reach for a profiling tool and what kind. The general results and the
@@ -92,7 +92,7 @@ The second-best option is to pursue the
 plainly optimistic approach; the data shows that it is best by a small margin,
 but it requires more effort from the programmer. 
 
-As a programmer pursues one of these two strategies, one of the resulting
+Finally, as a programmer pursues one of these two strategies, one of the resulting
 programs may suffer from performance problems that are worse than the original
 ones. In this case, the question is whether the programmer should continue with
 the performance-debugging effort. Once again, the data clearly suggests that the
@@ -101,13 +101,14 @@ the programmer is using one of the best strategies and the new
 configuration is a performance-debugging scenario, the data tells us that no
 other strategy can help.
 
-Finally, a reader may wonder whether the programmer should relax the high
-standards of eliminating the entire performance overhead.  That is, the question
-is whether a mixed-typed program should run as fast as its (possibly
-non-existent) untyped variant. But, the antenna data disagrees with relaxing the
-standard. With the exceptions of low-overhead programs, a profiling strategy is
-as likely to produce an overhead-free configuration as it is to produce a
-configuration with some reasonably bounded ($3$x) overhead.
+%%bg: unclear from the data ... we know N-loose 1x > strict 3x, but what about strict for each? also 1x might require longer paths
+%% Finally, a reader may wonder whether the programmer should relax the high
+%% standards of eliminating the entire performance overhead.  That is, the question
+%% is whether a mixed-typed program should run as fast as its (possibly
+%% non-existent) untyped variant. But, the antenna data disagrees with relaxing the
+%% standard. With the exceptions of low-overhead programs, a profiling strategy is
+%% as likely to produce an overhead-free configuration as it is to produce a
+%% configuration with some reasonably bounded ($3$x) overhead.
 
 Language designers can extract a single lesson from the data.
 The addition of shallow type enforcement to
