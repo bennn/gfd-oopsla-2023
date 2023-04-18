@@ -6,11 +6,13 @@
   pict pict-abbrevs
   (only-in gtp-pict make-lattice))
 
-(define out-kind
-  'pdf
-  #;'png)
+(define out-kind 'png) ;; 'pdf
 
 (define text-size 11)
+
+(define black (hex-triplet->color% #x000000))
+(define greye (hex-triplet->color% #x888888))
+(define white (hex-triplet->color% #xffffff))
 
 (define fsm-info
   '#hash((configs . 81)
@@ -90,21 +92,23 @@
 (define ((mk-node ll) bb*)
   (define key (bool->str bb*))
   (define val (assoc key ll))
-  (define nn (bool-node bb*))
+  (define nn (node-3d bb*))
   (define-values [top txt]
     (cond
       [(fast-cfg? val)
        (values (ppict-do (bblur nn) #:go (coord 1/2 1/2 'cc) (make-check-pict (* 2 (pict-height nn))))
-               " \\ ")]
+               " ")]
       [else
         (values nn
-                (format "~a cfgs\\~a"
-                        (second val)
+                (format "~a"
+                        #;(second val)
                         (intervalstr (int-round (third val)) (int-round (fourth val)))))]))
   (vc-append 4 top (lbltext txt)))
 
 (define (intervalstr lo hi)
-  (format "~ax to ~ax" (if (zero? lo) "<1" lo) hi))
+  (if (equal? lo hi)
+    (format "~ax" lo)
+    (format "~ax to ~ax" (if (zero? lo) "<1" lo) hi)))
 
 (define (fast-cfg? val)
   (not (third val)))
@@ -113,10 +117,32 @@
   (apply hc-append (map bool->square bb*)))
 
 (define (bool->square bb)
-  (filled-square 10 (if bb "black" "white")))
+  (filled-square 10 (if bb black white)))
+
+(define (node-3d bb*)
+  (define num-typed (for/sum ((b (in-list bb*)) #:when b) 1))
+  (define scale-factor (- 1 (* num-typed 1/8)))
+  (define (fnode cc*)
+    (define num*
+      (let ((c-idx 0))
+        (for/list ((bb (in-list bb*)))
+          (if bb
+            (begin0 (if (list-ref cc* c-idx) 2 1) (set! c-idx (add1 c-idx)))
+            0))))
+    (num-node num*))
+  (define pp (make-lattice num-typed fnode #:y-margin 2 #:x-margin 4))
+  (if (< scale-factor 1)
+    (scale pp scale-factor)
+    pp))
+
+(define (num-node bb*)
+  (apply hc-append (map num->square bb*)))
+
+(define (num->square bb)
+  (filled-square 10 (if (< bb 1) white (if (< bb 2) greye black))))
 
 (define (filled-square ww color)
-  (filled-rounded-rectangle ww ww 1 #:draw-border? #t #:border-color "black" #:color color))
+  (filled-rounded-rectangle ww ww 1 #:draw-border? #t #:border-color black #:color color))
 
 (define (lbltext str)
   (apply vc-append 2 (map lbltext-one (string-split str "\\"))))
@@ -125,11 +151,14 @@
   (text str 'roman text-size))
 
 (define (save-pict* sym pp)
-  (save-pict (format "data/~a.~a" sym out-kind)
+  (set! out-kind 'pdf)
+  (define out-name (format "data/~a.~a" sym out-kind))
+  (printf "save pict ~s~n" out-name)
+  (save-pict out-name
              (add-rectangle-background
                pp
                #:radius 0
-               #:color "white"
+               #:color white
                #:draw-border? #f
                #:x-margin 2
                #:y-margin 2)))
