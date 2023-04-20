@@ -7,16 +7,16 @@ between them, across which they exchange values at run time. Depending on the
 kind of types at the two sides of the boundary, a value exchange can trigger
 run-time checks, which may degrade the performance.
 
-A profiling strategy should thus aim to eliminate the most costly boundaries in
-a program. In formal terms, a profiling strategy is a function that consumes a
-program \program{} and, after determining its profile, returns a set of pairs
-$(\component{}, \type{})$. Here \type{} is either \deep{} or \shallow{}. Each
-such pair prescribes a modification of \program{}. For instance, if a strategy
-returns the singleton set with the pair $(c, \deep)$, then the strategy directs
-its rational-programmer mode to equip component $c$ with types (if necessary)
-and set its enforcement strategy to deep; if $c$ is typed, it just requests
-toggling from shallow to deep.  If a strategy's result is the empty set, it
-cannot figure out how to proceed.
+A profiling strategy should thus aim to eliminate the most costly
+boundaries in a program. In formal terms, a profiling strategy is a
+function that consumes a program \program{} and, after determining its
+profile, returns a set of pairs $(\component{}, \type{})$. Here \type{} is
+either \deep{} or \shallow{}. Each such pair prescribes a modification of
+\program{}. For instance, if a strategy returns the singleton set with the
+pair $(c, \deep)$, then the strategy points to a new version of \program{}
+where component $c$ obtains deep types (if necessary) ; if $c$ is typed,
+the strategy just requests toggling from shallow to deep.  If a strategy's
+result is the empty set, it cannot figure out how to proceed.
 
 \input{experiment-basics}
 
@@ -83,14 +83,14 @@ Figure~\ref{f:cstrategies} lists these composite strategies. In addition to the
  the feedback from the profiler plays a meaningful role; otherwise, the
  experiment is meaningless.
 
-The results presented in the next section include two modes using
+The results presented in the next section include two 
  \agnostickw{} strategies. The first one, \randkw{}, aims to invalidate the null
  hypothesis with random choices. Specifically, it picks a random boundary with
- types of different strictness and suggests to modify the two sides of the
+ types of different strictness and suggests the modification of the two sides of the
  target boundary in either an \optkw{} or a \conkw{} manner.  The second
  \agnostickw{} strategy, \togglekw{}, is due to~\citet{g-deep-shallow}. It
  serves as a point of comparison with Greenman's results, which do not rely on
  profiling information. If the given program uses a mixture of shallow and deep
- enforcement, the strategy directs its rational-programmer mode to equip all
- typed components with deep enforcement. If all components already use deep, it
- instructs the mode to toggle the enforcement to shallow.
+ enforcement, the strategy recommends that all
+ typed components toggle to deep enforcement. If all typed components already use deep, it
+ recommends toggling the enforcement to shallow.

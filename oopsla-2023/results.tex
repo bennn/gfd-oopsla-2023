@@ -4,15 +4,16 @@
 \newcommand{\runtimeMB}{44}
 
 %% -----------------------------------------------------------------------------
-Running the rational-programmer experiment requires a large pool of computing
-resources.  To begin with, it demands reliable measurements for all complete
-migration lattices. Then, it needs to use the measurements to compute the
-outcome of applying the various modes of the rational programmer to the
-now-identifiable performance-debugging scenarios. This section starts with a
-description of the measurement process (section~\ref{subsec:experiment}). The
-remaining two subsections (sections~\ref{subsec:qx} and~\ref{s:hh}) explain how
-the outcome of the experiment answers the two research questions from the
-preceding section.
+Running the rational-programmer experiment requires a large pool of
+computing resources.  To begin with, it demands reliable measurements for
+all complete migration lattices. Then, it needs to use the measurements to
+compute the outcome of navigating the
+lattices following each strategy starting from all the now-identifiable performance-debugging
+scenarios. This section starts with a description of the measurement
+process (section~\ref{subsec:experiment}). The remaining two subsections
+(sections~\ref{subsec:qx} and~\ref{s:hh}) explain how the outcome of the
+experiment answers the two research questions from the preceding
+section.
 
 %% -----------------------------------------------------------------------------
 \subsection{Experiment} \label{subsec:experiment} \label{sec:data}
@@ -149,20 +150,20 @@ successful configuration is therefore a challenge overall.
 
 \subsection{Answering $Q_X$} \label{subsec:qx}
 
-\Cref{f:strategy-overall} presents the results of running all modes of the
-rational programmer from the preceding section on all scenarios. It answers
+\Cref{f:strategy-overall} presents the results of navigating with all strategies
+from the preceding section starting from all scenarios. It answers
 research question $Q_X$. 
 
 Each stacked bar in the ``skyline'' of \cref{f:strategy-overall} corresponds to
-a different mode of the rational programmer. Concretely, it reports the success
-rate of the mode for increasingly-loose notions of success for $T = 1$.  The
+a different strategy. Concretely, it reports the success
+rate of the strategy for increasingly-loose notions of success for $T = 1$.  The
 lowest, widest part of each bar represents the percentage of scenarios where the
-mode is strictly successful. The next three levels represent $1$-loose,
+strategy is strictly successful. The next three levels represent $1$-loose,
 $2$-loose, and $3$-loose success percentages.  The striped spire is for
 $N$-loose successes.  And finally, the antenna uses the even weaker notion of
 strict success for $T = 3$.
 
-The modes come with a wide range of success rates: 
+The strategies come with a wide range of success rates: 
 \begin{itemize}
   \item
     \emph{Optimistic} navigation performs well when guided by the \emph{boundary} profiler,
@@ -223,10 +224,10 @@ overhead~\cite{vss-popl-2017,bbst-oopsla-2017}.  Changing to 2x or 4x does not
 significantly change the outcome.
 
 For \emph{conservative} and \emph{cost-aware conservative}, allowing a 3x
-overhead improves results across the profilers. The modes succeed on an
-additional 10\% of scenarios.  The optimistic modes with statistical profiles
+overhead improves results across the profilers. The strategies succeed in an
+additional 10\% of scenarios.  The optimistic strategies with statistical profiles
 improve in a similar way for 3x success.  Optimistic with boundary profiles does
-not improve, and neither does the null mode.  Toggling
+not improve, and neither does the null strategy.  Toggling
 improves tremendously for 3x success, in line with prior work on shallow, which
 reports a median worst-case overhead of 4.2x on the GTP
 Benchmarks~\cite{g-deep-shallow}.  Evidently, about 45\% of configurations can
@@ -269,9 +270,10 @@ reach a 3x overhead by switching to shallow types.
   \label{f:strategy-hope}
 \end{figure}
 
-\paragraph{Omitting Hopeless Scenarios} From the perspective of type migration,
-some scenarios are hopeless. No matter how the modes of the rational programmer
-add types to these scenarios, the performance cannot improve to the $T=1$ goal.
+\paragraph{Omitting Hopeless Scenarios} From the perspective of type
+migration, some scenarios are hopeless. No matter what recommendation a strategy
+makes for the boundary-by-boundary addition of types to these scenarios,
+the performance cannot improve to the $T=1$ goal.
 
 \Cref{t:blackhole} lists the number of scenarios in each benchmark and the
 percentage of hopeful ones. A low percentage in the third column (labeled ``\%
@@ -288,17 +290,20 @@ scenario is excluded as hopeless.  As before, the results for \emph{random
 boundary} are the average across three runs.  The standard deviation is slightly
 higher than before ($<0.12\%$).
 
-For the optimistic modes, the results are much better.  They succeed on an
-additional 10\% of scenarios under strict success with the \emph{optimistic,
-boundary} strategy, and the $N$-loose results improve along the same lines.
-With statistical profiles, the optimistic strategies improve slightly.
+For the optimistic strategies, the results are much better.  The
+\emph{optimistic, boundary} strategies succeed in an additional 10\% of
+scenarios under strict success, and the $N$-loose results improve along
+the same lines.  With statistical profiles, the optimistic strategies
+improve slightly.
 
-Unfortunately the conservative modes perform no better.  They improve on few
-hopeful scenarios according to the notion of $N$-loose success.  Strict 3x
-successes are rare as well.  Indeed the antennae in~\cref{f:strategy-hope}
-are shorter than the antennae in~\cref{f:strategy-overall}.  This means that
-conservative succeeded in the 3x sense on a number of hopeless configurations;
-such configurations cannot reach a 1x point, but they can reach a 3x point.
+Unfortunately the conservative strategies perform no better.  They improve
+on few hopeful scenarios according to the notion of $N$-loose success.
+Strict 3x successes are rare as well.  Indeed the antennae
+in~\cref{f:strategy-hope} are shorter than the antennae
+in~\cref{f:strategy-overall}.  This means that conservative strategies
+succeeded in the 3x sense in a small number of hopeless scenarios; the
+strategies fail to chart a navigation for such scenarios to a 1x point,
+but succeed, in the strict sense, for a 3x point.
 
 
 \begin{figure}[ht]

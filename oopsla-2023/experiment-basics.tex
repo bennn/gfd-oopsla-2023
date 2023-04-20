@@ -7,8 +7,8 @@
   \newcommand{\desc}[1]{\parbox[t]{24em}{\raggedright #1\\[-2mm]}}
   
   \def\desca{\desc{Uses the boundary profiler to identify the most
-    expensive boundary in the given program. Then it directs the mode to equip
-    both sides of the target boundary with deep types.}}
+    expensive boundary in the given program. It recommends that
+    both sides of the target boundary obtain deep types.}}
 
   \def\descb{\desc{Like \featopt{} but with shallow types for both
     sides of the target boundary.}}
@@ -17,8 +17,8 @@
     $\component{}_1$ with the highest self time in the given program that has a
     boundary with at least one component $\component{}_2$ that has stricter
     types than $\component{}_1$.  Then it picks the component $\component{}_2$
-    that has the highest self time, and directs the mode to equip both
-    $\component{}_1$ and $\component{}_2$ with deep types.}}
+    that has the highest self time, and recommends that both
+    $\component{}_1$ and $\component{}_2$ obtain deep types.}}
 
   \def\descd{\desc{Like \statselfopt{} \with}}
 

@@ -7,33 +7,33 @@ mp:gt-decidable, ccew:gt-migrate, gc:gt-infer,
 cagg-solver-based-migration,clps-popl-2020,js-infer,ruby-static-infer,unif-infer,
 msi:gt-infer-hm,dyn-infer-ruby,profile-guided-typing,jstrace,gen-ts-decl,
 lambdanet,nl2ptype,learn-types-big-data,ml-ts}. For
-any untped component, a migrating programmer has to choose among several
+any untyped component, a migrating programmer has to choose among several
 practical type annotations and often among an infinite number of theoretical
 ones. But, to make a rational-programmer experiment computationally feasible, it
 is necessary to avoid this dimension.
 
 Fortunately, the construction of the corpus of scenarios from a carefully
-selected set of suitable seed programs can solve the problem. For instance, the
-established GTP benchmarks~\cite{gtnffvf-jfp-2019}\footnote{\gtpurl{}} are
-representative of the programming styles in the Racket world, and they come with
-well-chosen type annotations for all their components.  Hence, the migration
-lattices can be pre-constructed for all benchmark programs.  It is thus possible
-to start a rational programmer mode from any performance-debugging scenario in
-this lattice---a program with intolerable performance---and make it use the
-known types of the components to chart a path through the program's migration
-lattice.
+selected set of suitable seed programs can solve the problem. For
+instance, the established GTP
+benchmarks~\cite{gtnffvf-jfp-2019}\footnote{\gtpurl{}} are
+representative of the programming styles in the Racket world, and they
+come with well-chosen type annotations for all their components.  Hence,
+the migration lattices can be pre-constructed for all benchmark programs.
+It is thus possible to apply a strategy to any performance-debugging
+scenario in this lattice---a program with intolerable performance---and
+use the strategy's recommendations and the known types of the components
+to chart a path through the program's migration lattice.
 
-A rational-programmer mode thus combines a strategy \strategyvar{} with a
-function that picks points from the migration lattice. That is, the mode
-$\mode{\strategyvar{}}$ is a partial function from a program $\program{}_0$ to a
-program $\program{}_n$. To get from $\program{}_0$ to $\program{}_n$,
-$\mode{\strategyvar{}}$ iterates \strategyvar{} on its input and applies its
-recommendations to obtain the next $\program{}_i$.  In other words, $\mode{\strategyvar{}}$
-constructs a \emph{migration path}, a sequence of programs ${\program{}_0},
-\ldots, {\program{}_n}$ from a migration lattice. If \strategyvar{} cannot make
-a recommendation at any point in this lattice, $\mode{\strategyvar{}}$ does not
-produce a result. The following definitions translate these points into rigorous
-language. 
+Intuitively,  a strategy \strategyvar{} picks points from the migration
+lattice in an attempt to turn a $\program{}_0$ to a program $\program{}_n$
+in  a step-wise manner. Each intermediate point from $\program{}_0$ to
+$\program{}_n$ derives from applying the recommendation of \strategyvar{}
+to its input to obtain the next $\program{}_i$.  In essence,
+$\strategyvar{}$ constructs a \emph{migration path}, a sequence of
+programs ${\program{}_0}, \ldots, {\program{}_n}$ from a migration
+lattice. If \strategyvar{} cannot make a recommendation at any point along
+this path, migration halts without a result. The following
+definitions translate these points into rigorous language. 
 
 \paragraph{The Migration Lattice.}  All programs $\program{}_i$ are nodes in the
 \emph{migration lattice} \lattice{\program{}_u} where ${\program{}_u}$, is like
@@ -64,24 +64,13 @@ out. Ditto for the profiler-agnostic ones.}  In other words, a migration path is
 a weakly ascending chain in
 \lattice{\program{}_u}.
 
-%% MF: I think this is obvious. We can discuss if you think not. 
-
-% This last observation is key for the implementation of the rational-programmer
-% experiment. If for each $\program{}_u$ in the experiment, one of its fully type
-% versions $\program{}_t$ is also available, then the construction of
-% \lattice{\program{}_u} is automatic, and as a result, so are the modifications
-% that the strategies produce. Therefore, given implementations of the strategies
-% and a collection of seed programs with both untyped and fully typed versions,
-% the rational-programmer experiment reduces to a fully automated push-button
-% process that asks all modes of the rational programmer to construct a migration
-% path starting at the same configurations of
-% \lattice{\program{}_u}, and compares their successes. 
 
 \paragraph{Performance-debugging scenarios and success criteria.} Completing the
 formal description of the experiments demands answers to two more questions.
 
-The first concerns the selection of the starting points for the modes of the
-rational programmer, i.e., the \emph{performance-debugging scenarios}.  The
+The first concerns the selection of the starting points for the
+strategy-driven migrations,
+i.e., the \emph{performance-debugging scenarios}.  The
 answer is that every configuration $\program$ that exhibits performance
 degradation compared to $\program{}_u$ above a certain threshold is an
 interesting starting point for a rational-programmer exploration.
