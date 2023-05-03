@@ -6,6 +6,7 @@
   (struct-out trailres)
   (struct-out bmres)
   (struct-out seascape)
+  trail-dir
   combine-trails)
 
 (require
