@@ -1,0 +1,59 @@
+;; how many DEEP configs are over 10x?
+;; where in the lattice are they?
+;; (num-types . num-configs)
+
+- - -
+
+fsm  0 over 10x
+kcfa  0 over 10x
+acquire  0 over 10x
+
+forth  8 over 10x
+((1 . 2) (2 . 4)
+ (3 . 2))
+
+fsmoo  8 over 10x
+((1 . 2) (2 . 4)
+ (3 . 2))
+
+jpeg  16 over 10x
+((1 . 2) (2 . 6)
+ (3 . 6) (4 . 2))
+
+suffixtree  29 over 10x
+((1 . 1) (2 . 8)
+ (3 . 12)
+ (4 . 7) (5 . 1))
+
+snake  43 over 10x
+((3 . 7) (4 . 16)
+ (5 . 14) (6 . 5) (7 . 1))
+
+take5  192 over 10x
+((1 . 3) (2 . 18) (3 . 45)
+ (4 . 60)
+ (5 . 45) (6 . 18) (7 . 3))
+
+zombie  8 over 10x
+((1 . 2) (2 . 4)
+ (3 . 2))
+
+tetris  129 over 10x
+((1 . 1) (2 . 7) (3 . 21) (4 . 35)
+ (5 . 36) (6 . 21) (7 . 7) (8 . 1))
+
+dungeon  16 over 10x
+((1 . 2) (2 . 6)
+ (3 . 6) (4 . 2))
+
+synth  870 over 10x
+((1 . 2)
+ (2 . 24)
+ (3 . 96)
+ (4 . 193)
+ (5 . 241)
+
+ (6 . 193)
+ (7 . 95)
+ (8 . 24)
+ (9 . 2))

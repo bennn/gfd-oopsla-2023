@@ -36,6 +36,10 @@
   hyphen-join
   tex-row-join
   split-filename
+  config->num-types
+  deep-config?
+  make-config
+  log3
   hash-add1
   hash-add1!)
 
@@ -98,6 +102,38 @@
     (if (string? pp)
       pp
       (raise-argument-error 'path-string->string "path-string?" pp))))
+
+(define (config->num-types str)
+  (for/sum ((cc (in-string str))
+            #:unless (eq? cc #\0))
+    1))
+
+(define (deep-config? str)
+  (for/and ((cc (in-string str)))
+    (or (eq? cc #\0)
+        (eq? cc #\1))))
+
+(define (make-config nmod #:D [deep* #f] #:S [shallow* #f] #:default [default #f])
+  (define base (make-string nmod (or default #\0)))
+  (config-set* base deep* #\1)
+  (config-set* base shallow* #\2)
+  (string->immutable-string base))
+
+(define (config-set* base pos* tgt)
+  (when pos*
+    (if (real? pos*)
+      (string-set! base pos* tgt)
+      (for ((pos (in-list pos*)))
+        (string-set! base pos tgt)))))
+
+(define (log3 n)
+  (let loop ((k 1))
+    (define vv (expt 3 k))
+    (if (< vv n)
+      (loop (+ k 1))
+      (if (= vv n)
+        k
+        (raise-argument-error 'log3 "power-of-3?" n)))))
 
 (define (fzero) 0)
 
