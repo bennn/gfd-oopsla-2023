@@ -26,11 +26,22 @@ Why do so few scenarios succeed?
      [ ] TODO any more insights?
   (notes/why-stuck.txt)
 
+- [ ] t-test, significant differences
+  - [ ] cite Amherst etc for insignificant differences (<20ms)
+    ... acquire same? forth same for sure
+  - [ ] use Andy Georges formulas for t-test,,, chapter 4.3?
+  - [ ] configs within the noise if either one holds ... stop using stddev windows!
+  - [ ] re-run ... results same right?
+
 - [ ] does shallow ever help?
   - [X] for critical pairs on 1st level, rarely (few such pairs anyway), ~13 cases
     (notes/shallow-help.txt)
-  - [ ] 1st level, how often toggling helps?
-  - [ ] 2nd level, ditto
+  - [X] 1st level, how often toggling helps?
+  - [X] 2nd level, ditto
+    (notes/sh
+  - [ ] TODO filter scenarios
+  - [ ] more levels ... show all
+  - [ ] add to paper
 
 - [ ] where in the lattice are the slow points? evenly distributed?
   - for deep only, typically low but pretty even split
@@ -39,6 +50,11 @@ Why do so few scenarios succeed?
 - [ ] how do the results look with 1.1x as success?
       what about 2x or 3x?
   (TODO)
+
+- [ ] what to do about adaptors? how big of a threat are they?
+  - [ ] why is forth config 0200 so slow? any deep? any adaptor? any base library?
+  - [ ] count num failures due to adaptors, report like #hopeless
+  - [ ] 
 
 
 Scripts:

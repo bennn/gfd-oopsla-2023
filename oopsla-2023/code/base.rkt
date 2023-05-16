@@ -37,6 +37,8 @@
   tex-row-join
   split-filename
   config->num-types
+  perf#-untyped
+  perf#-deep
   deep-config?
   make-config
   log3
@@ -308,4 +310,15 @@
 (define (untyped-bit? cc)
   (eq? #\0 cc))
 
+(define (perf#-untyped p#)
+  (define nm (perf#-num-components p#))
+  (hash-ref p# (make-string nm #\0)))
+
+(define (perf#-deep p#)
+  (define nm (perf#-num-components p#))
+  (hash-ref p# (make-string nm #\1)))
+
+(define (perf#-num-components p#)
+  (define cfg (for/first ((kk (in-hash-keys p#))) kk))
+  (string-length cfg))
 

@@ -1,0 +1,32 @@
+
+What does t-test say about untyped vs. deep-typed configs?
+(code/tt.rkt)
+
+Especially curious about these first few, because they all
+have black holes => likely untyped faster than typed.
+But for `forth` at least, the runtimes are VERY close in an
+absolute sense!
+
+  forth      ((student 0) (welch 0))
+  mbta       ((student 0) (welch 0))
+  zombie     ((student 0) (welch 0))
+  dungeon    ((student 0) (welch 0))
+  take5      ((student 0) (welch 0))
+  acquire    ((student 0) (welch 0))
+
+0 => different (this is all rounded aggressively, to 2 decimal places)
+
+The rest is nothing surprising:
+
+  sieve      ((student 58) (welch 58))
+  morsecode  ((student 0) (welch 0))
+  fsm        ((student 0) (welch 0))
+  fsmoo      ((student 0) (welch 0))
+  jpeg       ((student 0) (welch 0))
+  lnm        ((student 0) (welch 0))
+  suffixtree ((student 0) (welch 0))
+  kcfa       ((student 35) (welch 36))
+  snake      ((student 0) (welch 0))
+  tetris     ((student 0) (welch 0))
+  synth      ((student 80) (welch 81))
+

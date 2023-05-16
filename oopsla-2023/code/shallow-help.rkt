@@ -1,6 +1,7 @@
 #lang racket
 
 (require
+  text-table
   "base.rkt"
   "runtime.rkt")
 
@@ -68,7 +69,55 @@
   (pretty-write (sort (hash->list slow#) < #:key car))
   (void))
 
-(define go where-slow)
+(define (low-levels bm-name)
+  ;; how often does toggling help on low lattice levels?
+  (define perf# (benchmark->perf# bm-name))
+  (define nmod (log3 (hash-count perf#)))
+  (define-values [l1-good l1-total] (try-toggle one-typed perf#))
+  (define-values [l2-good l2-total] (try-toggle two-typed perf#))
+  (define-values [l3-good l3-total]
+                 (if (< 2 nmod) (try-toggle (has-typed 3) perf#) (values "" "")))
+  (define-values [l4-good l4-total]
+                 (if (< 3 nmod) (try-toggle (has-typed 4) perf#) (values "" "")))
+  (define-values [lnn-good lnn-total]
+                 (if (< 4 nmod) (try-toggle (has-typed (- nmod 2)) perf#) (values "" "")))
+  (define-values [ln-good ln-total]
+                 (if (< 5 nmod) (try-toggle (has-typed (- nmod 1)) perf#) (values "" "")))
+  (list nmod
+        l1-good (pctstr2 l1-good l1-total)
+        l2-good (pctstr2 l2-good l2-total)
+        l3-good (if (real? l3-good) (pctstr2 l3-good l3-total) "")
+        l4-good (if (real? l4-good) (pctstr2 l4-good l4-total) "")
+        lnn-good (if (real? lnn-good) (pctstr2 lnn-good lnn-total) "")
+        ln-good (if (real? ln-good) (pctstr2 ln-good ln-total) "")
+        ))
+
+(define ((has-typed n) cfg)
+  (= n (num-typed-modules cfg)))
+
+(define (one-typed cfg)
+  (= 1 (num-typed-modules cfg)))
+
+(define (two-typed cfg)
+  (= 2 (num-typed-modules cfg)))
+
+(define (num-typed-modules cfg)
+  (for/sum ((cc (in-string cfg))
+            #:unless (eq? #\0 cc))
+    1))
+
+(define (try-toggle p? perf#)
+  (for/fold ((num-fast 0)
+             (num-total 0))
+            (((k v) (in-hash perf#))
+             #:when (p? k))
+    (values (+ (if (and
+                     (not (good-overhead? v))
+                     (good-overhead? (hash-ref perf# (config->shallow k))))
+                   1 0) num-fast)
+            (+ 1 num-total))))
+
+(define go low-levels)
 
 (module+ main
   ; (go 'fsm)
@@ -76,9 +125,15 @@
   ; (go 'kcfa)
   ; (go 'jpeg)
   ; (go 'tetris)
-  (for ((bm (in-list '(forth fsm fsmoo kcfa jpeg suffixtree snake take5 zombie
+  #;(for ((bm (in-list '(forth fsm fsmoo kcfa jpeg suffixtree snake take5 zombie
                        tetris dungeon acquire synth))))
    (go bm))
+  (print-simple-table
+    #:align '(left right)
+    (cons
+      (list "benchmark" "N" "L1-S" "%" "L2-S" "%" "L3-S" "%" "L4-S" "%" "L(n-2)-S" "%" "L(n-1)-S" "%")
+      (for/list ((bm (in-list (all-benchmark-name*))))
+        (cons bm (go bm)))))
   (void))
 
 
