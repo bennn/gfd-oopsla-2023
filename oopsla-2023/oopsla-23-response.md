@@ -192,4 +192,9 @@ space we have selected help us guage how other alterntives would fare, as
 it seems the reviewer also can. 
 
 
+### Suggested lists of changes
+
+--- fix the formalisms (review C)
+--- more details about experimental setup (review B)
+--- further comparison in related work with PLDI 2022
 
