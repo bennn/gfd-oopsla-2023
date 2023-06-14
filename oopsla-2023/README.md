@@ -56,6 +56,12 @@ Why do so few scenarios succeed?
   - [ ] count num failures due to adaptors, report like #hopeless
   - [ ] 
 
+- [ ] why black holes?!
+  - [ ] take5 typed is slower, why? fix it.
+
+- vague quesions:
+  - [ ] can wrappers make garbage un-claimable in a big way?
+  - [ ] is shallow blocking chez optimizations? any way to check?!
 
 Scripts:
 
