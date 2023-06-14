@@ -1,32 +1,23 @@
-Thanks for the reviews and the extensive comments. We will use them to improve
-the paper. For one, we certainly need more background on gradual typing
-strategies and their implementation-specific nuances (Shallow JIT, etc).
+Thanks for the constructive feedback. We will use it to improve the paper.
 
-In the hope of keeping it short, this response focuses on criticisms from #201A:
+## General Overview
 
-> ### Cons
-> - Limited Generality
-> - Inadequate exploration of even the limited scope
-> - The talk about the "rational programmer" method obfuscates a rather simple
->   methodology
+While all reviews come with actionable points, Review #201A contains serious
+misunderstandings.
 
-Some of the comments in the review are quite damning. However, there are
-serious misunderstandings at play.
-
-We apologize that our submission was not clear enough about the experiment
-and prior work.
+We first address a common point among #201A and #201C, then tackle the
+misunderstandings.
 
 
-### Limited generality
 
-#201A and #201C raise questions about generality:
-
-> **#201A** [this paper] does not provide a significant improvement over the
-> state of the art or provide enough significant insights.
+### Common Point: Limited generality, tailored to Racket
 
 > **#201A**
 > the experiments are tailored to Racket and do not obviously generalize to
 > other gradually-typed languages, and even there, they do not work that well.
+
+> **#201A**
+> How do you imagine your results being used?
 
 > **#201C**
 > Q1: How do these results generalize beyond the walled garden of
@@ -35,7 +26,24 @@ and prior work.
 > Q2: More specifically, is "boundary profiler" really an 'approach' in the
 > same sense that "statistical profilers" are, or is it a specific artifact?
 
-While Racket is the only language that 
+At the moment, no other research language -- not to speak of an
+industrial language comes with the necessary ingredients to repeat
+this experiment:
+
+- a 'deep' or 'shallow' backend
+- a good amount of code written in this language
+- a boundary profiler (and ideally a second one)
+
+Until this set of ingredients is available, we cannot argue on a
+scientific basis that these results generalize.
+
+The reverse direction does call for a different form of
+generalization. Language implementors of 'deep' or 'shallow' gradually
+typed languages should add a boundary profiler. (Instagram's Python
+team comes to mind.) This may not be the expected answer but given the
+"glass half full" remark above, this is the best answer we have right
+now.
+
 
 > CD
 > For designers: shallow not very good at least with current tools (the
@@ -57,52 +65,43 @@ While Racket is the only language that
 > design --- researchers can use it to evaluate other languages
 
 
-> MF
-> When someone implements a deep (or shallow) checking regime for a
-> language with substantial code bases, we will be the first to re-do
-> this experiment. Racket has run its course here. 
-> 
-> At the moment, no other research language -- not to speak of an
-> industrial language comes with the necessary ingredients to repeat
-> this investigation:
-> 
-> - a 'deep' or 'shallow' backend
-> - a good amount of code written in this language
-> - a boundary profiler (and ideally a second one)
-> 
-> Until this set of ingredients is available, we cannot argue on a
-> scientific basis that these results generalize.
-> 
-> The reverse direction does call for a different form of
-> generalization. Language implementors of 'deep' or 'shallow' gradually
-> typed languages should add a boundary profiler. (Instagram's Python
-> team comes to mind.) This may not be the expected answer but given the
-> "glass half full" remark above, this is the best answer we have right
-> now.
+When someone implements a deep (or shallow) checking regime for a
+language with substantial code bases, we will be the first to re-do
+this experiment. Racket has run its course here. 
 
 
+### Incorrect Statements in #201A
 
+@ Running the benchmarks ourselves && question 1 ("How does .. square ..?")
+@ "well-known about black holes in the GTP benchmarks" --
+@ GTP benchmarks -- The GTP benchmark suite is a representative
+collection of (Typed) Racket programs. It is not a collection of "hard
+cases". To claim otherwise requires a presentation of evidence.
+@ "As someone from that corner [language designers and implementers .. GT]"
 
 ### Inadequate exploration
 
-> the experiment was in some sense doomed from the start
+> **#201A** [this paper] does not provide a significant improvement over the
+> state of the art or provide enough significant insights.
 
-> my main takeaway from this paper are a few more hard numbers on the
+> **#201A** the experiment was in some sense doomed from the start
+
+> **#201A** my main takeaway from this paper are a few more hard numbers on the
 > unsurprising fact that there are many low-performing configurations that are
 > hard to get out of
 
-> is not really borne out because of the fact that a large chunk of
+> **#201A** is not really borne out because of the fact that a large chunk of
 > configurations - almost half are hopeless to fix in the first place, a fact
 > that is well-known, as is the fact that for many of the programs in the GTP
 > benchmark suite in Typed Racket, there simply is no reasonable path through the
 > migration lattice that avoids unacceptable overheads.
 > the bulk of that work was just reproducing the numbers from earlier papers
 
-> you could have also compared against the "optimal" strategy
+> **#201A** you could have also compared against the "optimal" strategy
 
 We did! Figure 5
 
-> , and what other criteria than the more or less randomly chosen 3x overhead
+> **#201A** , and what other criteria than the more or less randomly chosen 3x overhead
 > for success and 1x overhead hopefulness there could be (this is particularly
 > noticeable in the `take5` benchmark, which Greenman reports as getting to a
 > worst shallow overhead of 2.99x, and a worst combined overhead of 2.97x;
@@ -116,29 +115,9 @@ Nobody except gradual typing researchers will put up with >1x slowdowns.
 
 If you suggest a threshold, we will use it and attribute to the OOPSLA'23 reviewers.
 
-> TODO strategy design
-
-We considered a space of strategies that revolve around a few specific
-knobs (profiler kind/optimistic-conservative). We also supplemented those
-with a few compoiste strategies that switch their optimistic-conservative
-knob based on some knowledge of the configuration, and two baseline one.
-The design of this space derives from 1) developers usually pick a
-profiler and stick to it (no tools that combine profilers exist); 2) the
-optimistic-conservative dimensions help us isolate the effect of the two
-semantics; 3) the composite strategies help as check the effect of
-switching between semantics; 4) the baseline ones aim to isolate the
-effect of the profiler and create a point of comparison with prior work.
-That is ``carefully'' means that the space of strategy was designed in a
-systematic ``rational'' manner to examine a spread of possibilities. There
-will always be more alternatives and heuristic. But the results seem to
-indicate that say combining statistical and boundary won't help due to the
-poor resilts of the statistical profiler. In a sense the points in the
-space we have selected help us guage how other alterntives would fare, as
-it seems the reviewer also can. 
 
 
-
-### Rational programmer obfuscates a simple method
+### [Needs some label] Rational programmer obfuscates a simple method
 
 
 
@@ -189,6 +168,28 @@ it seems the reviewer also can.
 
 
 
+
+
+
+### FILL Strategy Design
+
+We considered a space of strategies that revolve around a few specific
+knobs (profiler kind/optimistic-conservative). We also supplemented those
+with a few compoiste strategies that switch their optimistic-conservative
+knob based on some knowledge of the configuration, and two baseline one.
+The design of this space derives from 1) developers usually pick a
+profiler and stick to it (no tools that combine profilers exist); 2) the
+optimistic-conservative dimensions help us isolate the effect of the two
+semantics; 3) the composite strategies help as check the effect of
+switching between semantics; 4) the baseline ones aim to isolate the
+effect of the profiler and create a point of comparison with prior work.
+That is ``carefully'' means that the space of strategy was designed in a
+systematic ``rational'' manner to examine a spread of possibilities. There
+will always be more alternatives and heuristic. But the results seem to
+indicate that say combining statistical and boundary won't help due to the
+poor resilts of the statistical profiler. In a sense the points in the
+space we have selected help us guage how other alterntives would fare, as
+it seems the reviewer also can. 
 
 
 
