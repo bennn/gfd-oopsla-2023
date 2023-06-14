@@ -17,7 +17,7 @@ We apologize that our submission was not clear enough about the experiment
 and prior work.
 
 
-#### Limited generality
+### Limited generality
 
 #201A and #201C raise questions about generality:
 
@@ -83,7 +83,7 @@ While Racket is the only language that
 
 
 
-#### Inadequate exploration
+### Inadequate exploration
 
 > the experiment was in some sense doomed from the start
 
@@ -138,7 +138,7 @@ it seems the reviewer also can.
 
 
 
-#### Rational programmer obfuscates a simple method
+### Rational programmer obfuscates a simple method
 
 
 
