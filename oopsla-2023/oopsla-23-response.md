@@ -4,22 +4,18 @@ This response follows the format suggested by the PC chair:
 
 * OVERVIEW
 * CHANGE LIST
-* RESPONSE
+* POINT-BY-POINT RESPONSE
 
 
 ## OVERVIEW
 
 _A short overview of the response_
 
-This response addresses three major points in this first overview section:
+This part of the response addresses three major points:
 
  1. Concerns about limited generality (Reviews A and C).
  2. Incorrect statements in Review A.
  3. Concern that the rational programmer obfuscates a simple method (Review A).
-
-The second section has a brief list of changes. The final section gives
-point-by-point replies to review comments.
-
 
 ### 1. Concerns about limited generality (Reviews A and C)
 
@@ -32,7 +28,7 @@ and asks:
 
 > How do you imagine your results being used?
 
-Similarly, Review C asks:
+Review C asks:
 
 > Q1: How do these results generalize beyond the walled garden of
 > gradually-typed Racket?
@@ -43,26 +39,33 @@ Similarly, Review C asks:
 At the moment, it is true that no other language comes with the necessary
 ingredients to repeat this experiment (deep and shallow backends, sizeable
 benchmarks, and a boundary profiler). Such things happen in research; for
-example, only TypeScript has the userbase to support a large-scale study of
-programming with gradual types. Until a second language implements the same set
-of ingredients, we cannot argue on a scientific basis that our experimental
-results generalize.
+example, only TypeScript has the userbase to support a large-scale corpus
+study of programming with optional types. Until a second language
+implements the same set of ingredients, we cannot argue on a scientific
+basis that our experimental results generalize.
 
 That said, our findings do offer lessons for language designers and
 researchers at large:
 
-- For designers implementing a deep language, our results show the need
-  for a boundary profiler.  (@Review C, a boundary profiler is a refinement of
+- For designers implementing a language with deep types, our results show the benefits
+  from also adding a boundary profiler.  (@Review C, a boundary profiler is a refinement of
   a statistical profiler, well in reach for other languages. Andersen et al.
-  have an R implementation.)
+  have an R implementation.) They also show that there is room for
+  improvement on the profiling front --- an avenue for further research
+  whose success our experiments can help quantify. 
 
-- For designers implementing a shallow language, there is a need for better
+- For designers implementing a language with shallow types, there is a need for research on improving
   profiling tools.
 
-- For researchers, our experimental design merits reuse to address other
-  pragmatic questions.
+- For designers considering the combination of the two, our results raise
+  doubts about the benefits from the combination given the status quo in
+  tooling and compiler support. More research is needed to unlock the
+  potential of the combination.
 
-We imagine our results being used to guide language design and profiler design.
+- For researchers and designers that are working on gradual typing
+  languages, our experiment offers a template for evaluating their own linguistic setting.
+
+Hence, we imagine our results being used to guide pragmatic language and profiler design.
 
 
 ### 2. Incorrect statements in Review A
@@ -70,24 +73,36 @@ We imagine our results being used to guide language design and profiler design.
 > a large chunk of configurations - almost half are hopeless to fix in the
 > first place, a fact that is well-known
 
-Prior work does not show that configurations are hopeless (unable to reach a
-fast configation). It merely shows that many configurations run slowly.
+No prior work shows that configurations are hopeless in the sense of this
+paper (unable to reach a fast configuration). It merely shows that many
+configurations run slowly.
 
-Early work on Typed Racket (popl'16, jfp'19) did search up to two steps
-forward, but "hopeless" searches any number of steps forward.
+Early work on Typed Racket (popl'16, jfp'19) did search up to two
+migratory steps, but "hopeless" searches any number of steps forward.
+Moreover that work concerned a `2^N` lattice (no combination of deep and
+shallow).
 
 > as is the fact that for many of the programs in the GTP benchmark suite in
 > Typed Racket, there simply is no reasonable path through the migration
 > lattice that avoids unacceptable overheads.
 
-We are unaware of prior work that studies paths from arbitrary starting points.
-Indeed, it is unclear how to conduct such an experiment without the rational
-programmer method.
+There is no prior work that studies paths from performance-debugging
+scenarios to configurations with acceptable performance. Indeed, it is
+unclear how to conduct such an experiment that studies such paths that a
+non-omnipotent developer can follow without the rational programmer
+method.
 
 Two papers (jfp'19, pldi'22) do study the worst-case overhead on all paths that
 **start at the untyped configuration** and end at the typed configuration.
 This is a very different question than the one we ask (whether slow
 configurations can improve).
+
+We consider the study of the paths in this paper the important question
+here. Based on our combined 40 years of experience implementing,
+programming in, and studying gradual typing, developers add types for a
+variety of reasons, not with a step-by-step migration intent. Hence, they
+often end up in mixed-typed scenarios with severe performance issues and
+no clue how to proceed.
 
 > given that you know the full lattice, you could have also compared against
 > the "optimal" strategy
@@ -98,10 +113,18 @@ can reach a fast configuration.
 > the bulk of that work was just reproducing the numbers from
 > earlier papers on your own hardware
 
-The bulk of the work was for synth, which was not fully explored in earlier
-papers. Greenman (pldi'22, table 1) measured two `2^N` lattices (deep and
-shallow) but not the full `3^N` lattice.
+Actually, the bulk of the work was measuring the `3^N` lattice for synth
+---  Greenman (pldi'22, table 1) measured two `2^N` lattices (deep and
+shallow separately) for this very large benchmark but not its full `3^N`
+lattice. That work also didn't measure `3^N` lattices for the rest of the
+very large benchmarks from GTP.
 
+We also spent significant time collecting profiling data that previous
+work did not concern with. 
+
+A separate issue is that in the last year there have been a number of
+performance improvements in Typed Racket, and those change the performance
+profiles of some of the benchmarks. 
 
 ### 3. Concern that the rational programmer obfuscates a simple method (Review A)
 
@@ -121,12 +144,12 @@ This argument skims over the key question that the rational programmer lets us
 answer: **how to choose a "next" configuration**. Profilers do not propose a
 next step, they simply measure. People in a user study might follow hunches
 instead of the profiler output. With the rational programmer method, we can
-apply the human creativity needed to interpret profiler output systematically,
+systematically abstract the human creativity needed to interpret profiler output,
 in a large and reproducible experiment.
 
 Satisficing is important because human programmers do not have the luxury
 of seeking optimal paths. They cannot explore the full lattice; they must
-make do with limited data.
+make do with limited means.
 
 
 ## CHANGE LIST
@@ -139,10 +162,11 @@ We plan to make five sizeable changes:
 
 - spell out general takeaways in the conclusion
 - provide more background on gradual typing, checking strategies, and the
-  implementation-dependent costs of shallow checks
-- fix the error in section 4.2 (thanks Review C)
+  implementation-dependent costs of shallow checks (as outlined in the
+  point-by-point responses further on)
+- fix the formalism mistake in section 4.2 (thanks Review C)
 - give more detail about the experimental setup (thanks Review B)
-- clearly relate to prior work on Typed Racket performance (thanks Review A)
+- clearly compare to prior work on Typed Racket performance (thanks Review A)
 
 We also plan to fix other issues noted in the reviews. See the point-by-point
 response below for more details.
@@ -168,17 +192,22 @@ appears in the review) and our replies.
 > in the related work section here, but the paper seems to present this as much
 > more novel than it is.
 
-On the contrary, it was the scheme of the rational programmer that provided the
+On the contrary, it was the rational programmer method that provided the
 template and tools for designing the experiment. Prior work contemplated
-migration questions (popl'16) but lacked a compelling way to answer them.
+migration questions (popl'16, jfp '19) but lacked a compelling way to answer them.
+This work managed to do it by instantiating the rational programmer.
 
-The paper is the third in a series that explores the idea of distilling human
-behavior into a rational algorithm. As such it is at least as much an
-evaluation of this approach as it is an evaluation of profilers.
+At the meta level, the paper is the fourth in a series that explores the
+idea of studying language pragmatics with the rational algorithm. The
+rational programmer is the first attempt for creating a general tool for
+such studies. The previous three look at debugging type-like and logical
+mistakes. This is the first that looks into improving performance issues
+with profilers.  As such, this paper is at least as much a study of
+the rational programmers as it is a study of profilers in gradual typing.
 
 The review seems to deny that there is value in exploring the
-rational-programmer method across different areas of evaluation.
-Why?
+rational-programmer method across different aspects of language
+pragmatics. Why?
 
 > > At the object level, the results of the rational programmer experiment
 > > provide guidance to developers about how to best use the feedback from
@@ -189,8 +218,10 @@ Why?
 > boundary that is found by the boundary profiler", because that leads to success
 > in about half of the cases explored here.
 
-We fully expected shallow types and the statistical profiler to help in the
-lower half of the lattice. We will clarify in the paper.
+We were surprised by this. Based on Greenman's work (pldi 22) and the
+work on reticulated Python, we fully expected shallow types and the
+statistical profiler to help in the lower half of the lattice. We will
+clarify in the paper.
 
 > The bigger meaning implicit in the paper is that using a profiler in this way
 > is actually a useful strategy, which is not really borne out because of the
@@ -206,8 +237,14 @@ These "facts" are not true. See overview above.
 > has already been established that reasonable paths often do not exist.
 
 The GTP benchmark suite is appropriate as it is the largest collection of
-programs that support a full gradual lattice. As we note in the overview,
-prior work studies only paths that start at the untyped configuration.
+programs that support a full gradual lattice. Furthermore, these are not
+micro-benchmarks, but a collection of realistic applications written in
+different styles, by different people, and for different domains. 
+
+Finally, as we expand on in the overview, prior work studies only paths
+that start at the untyped configuration and stay within a threshold of
+performance. So, it does not establish the lack of reasonable paths for
+resolving performance-debugging scenarios.
 
 > Maybe one other way of looking at my criticism here is to ask: "Who is helped
 > by this?" - your introduction makes it partially sound like this is a useful
@@ -231,14 +268,17 @@ recommend it (or not) to users.
 > unsurprising fact that there are many low-performing configurations that are
 > hard to get out of.
 
-Prior work says little about getting out of slow configurations.
+Prior work says little about getting out of slow configurations. Moreover,
+the GTP benchmarks are not a collection of pathological cases --- they are
+a diverse collection of applications that aim to capture the full
+experience of programming in Typed Racket. 
 
 > To really be helpful here, a little more exploration might have helped, to
 > see how far we really are away from any sort of findable reasonable path
 > (also, given that you know the full lattice, you could have also compared
 > against the "optimal" strategy),
 
-Figure 5 compares to the optimal strategy.
+We did that. Figure 5 compares to the optimal strategy.
 
 > and what other criteria than the more or less randomly chosen 3x overhead for
 > success and 1x overhead hopefulness there could be (this is particularly
@@ -251,11 +291,13 @@ Figure 5 compares to the optimal strategy.
 > hopeless).
 
 The overwhelming success of TypeScript and underwhelming success of sound gradual
-typing suggests that nobody will put up with a 2x slowdown (except maybe gradual
-typing researchers).
+typing suggests that nobody will put up with any slowdown for production (except maybe gradual
+typing researchers). 3x is not randomly chosen; it is what gradual typing
+researchers seem to have picked arbitrarily in a number of papers.
 
 Still, if you propose a limit other than 1x we will build a second set of figures
-for the appendix.
+for the appendix. We have the full measurement data and scripts ready to get
+    that quickly. 
 
 > As you report, running all the benchmarks fully takes quite a lot of time, but
 > it seems to me that the bulk of that work was just reproducing the numbers from
@@ -267,12 +309,13 @@ for the appendix.
 > performance-debugging-scenarios in the original data), and thus enabled you to
 > also do this for the larger ones (gregor, quadT, quadU).
 
-As we note above in the overview, the bulk of performance data is new. (The
+As we note above in the overview, the bulk of performance data is new. (and the
 profiler data is of course all new.)
 
-There are 11,160,261 configurations across gregor, quadT, and quadU. If we
-ignored all other configurations (116,154 total), we would still need more
-machines and more researchers to measure them all.
+There are 11,160,261 configurations across gregor, quadT, and quadU. Even
+ff we ignored all the configurations measured for the paper (116,154
+total), we would still need more machines and more researchers to measure
+the three largest benchmarks.
 
 > I know that there's the possibility that your measurements might be
 > significantly different from those of earlier publications, but in order for
@@ -290,8 +333,10 @@ If we reused older data, we would need to use an older version of Racket
 > random migration until you get into a performance debugging scenario, then
 > apply your method for addressing it. How far do you get?
 
-This is an excellent idea. We will propose it as future work and attribute it
-to the oopsla'23 reviewers.
+Obtaining sufficiently large samples that have have statistical
+significance for the full lattices is quite tricky. But thank you, this is
+a nice idea for a future paper.  We will propose it as future work and
+attribute it to the oopsla'23 reviewers.
 
 > Questions for author response
 > -----------------------------
@@ -319,8 +364,8 @@ appendix.
 
 Hopelessness looks forward to any configuration, no matter the distance.
 
-We say that any overhead (>1x) is unreasonable, thus take5, mbta, and dungeon
-are hopeless.
+We say that any eventual overhead (>1x after migration) is unacceptable
+for working programmers, thus take5, mbta, and dungeon are hopeless.
 
 
 > - You acknowledge the threat to validity that you may not have covered all
@@ -371,7 +416,7 @@ That anthem was new to us. Thanks :)
 > a program linearly. Blowing my students' trumperts, Roberts et al 2016
 > shows that's shouldn't be the case for  jitted implementation.
 
-Right, we need a more nuanced discussion.
+Right, we will add a more nuanced discussion.
 
 > reflecting on that point - there are also complementary implementation
 > assumptions coming through in the "lessons' section. what I mean here
@@ -437,7 +482,9 @@ did something like that using contracts.
 > isn't "optimistic" just deep and "conservative" shallow?
 
 Those words arose from our programmer-oriented design method for
-strategies. We will reconsider them.
+strategies --- optimistic denotes here a choice that goes for eliminating 
+a boundary putting aside worries for ripple effects; conservative denotes the
+oposite. We will reconsider them.
 
 > 333 rational programmers  -- but rational programmers aren't
 > programmers, they're *not* people!  could reword to avoid that
@@ -556,9 +603,10 @@ Figure 4 supports this cynical take.
 Thank you for the comments. Section 2 assumes too much background knowledge; we
 will improve it.
 
-Short explanation: adding deep types to one module improves performance through
-type-driven optimizations but lowers performance at boundaries to non-deep
-modules. If all modules are deep and there are no boundaries, there is no cost.
+Short explanation: adding deep types to one module improves performance
+through type-driven optimizations but lowers performance at boundaries to
+non-deep modules. If all modules are deep and there are no boundaries,
+there is no cost and only potential improvements.
 
 > Section 4.2 – "the 3**n configurations of [the lattice] are ordered: Pi < Pj
 > iff Pj has at least one component that is untyped in Pj."  Putting aside what
