@@ -11,7 +11,7 @@ This response follows the format suggested by the PC chair:
 
 _A short overview of the response_
 
-This response addresses three points in this first overview section:
+This response addresses three major points in this first overview section:
 
  1. Concerns about limited generality (Reviews A and C).
  2. Incorrect statements in Review A.
@@ -42,10 +42,10 @@ Similarly, Review C asks:
 
 At the moment, it is true that no other language comes with the necessary
 ingredients to repeat this experiment (deep and shallow backends, sizeable
-benchmarks, and a boundary profiler). This happens in research. For example,
-only TypeScript has the userbase to support a large-scale study of programming
-with gradual types. Until a second language implements the same set of
-ingredients, we cannot argue on a scientific basis that our experimental
+benchmarks, and a boundary profiler). Such things happen in research; for
+example, only TypeScript has the userbase to support a large-scale study of
+programming with gradual types. Until a second language implements the same set
+of ingredients, we cannot argue on a scientific basis that our experimental
 results generalize.
 
 That said, our findings do offer lessons for language designers and
