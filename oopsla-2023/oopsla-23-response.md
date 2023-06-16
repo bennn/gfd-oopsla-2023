@@ -4,7 +4,7 @@ This response follows the format suggested by the PC chair:
 
 * OVERVIEW
 * CHANGE LIST
-* POINT-BY-POINT RESPONSE
+* RESPONSE
 
 
 ## OVERVIEW
@@ -52,7 +52,7 @@ researchers at large:
   a statistical profiler, well in reach for other languages. Andersen et al.
   have an R implementation.) They also show that there is room for
   improvement on the profiling front --- an avenue for further research
-  whose success our experiments can help quantify. 
+  whose success our experimental method can help quantify. 
 
 - For designers implementing a language with shallow types, there is a need for research on improving
   profiling tools.
@@ -97,13 +97,6 @@ Two papers (jfp'19, pldi'22) do study the worst-case overhead on all paths that
 This is a very different question than the one we ask (whether slow
 configurations can improve).
 
-We consider the study of the paths in this paper the important question
-here. Based on our combined 40 years of experience implementing,
-programming in, and studying gradual typing, developers add types for a
-variety of reasons, not with a step-by-step migration intent. Hence, they
-often end up in mixed-typed scenarios with severe performance issues and
-no clue how to proceed.
-
 > given that you know the full lattice, you could have also compared against
 > the "optimal" strategy
 
@@ -113,11 +106,11 @@ can reach a fast configuration.
 > the bulk of that work was just reproducing the numbers from
 > earlier papers on your own hardware
 
-Actually, the bulk of the work was measuring the `3^N` lattice for synth
----  Greenman (pldi'22, table 1) measured two `2^N` lattices (deep and
-shallow separately) for this very large benchmark but not its full `3^N`
-lattice. That work also didn't measure `3^N` lattices for the rest of the
-very large benchmarks from GTP.
+Actually, the bulk of the work was measuring the `3^N` lattice for synth,
+which Greenman (pldi'22) did not measure. That work measured two `2^N` lattices
+(deep and shallow separately) for this very large benchmark but not its full
+`3^N` lattice. That work also did not measure `3^N` lattices for the rest of
+the very large benchmarks from GTP.
 
 We also spent significant time collecting profiling data that previous
 work did not concern with. 
@@ -194,7 +187,7 @@ appears in the review) and our replies.
 
 On the contrary, it was the rational programmer method that provided the
 template and tools for designing the experiment. Prior work contemplated
-migration questions (popl'16, jfp '19) but lacked a compelling way to answer them.
+migration questions (popl'16, jfp'19) but lacked a compelling way to answer them.
 This work managed to do it by instantiating the rational programmer.
 
 At the meta level, the paper is the fourth in a series that explores the
@@ -218,8 +211,8 @@ pragmatics. Why?
 > boundary that is found by the boundary profiler", because that leads to success
 > in about half of the cases explored here.
 
-We were surprised by this. Based on Greenman's work (pldi 22) and the
-work on reticulated Python, we fully expected shallow types and the
+We were surprised by this. Based on Greenman's work (pldi'22) and the
+work on Reticulated Python, we fully expected shallow types and the
 statistical profiler to help in the lower half of the lattice. We will
 clarify in the paper.
 
@@ -292,12 +285,11 @@ We did that. Figure 5 compares to the optimal strategy.
 
 The overwhelming success of TypeScript and underwhelming success of sound gradual
 typing suggests that nobody will put up with any slowdown for production (except maybe gradual
-typing researchers). 3x is not randomly chosen; it is what gradual typing
-researchers seem to have picked arbitrarily in a number of papers.
+typing researchers).
 
 Still, if you propose a limit other than 1x we will build a second set of figures
 for the appendix. We have the full measurement data and scripts ready to get
-    that quickly. 
+that quickly.
 
 > As you report, running all the benchmarks fully takes quite a lot of time, but
 > it seems to me that the bulk of that work was just reproducing the numbers from
@@ -315,7 +307,7 @@ profiler data is of course all new.)
 There are 11,160,261 configurations across gregor, quadT, and quadU. Even
 ff we ignored all the configurations measured for the paper (116,154
 total), we would still need more machines and more researchers to measure
-the three largest benchmarks.
+those three largest benchmarks.
 
 > I know that there's the possibility that your measurements might be
 > significantly different from those of earlier publications, but in order for
@@ -335,8 +327,8 @@ If we reused older data, we would need to use an older version of Racket
 
 Obtaining sufficiently large samples that have have statistical
 significance for the full lattices is quite tricky. But thank you, this is
-a nice idea for a future paper.  We will propose it as future work and
-attribute it to the oopsla'23 reviewers.
+a good suggestion. We will propose it as future work and attribute it to the
+oopsla'23 reviewers.
 
 > Questions for author response
 > -----------------------------
@@ -484,7 +476,7 @@ did something like that using contracts.
 Those words arose from our programmer-oriented design method for
 strategies --- optimistic denotes here a choice that goes for eliminating 
 a boundary putting aside worries for ripple effects; conservative denotes the
-oposite. We will reconsider them.
+opposite. We will reconsider them.
 
 > 333 rational programmers  -- but rational programmers aren't
 > programmers, they're *not* people!  could reword to avoid that
