@@ -191,15 +191,15 @@ migration questions (popl'16, jfp'19) but lacked a compelling way to answer them
 This work managed to do it by instantiating the rational programmer.
 
 At the meta level, the paper is the fourth in a series that explores the
-idea of studying language pragmatics with the rational algorithm. The
+idea of studying language pragmatics with the rational programmer. The
 rational programmer is the first attempt for creating a general tool for
-such studies. The previous three look at debugging type-like and logical
-mistakes. This is the first that looks into improving performance issues
+such studies. The previous four papers look at debugging type-like and logical
+mistakes, while this is the first that looks into improving performance issues
 with profilers.  As such, this paper is at least as much a study of
-the rational programmers as it is a study of profilers in gradual typing.
+the rational programmer method as it is a study of profilers in gradual typing.
 
 The review seems to deny that there is value in exploring the
-rational-programmer method across different aspects of language
+rational programmer method across different aspects of language
 pragmatics. Why?
 
 > > At the object level, the results of the rational programmer experiment
@@ -253,6 +253,11 @@ test the overall effectiveness of a strategy because of the limited patience
 of humans and the huge number of confounding variables involved. By contrast,
 the rational programmer can test the effectiveness of a strategy and thereby
 recommend it (or not) to users.
+
+Furthermore, the history of user studies goes against the review's claim
+that a user study could lead to more realistic benchmarks. If anything, to
+keep things meaningful, user studies tend to simplify the tasks or the
+number of users or both.
 
 > On the other hand, in my interpretation, the GTP benchmark suite is addressed
 > at language designers and implementers, demonstrating particular pitfalls and
