@@ -137,7 +137,7 @@ This argument skims over the key question that the rational programmer lets us
 answer: **how to choose a "next" configuration**. Profilers do not propose a
 next step, they simply measure. People in a user study might follow hunches
 instead of the profiler output. With the rational programmer method, we can
-systematically abstract the human creativity needed to interpret profiler output,
+systematically test interpretations of profiler output,
 in a large and reproducible experiment.
 
 Satisficing is important because human programmers do not have the luxury
