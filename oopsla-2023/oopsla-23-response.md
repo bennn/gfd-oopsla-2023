@@ -97,6 +97,13 @@ Two papers (jfp'19, pldi'22) do study the worst-case overhead on all paths that
 This is a very different question than the one we ask (whether slow
 configurations can improve).
 
+In fact, we consider the question that this paper addresses the most
+important of the two. Typed Racket programmers seem to add types for a
+variety of reasons (debugging, documentation, safety concerns) and they do
+so without following a step-by-step process of additions and measurements.
+Hence, they often report that they end up with mixed-typed codebases with
+severe slowdowns and no clue how to fix the issues.
+
 > given that you know the full lattice, you could have also compared against
 > the "optimal" strategy
 
@@ -108,12 +115,12 @@ can reach a fast configuration.
 
 Actually, the bulk of the work was measuring the `3^N` lattice for synth,
 which Greenman (pldi'22) did not measure. That work measured two `2^N` lattices
-(deep and shallow separately) for this very large benchmark but not its full
+(deep and shallow separately) for this large benchmark but not its full
 `3^N` lattice. That work also did not measure `3^N` lattices for the rest of
-the very large benchmarks from GTP.
+the large benchmarks from GTP.
 
 We also spent significant time collecting profiling data that previous
-work did not concern with. 
+work did not collect. 
 
 A separate issue is that in the last year there have been a number of
 performance improvements in Typed Racket, and those change the performance
