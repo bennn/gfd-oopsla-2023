@@ -50,8 +50,8 @@ researchers at large:
 - For designers implementing a language with deep types, our results show the benefits
   from also adding a boundary profiler.  (@Review C, a boundary profiler is a refinement of
   a statistical profiler, well in reach for other languages. Andersen et al.
-  have an R implementation.) They also show that there is room for
-  improvement on the profiling front --- an avenue for further research
+  have an R implementation.) The results also show that there is room for
+  improvement on the profiling front here --- an avenue for further research
   whose success our experimental method can help quantify. 
 
 - For designers implementing a language with shallow types, there is a need for research on improving
@@ -193,7 +193,7 @@ This work managed to do it by instantiating the rational programmer.
 At the meta level, the paper is the fourth in a series that explores the
 idea of studying language pragmatics with the rational programmer. The
 rational programmer is the first attempt for creating a general tool for
-such studies. The previous four papers look at debugging type-like and logical
+such studies. The previous three papers look at debugging type-level and logical
 mistakes, while this is the first that looks into improving performance issues
 with profilers.  As such, this paper is at least as much a study of
 the rational programmer method as it is a study of profilers in gradual typing.
@@ -310,7 +310,7 @@ As we note above in the overview, the bulk of performance data is new. (and the
 profiler data is of course all new.)
 
 There are 11,160,261 configurations across gregor, quadT, and quadU. Even
-ff we ignored all the configurations measured for the paper (116,154
+if we ignored all the configurations measured for the paper (116,154
 total), we would still need more machines and more researchers to measure
 those three largest benchmarks.
 
