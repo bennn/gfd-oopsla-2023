@@ -1,4 +1,4 @@
-Thank you all for the constructive feedback.
+Thanks for the constructive feedback.
 
 This response follows the format suggested by the PC chair:
 
@@ -159,9 +159,9 @@ make do with limited means.
 
 ## CHANGE LIST
 
-_A list of the changes that you plan to make in response to the reviews along
+A list of the changes that we plan to make in response to the reviews along
 with an estimation of the time you think the implementation of the changes will
-take._
+take.
 
 We plan to make five sizeable changes:
 
@@ -346,7 +346,7 @@ If we reused older data, we would need to use an older version of Racket
 > apply your method for addressing it. How far do you get?
 
 Obtaining sufficiently large samples that have have statistical
-significance for the full lattices is quite tricky. But thank you, this is
+significance for the full lattices is quite tricky. But thanks, this is
 an actionable and interesting suggestion.
 
 > Questions for author response
@@ -473,7 +473,7 @@ change to add costs. We will elaborate in the paper.
 > would that help? 
 
 That would help, partly. We also need to know how often a deep check
-(and its subchecks) get executed. Your next point below about counting
+(and its subchecks) get executed. The next point below about counting
 would help.
 
 > could the boundary profiler just count the number of crossings, rather
@@ -607,7 +607,7 @@ Figure 4 supports this cynical take.
 > It seems to me that adding runtime checks adds overhead, and I need help
 > understanding why it sometimes doesn't.
 
-Thank you for the comments. Section 2 assumes too much background knowledge; we
+Thanks for the comments. Section 2 assumes too much background knowledge; we
 will explain the background in some more depth. 
 
 Short explanation: adding deep types to one module improves performance
@@ -622,7 +622,7 @@ there is no cost and only potential improvements.
 > components c, if c is typed in Pi it is typed in Pj, AND there exists some
 > component c' that is typed in Pj but not in Pi.  Otherwise, I am confused.
 
-You are correct, we will fix this.
+This is correct, we will fix this.
 
 > Questions for author response
 > -----------------------------
