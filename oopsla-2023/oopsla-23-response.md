@@ -58,9 +58,8 @@ researchers at large:
   profiling tools.
 
 - For designers considering the combination of the two, our results raise
-  doubts about the benefits from the combination given the status quo in
-  tooling and compiler support. More research is needed to unlock the
-  potential of the combination.
+  doubts about the current benefits from the combination. 
+  More research is needed to unlock the potential of the combination.
 
 - For researchers and designers that are working on gradual typing
   languages, our experiment offers a template for evaluating their own linguistic setting.
