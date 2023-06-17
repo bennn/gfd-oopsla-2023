@@ -47,13 +47,12 @@ argue on a scientific basis that our experimental results generalize.
 That said, our findings do offer lessons for language designers and
 researchers at large:
 
-- For designers implementing a language with deep types, our results
-  show the benefits from also adding a boundary profiler.  
-
-- A boundary profiler is a refinement of a statistical profiler, well
-  in reach for other languages. For example, Andersen et al. explain
-  how to port such a profiler t R and how useful it is there (for a
-  different set of measurements).
+- For designers implementing a language with deep types, our results show
+  the benefits from also adding a boundary profiler --- a boundary
+  profiler is a refinement of a statistical profiler, well in reach for
+  other languages. For example, Andersen et al. explain how to port such a
+  profiler to R and how useful it is there (for a different set of
+  measurements).
 
 - The results also show that there is room for improvement on the
   profiling front here (for both deep and shallow). That is, the
