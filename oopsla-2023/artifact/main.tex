@@ -1,0 +1,112 @@
+\documentclass{article}
+
+\usepackage{colortbl}
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+\newcommand{\bmname}[1]{\textsf{#1}}
+\newcommand{\gcell}[1]{\cellcolor{green!20}#1}
+\newcommand{\wcell}[1]{\cellcolor{black!05}#1}
+\newcommand{\ycell}[1]{\cellcolor{yellow!18}#1}
+\newcommand{\ocell}[1]{\cellcolor{orange!29}#1}
+\newcommand{\rcell}[1]{\cellcolor{red!30}#1}
+\newcommand{\tcell}[1]{\cellcolor{black!10}#1}
+
+\begin{document}
+
+\begin{table}[ht]\centering
+  \caption{How many configurations have any overhead to begin with?}
+  \label{t:baseline-trouble}
+  \begin{tabular}{lrr}
+    \input{tex/baseline-trouble.tex}
+  \end{tabular}
+\end{table}
+
+\begin{figure}[ht]
+  \includegraphics[width=\columnwidth]{tex/strategy-overall-feasible.pdf}
+  \caption{How many scenarios does each strategy succeed in, for six notions of success.}
+  \label{f:strategy-overall}
+\end{figure}
+
+\begin{table}[ht]\centering
+  \caption{How many scenarios can possibly reach 1x without removing types?}
+  \label{t:blackhole}
+  \begin{tabular}{lrr}
+    \input{tex/blackhole.tex}
+  \end{tabular}
+\end{table}
+
+\begin{figure}[ht]
+  \includegraphics[width=\columnwidth]{tex/strategy-overall-hopeful.pdf}
+  \caption{How many of the hopeful scenarios does each strategy succeed in, for six notions of success.}
+  \label{f:strategy-hope}
+\end{figure}
+
+\begin{figure}[ht]
+  \includegraphics[width=0.9\columnwidth]{tex/head-to-head.pdf} %% TODO
+  \caption{Boundary optimistic vs. the rest, strict success: losses (red bars) and wins (green bars) on all scenarios.}
+  \label{f:head-to-head}
+\end{figure}
+
+\begin{figure}[ht] \footnotesize
+  \newcommand{\kkrow}[1]{\bmname{#1} \\ \includegraphics[width=0.39\columnwidth]{tex/sky/#1-feasible.pdf}}
+  %% TODO
+  \begin{tabular}[t]{ll}
+    \begin{tabular}[t]{l}
+      \kkrow{morsecode} \\
+      \kkrow{forth} \\
+      \kkrow{fsm} \\
+      \kkrow{fsmoo} \\
+      \kkrow{mbta} \\
+      \kkrow{zombie} \\
+      \kkrow{dungeon} \\
+      \kkrow{jpeg} \\
+    \end{tabular}
+    &
+    \begin{tabular}[t]{l}
+      \kkrow{lnm} \\
+      \kkrow{suffixtree} \\
+      \kkrow{kcfa} \\
+      \kkrow{snake} \\
+      \kkrow{take5} \\
+      \kkrow{acquire} \\
+      \kkrow{tetris} \\
+      \kkrow{synth}
+    \end{tabular}
+  \end{tabular}
+
+  \caption{How scenarios in each benchmark does each strategy succeed in?}
+  \label{f:skyline:bm}
+\end{figure}
+
+\begin{figure}[t] \footnotesize
+  \newcommand{\hhrow}[1]{\bmname{#1} \\ \includegraphics[width=0.39\columnwidth]{tex/h2h/#1.pdf}}
+  %% TODO
+  \begin{tabular}[t]{ll}
+    \begin{tabular}[t]{l}
+      \hhrow{morsecode} \\
+      \hhrow{forth} \\
+      \hhrow{fsm} \\
+      \hhrow{fsmoo} \\
+      \hhrow{mbta} \\
+      \hhrow{zombie} \\
+      \hhrow{dungeon} \\
+      \hhrow{jpeg} \\
+    \end{tabular}
+    &
+    \begin{tabular}[t]{l}
+      \hhrow{lnm} \\
+      \hhrow{suffixtree} \\
+      \hhrow{kcfa} \\
+      \hhrow{snake} \\
+      \hhrow{take5} \\
+      \hhrow{acquire} \\
+      \hhrow{tetris} \\
+      \hhrow{synth}
+    \end{tabular}
+  \end{tabular}
+
+  \caption{Optimistic vs. the rest, comparing strict successes in each benchmark.}
+  \label{f:h2h:bm}
+\end{figure}
+\end{document}

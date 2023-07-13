@@ -1,0 +1,12 @@
+#hash(
+("card-adapted.rkt" . "card.rkt")
+("--face" . "card.rkt")
+(">-face" . "card.rkt")
+("card3" . "card.rkt")
+("configuration" . "basics.rkt")
+("create-card-pool" . "card-pool.rkt")
+("create-dealer" . "dealer.rkt")
+("create-deck" . "deck.rkt")
+("create-player" . "player.rkt")
+("card-bulls" . "card.rkt")
+("player%" . "player.rkt"))

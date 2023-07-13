@@ -1,0 +1,27 @@
+require-typed-check: #s(require-typed-check-info "/home/ben/code/blame-trail/rds/rational-deep-shallow/code/gtp-bench/fsm/cfg/main.rkt" (require/typed/check "population.rkt" (build-random-population (-> Natural Population)) (population-payoffs (-> Population (Listof Payoff))) (death-birth (-> Population Natural (#:random (U False Real)) Population)) (match-up* (-> Population Natural Population))))
+require-typed-check: #s(require-typed-check-info "/home/ben/code/blame-trail/rds/rational-deep-shallow/code/gtp-bench/fsm/cfg/population.rkt" (require/typed/check "utilities.rkt" (choose-randomly (-> (Listof Probability) Natural (#:random (U False Real)) (Listof Natural)))))
+require-typed-check: #s(require-typed-check-info "/home/ben/code/blame-trail/rds/rational-deep-shallow/code/gtp-bench/fsm/cfg/main.rkt" (require/typed/check "utilities.rkt" (relative-average (-> (Listof Real) Real Real))))
+type->contract:
+ (-> (Listof Probability) State [#:random (U False Real)] (Listof State))
+ #<->/sc #<listof/sc #<or/sc #<flat/sc (and/c real? nonnegative?)>>> #<or/sc #<flat/sc exact-nonnegative-integer?>> #<or/sc #<flat/sc real?> #<flat/sc (quote #f)>> #<listof/sc #<or/sc #<flat/sc exact-nonnegative-integer?>>>>
+ ((#<syntax:/home/ben/code/racket/fork/extra-pkgs/typed-racket/typed-racket-lib/typed-racket/static-contracts/instantiate.rkt:237:20 (define g39 (listof exact-nonnegative-integer?))>) #<syntax:/home/ben/code/racket/fork/extra-pkgs/typed-racket/typed-racket-lib/typed-racket/static-contracts/combinators/function.rkt:80:6 (->* (any/c any/c) (#:random any/c) (values g39))>)
+type->contract:
+ (-> State Population)
+ #<->/sc #<or/sc #<flat/sc exact-nonnegative-integer?>> #<cons/sc #<vectorof/sc #<flat/sc (flat-named-contract (quote automaton?) (lambda (x) (automaton? x)))>> #<vectorof/sc #<flat/sc (flat-named-contract (quote automaton?) (lambda (x) (automaton? x)))>>>>
+ ((#<syntax:/home/ben/code/racket/fork/extra-pkgs/typed-racket/typed-racket-lib/typed-racket/static-contracts/instantiate.rkt:237:20 (define g9 (flat-named-contract (quote automaton?) (lambda (x) (automaton? x))))> #<syntax:/home/ben/code/racket/fork/extra-pkgs/typed-racket/typed-racket-lib/typed-racket/static-contracts/instantiate.rkt:237:20 (define g10 (vectorof g9))> #<syntax:/home/ben/code/racket/fork/extra-pkgs/typed-racket/typed-racket-lib/typed-racket/static-contracts/instantiate.rkt:237:20 (define g11 (cons/c g10 g10))>) #<syntax:/home/ben/code/racket/fork/extra-pkgs/typed-racket/typed-racket-lib/typed-racket/static-contracts/combinators/function.rkt:80:6 (->* (any/c) () (values g11))>)
+type->contract:
+ (-> Population (Listof Probability))
+ #<->/sc #<cons/sc #<vectorof/sc #<flat/sc (flat-named-contract (quote automaton?) (lambda (x) (automaton? x)))>> #<vectorof/sc #<flat/sc (flat-named-contract (quote automaton?) (lambda (x) (automaton? x)))>>> #<listof/sc #<or/sc #<flat/sc (and/c real? nonnegative?)>>>>
+ ((#<syntax:/home/ben/code/racket/fork/extra-pkgs/typed-racket/typed-racket-lib/typed-racket/static-contracts/instantiate.rkt:237:20 (define g13 (and/c real? nonnegative?))> #<syntax:/home/ben/code/racket/fork/extra-pkgs/typed-racket/typed-racket-lib/typed-racket/static-contracts/instantiate.rkt:237:20 (define g14 (listof g13))>) #<syntax:/home/ben/code/racket/fork/extra-pkgs/typed-racket/typed-racket-lib/typed-racket/static-contracts/combinators/function.rkt:80:6 (->* (g11) () (values g14))>)
+type->contract:
+ (-> Population State [#:random (U False Real)] Population)
+ #<->/sc #<cons/sc #<vectorof/sc #<flat/sc (flat-named-contract (quote automaton?) (lambda (x) (automaton? x)))>> #<vectorof/sc #<flat/sc (flat-named-contract (quote automaton?) (lambda (x) (automaton? x)))>>> #<or/sc #<flat/sc exact-nonnegative-integer?>> #<or/sc #<flat/sc real?> #<flat/sc (quote #f)>> #<cons/sc #<vectorof/sc #<flat/sc (flat-named-contract (quote automaton?) (lambda (x) (automaton? x)))>> #<vectorof/sc #<flat/sc (flat-named-contract (quote automaton?) (lambda (x) (automaton? x)))>>>>
+ (() #<syntax:/home/ben/code/racket/fork/extra-pkgs/typed-racket/typed-racket-lib/typed-racket/static-contracts/combinators/function.rkt:80:6 (->* (g11 any/c) (#:random any/c) (values g11))>)
+type->contract:
+ (-> Population State Population)
+ #<->/sc #<cons/sc #<vectorof/sc #<flat/sc (flat-named-contract (quote automaton?) (lambda (x) (automaton? x)))>> #<vectorof/sc #<flat/sc (flat-named-contract (quote automaton?) (lambda (x) (automaton? x)))>>> #<or/sc #<flat/sc exact-nonnegative-integer?>> #<cons/sc #<vectorof/sc #<flat/sc (flat-named-contract (quote automaton?) (lambda (x) (automaton? x)))>> #<vectorof/sc #<flat/sc (flat-named-contract (quote automaton?) (lambda (x) (automaton? x)))>>>>
+ (() #<syntax:/home/ben/code/racket/fork/extra-pkgs/typed-racket/typed-racket-lib/typed-racket/static-contracts/combinators/function.rkt:80:6 (->* (g11 any/c) () (values g11))>)
+type->contract:
+ (-> (Listof Real) Real Real)
+ #<->/sc #<listof/sc #<or/sc #<flat/sc real?>>> #<or/sc #<flat/sc real?>> #<or/sc #<flat/sc real?>>>
+ ((#<syntax:/home/ben/code/racket/fork/extra-pkgs/typed-racket/typed-racket-lib/typed-racket/static-contracts/instantiate.rkt:237:20 (define g18 (simple-result-> real? 2))>) #<syntax g18>)
