@@ -18,8 +18,14 @@ thousands of CPU hours and lots of manual work to reserve machines, divide
 work among them, and combine the outputs. There are brief instructions on
 Zenodo for the main steps to reproduce.
 
+Zenodo:
+
+<https://doi.org/10.5281/zenodo.8136116>
+
 
 ## Getting Started
+
+Download and unpack `artifact.tar.gz` from Zenodo.
 
 Check that the artifact has the following files and directories:
 
@@ -57,7 +63,7 @@ At this point, `main.tex` should not build. Confirm that (e.g. by running `make`
  you must edit the final two figures in `main.tex` --- either comment
  everything out, or comment the lines for benchmarks other than `fsm`.)
 
-Install [Racket v8.8](https://download.racket-lang.org/racket-v8.8.html) (at least)
+Install [Racket v8.8](https://download.racket-lang.org/racket-v8.8.html)
 or run the Dockerfile.
 
 Racket way:
