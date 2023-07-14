@@ -87,7 +87,7 @@ Rerun the rational programmer experiment:
 ```
 cd rational-experiment
 sh run.sh
-# will print many lines, compare them to: `example-output-run.sh.txt`
+# will print many lines similar to: `example-output-run.sh.txt`
 # expected time: 10 seconds
 cd ..
 ```
@@ -99,7 +99,7 @@ Rerun the trail analysis script and tex-rendering script:
 ```
 cd render
 sh run.sh
-# will print, compare output to: `example-output-run.sh.txt`
+# compare output to: `example-output-run.sh.txt`
 # you can also run mkdata.rkt and tex.rkt directly
 # expected time: 5 seconds
 cd ..
@@ -112,7 +112,7 @@ Docker.)
 
 Unless you edit `main.tex` to show only the fsm plots in the final two
 figures, those figures will be larger in your `main.pdf` than in `fsm.pdf`.
-Just compare the fsm subfigure in each.
+Compare only the fsm subfigures in each.
 
 All done!
 
@@ -139,14 +139,13 @@ More ambitious:
   programmer on a benchmark. Unpack both. Copy the benchmark source to
   `rational-experiment/gtp-bench`. Copy the runtime, boundary, and statistical
   profile data for that benchmark to the folders under `rational-experiment/data`.
-  Then add the benchmark's name to the list in `rational-experiment/run.sh`,
-  right next to "fsm". Finally run `run.sh` to generate trail output.
+  Add the benchmark's name to the list in `rational-experiment/run.sh` (next
+  to fsm). Lastly, run `run.sh` to generate trail output.
 
 Finally:
 
-- The scripts in `cloudlab.tar.gz` helped us collect performance data in the
-  first place. The readme on Zenodo outlines how to use them. Collecting the
-  data took several months.
+- `cloudlab.tar.gz` has scripts for collecting performance data.  The readme on
+  Zenodo outlines how to use them. Collecting the data took us several months.
 
 
 ## How to change the success criteria
@@ -159,10 +158,10 @@ To see results for a weaker criteria, edit `render/run.sh`. Change `-t 1` to
 To use a stronger criteria, edit `rational-experiment/run.sh` and
 `render/run.sh` to use a different `-t` value. Then rerun both in order.
 
-(The rational programmer needs to rerun with a stronger criteria. Suppose
-we strengthen from 1x to 1/2x. Before, the rational programmer would stop
-at a 1x configuration. After, it needs to keep searching to improve that
-1x to a 1/2x configuration.)
+(The rational programmer needs to rerun for a stronger criteria because
+it might have stopped short with the weaker one. Suppose we strengthen from 1x
+to 1/2x. Before, the rational programmer would stop at a 1x configuration.
+After, it needs to keep searching to improve that 1x to a 1/2x configuration.)
 
 
 ## How to add a strategy
@@ -186,6 +185,8 @@ You can add a new strategy by writing a function with the type:
 where:
 
 - `ConfigurationID` is a string made of "0" "1" or "2" characters
+  - the length of the string equals the number of modules in a benchmark
+  - 0 = untyped, 1 = deep typed, 2 = shallow typed
 - `[Values A B]` means the function returns two items
 - `StatusCode` is one of:
   - `(list 'success Reason)`
@@ -209,7 +210,8 @@ To run the rational programmer with this strategy:
 
 1. Add it to the file `rational-experiment/main.rkt`
 2. Add a name to the list `strategy*` near the top of the file.
-3. Add a case to the function `run-profile` like this:
+3. Add a case to the function `run-profile` that uses your function and name,
+   like this:
    `((untyped-strategy)
      (lambda (bm-name perf-info profile-dir #:P [profile-mode #f]) untyped-strategy))`
 4. Add a similar case to the function `run-boundary`:
@@ -217,12 +219,12 @@ To run the rational programmer with this strategy:
      (lambda (bm-name perf-info benchmark-dir) untyped-strategy))`
 
 Finally, rerun `rational-experiment/run.sh`. The directory
-`rational-experiment/out/` should have 3 additional files from running the
-strategy with boundary profile, statistical profile (self), and statistical
-profile (total) information. All three files will have the same results if you
-used `untyped-strategy` above.
+`rational-experiment/out/` should have 3 additional files from running your
+strategy with the boundary profiler, statistical profiler (self), and statistical
+profiler (total). If you used `untyped-strategy` from above, All three files will
+have the same results.
 
-To implement a smarter strategy than "make everything untyped", look at the code
+To implement a smarter strategy than "make everything untyped", look to the code
 for examples.
 
 After running, the next step is to render the results:
@@ -255,5 +257,5 @@ The high-level process for adding a benchmark is:
      variable names to module names
    - The instructions in `rational-experiment/getint.rkt` can help.
 
-This is a long process.
+This is a difficult process.
 
