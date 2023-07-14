@@ -48,7 +48,7 @@ rm rational-experiment/out/*
 rm render/figure-data/*
 rm tex/*.*
 rm tex/h2h/fsm.pdf
-rm tex/sky/fsm-feasible.pdf 
+rm tex/sky/fsm-feasible.pdf
 ```
 
 At this point, `main.tex` should not build. Confirm that (e.g. by running `make`).
