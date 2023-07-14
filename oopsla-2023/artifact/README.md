@@ -65,7 +65,8 @@ Racket way:
 ```
 # install from https://download.racket-lang.org/racket-v8.8.html
 # then install packages:
-raco pkg install --auto pict-abbrevs with-cache gtp-util text-table
+raco pkg install --auto lang-file-lib lang-file ppict basedir rackunit-abbrevs pict-abbrevs with-cache gtp-util text-table
+  
 ```
 
 Docker way:
