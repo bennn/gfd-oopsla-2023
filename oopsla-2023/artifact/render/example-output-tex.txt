@@ -1,0 +1,11 @@
+ total 62 scenarios
+aggregate: avg of 3 runs, max stddev 4.23
+save-pict strategy-overall-feasible.pdf
+(hopeful) total 62 scenarios
+aggregate: avg of 3 runs, max stddev 4.23
+save-pict strategy-overall-hopeful.pdf
+ total 62 scenarios
+aggregate: avg of 3 runs, max stddev 4.23
+save-pict fsm-feasible.pdf
+save-pict head-to-head.pdf
+save-pict fsm.pdf

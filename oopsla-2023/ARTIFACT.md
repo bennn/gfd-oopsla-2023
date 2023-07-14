@@ -1,6 +1,6 @@
 Artifact for OOPSLA'23 paper:
 
- _How Profilers Can Navigate the Lattice of Type Migration_
+ _How Profilers Can Navigate Type Migration_
 
 ### Contents:
 

@@ -402,5 +402,13 @@
   (go-h2h)
   (void))
 
-(module+ main (go))
+(module+ main
+  (require racket/cmdline)
+  (define *asumu (box #f))
+  (command-line
+    #:once-each
+    [("-t") n "Takikawa constant" (set-box! *asumu (string->number n))]
+    #:args ()
+    (parameterize ((*takikawa* (or (unbox *asumu) (*takikawa*))))
+      (go))))
 

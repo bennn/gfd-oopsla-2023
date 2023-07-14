@@ -43,7 +43,8 @@
   make-config
   log3
   hash-add1
-  hash-add1!)
+  hash-add1!
+  *takikawa*)
 
 (require
   racket/math
@@ -53,6 +54,8 @@
   racket/file)
 
 ;; ===
+
+(define *takikawa* (make-parameter 1))
 
 (struct rktd [name path bm strat mode] #:prefab)
 (struct row [cfg end ms ns ss] #:prefab)
@@ -241,7 +244,7 @@
 
 (define (row-trail-failure? rr ovr)
   #;(eq? 'error (car (row-end rr)))
-  (< 1 (ovr (row-ms rr))))
+  (< (*takikawa*) (ovr (row-ms rr))))
 
 (define (pct aa bb)
   (exact-round (pct2 aa bb)))
@@ -275,7 +278,7 @@
   (sort cfg* string<?))
 
 (define (good-overhead? m/s)
-  (<= (apply - m/s) 1))
+  (<= (apply - m/s) (*takikawa*)))
 
 (define (backup-overhead? m/s)
   (<= (apply - m/s) 3))
