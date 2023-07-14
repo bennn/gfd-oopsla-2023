@@ -81,6 +81,7 @@ Rerun the rational programmer experiment:
 cd rational-experiment
 sh run.sh
 # will print many lines, compare them to: `example-output-run.sh.txt`
+# expected time: 10 seconds
 cd ..
 ```
 
@@ -93,53 +94,159 @@ cd render
 sh run.sh
 # will print, compare output to: `example-output-run.sh.txt`
 # you can also run mkdata.rkt and tex.rkt directly
+# expected time: 5 seconds
 cd ..
 ```
 
 Now rebuild `main.tex` and compare `main.pdf` to `fsm.pdf`.
 
-If you used Docker, exit before rebuilding ... or install LaTeX.
+(If you used Docker, exit before rebuilding ... or install LaTeX in the
+Docker.)
 
-The final two figures are smaller in `fsm.pdf` because we commented the lines
-in `main.tex` for the other benchmarks (not `fsm`) before building.
+Unless you edit `main.tex` to show only the fsm plots in the final two
+figures, those figures will be larger in your `main.pdf` than in `fsm.pdf`.
+Just compare the fsm subfigure in each.
 
 All done!
 
 
 ## More
 
-TODO
+There is more that can be done with the artifact and Zenodo data.
 
 
-## Takikawa
+### Zenodo
 
--t 3 in run.sh, both run scripts
+Zenodo has all the data that we collected. You can download and use this data.
+
+Two items are easy to use:
+
+- `figure-data.tar.gz` is a drop-in replacement for `render/figure-data/`.
+  Download, unpack, run `tex.rkt`, and rebuild `main.tex`.
+- `rational-trails.tar.gz` can replace `rational-experiment/out/`. Download,
+  unpack, then re-render (`cd ../render; sh run.sh; cd ..; pdflatex main.tex`).
+
+More ambitious:
+
+- Both `benchmarks.tar.gz` and `raw-data.tar.gz` are required to run the rational
+  programmer on a benchmark. Unpack both. Copy the benchmark source to
+  `rational-experiment/gtp-bench`. Copy the runtime, boundary, and statistical
+  profile data for that benchmark to the folders under `rational-experiment/data`.
+  Then add the benchmark's name to the list in `rational-experiment/run.sh`,
+  right next to "fsm". Finally run `run.sh` to generate trail output.
+
+Finally:
+
+- The scripts in `cloudlab.tar.gz` helped us collect performance data in the
+  first place. The readme on Zenodo outlines how to use them. Collecting the
+  data took several months.
 
 
+## How to change the success criteria
 
-## Rational Programmer, Resolve interfaces
+The paper has a strict success criteria: 1x overhead.
 
-getint.rkt
- See interface-for/ for examples
+To see results for a weaker criteria, edit `render/run.sh`. Change `-t 1` to
+`-t 3` or another number. Then run and rebuild the main pdf.
 
-run.sh ~10 seconds
-default is fsm all strategies
+To use a stronger criteria, edit `rational-experiment/run.sh` and
+`render/run.sh` to use a different `-t` value. Then rerun both in order.
 
-gotta download to get all
-
-use -t flag for Takikawa, -s flag for strategy
-
-3 per strategy, for example ...
-  out/fsm-con-boundary.rktd
-  out/fsm-con-prf_self.rktd
-  out/fsm-con-prf_total.rktd
+(The rational programmer needs to rerun with a stronger criteria. Suppose
+we strengthen from 1x to 1/2x. Before, the rational programmer would stop
+at a 1x configuration. After, it needs to keep searching to improve that
+1x to a 1/2x configuration.)
 
 
-## render
+## How to add a strategy
 
-mkdata.rkt => figure-data
- depends on
- ../rational-experiment/out
+The file `rational-experiment/main.rkt` implements six strategies from
+the paper:
 
-tex.rkt => ../tex
+- optimistic (known as "opt" in the code)
+- cost-aware optimistic (cost-opt)
+- conservative (con)
+- cost-aware conservative (cost-con)
+- configuration aware (limit-con)
+- null (randomB)
+
+You can add a new strategy by writing a function with the type:
+
+```
+ ConfigurationID -> [Values StatusCode ConfigurationID]
+```
+
+where:
+
+- `ConfigurationID` is a string made of "0" "1" or "2" characters
+- `[Values A B]` means the function returns two items
+- `StatusCode` is one of:
+  - `(list 'success Reason)`
+  - `(list 'error Reason)`
+- `Reason` is any symbol, for example `'unknown`
+
+For example, this function moves to the untyped configuration. It fails if the
+input is already untyped:
+
+```
+(define (untyped-strategy cfg)
+  (define u-cfg (regexp-replace* #rx"1|2" cfg "0"))
+  (define status
+    (if (equal? cfg u-cfg)
+      (list 'error 'already-untyped)
+      (list 'success 'removed-all-types)))
+  (values status u-cfg))
+```
+
+To run the rational programmer with this strategy:
+
+1. Add it to the file `rational-experiment/main.rkt`
+2. Add a name to the list `strategy*` near the top of the file.
+3. Add a case to the function `run-profile` like this:
+   `((untyped-strategy)
+     (lambda (bm-name perf-info profile-dir #:P [profile-mode #f]) untyped-strategy))`
+4. Add a similar case to the function `run-boundary`:
+   `((untyped-strategy)
+     (lambda (bm-name perf-info benchmark-dir) untyped-strategy))`
+
+Finally, rerun `rational-experiment/run.sh`. The directory
+`rational-experiment/out/` should have 3 additional files from running the
+strategy with boundary profile, statistical profile (self), and statistical
+profile (total) information. All three files will have the same results if you
+used `untyped-strategy` above.
+
+To implement a smarter strategy than "make everything untyped", look at the code
+for examples.
+
+After running, the next step is to render the results:
+
+1. Edit `render/base.rkt`:
+  - Add your strategy name to the list `all-strategy-name*`
+  - Add the output filenames to the list `all-sm-name*`. (The order of this
+    determines the left-to-right order in the plots.)
+2. Edit `render/tex.rkt`:
+  - Add a case to the function `bg-strategy->cd-strategy`:
+    Example: `(("untyped-strategy") "un-strat")`
+  - Add a matching element to the list `cd-strategy*`.
+    Example: `"un-strat"`.
+
+Rerun `render/run.sh` and rebuild the main PDF.
+
+Every plot should now include your strategy.
+
+
+## How to add a benchmark
+
+The high-level process for adding a benchmark is:
+
+1. Write code that supports a full 3D lattice, like the GTP Benchmarks do.
+2. Modify any adaptor modules to match the style of `bnd-bench/` code
+   rather than `gtp-bench/` code.
+3. Collect runtime & profiler data for every configuration
+4. Tell the rational programmer how to interpret boundaries:
+   - Create a file `rational-experiment/interface-for/BENCHMARK` that maps
+     variable names to module names
+   - The instructions in `rational-experiment/getint.rkt` can help.
+
+This is a long process.
 
