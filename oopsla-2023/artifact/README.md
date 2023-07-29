@@ -70,9 +70,9 @@ Racket way:
 
 ```
 # install from https://download.racket-lang.org/racket-v8.8.html
+# put the `racket` and `raco` commands on your path somehow (update $PATH, add symlink, etc.)
 # then install packages:
 raco pkg install --auto lang-file-lib lang-file ppict basedir rackunit-abbrevs pict-abbrevs with-cache gtp-util text-table
-  
 ```
 
 Docker way:
@@ -88,11 +88,17 @@ Rerun the rational programmer experiment:
 cd rational-experiment
 sh run.sh
 # will print many lines similar to: `example-output-run.sh.txt`
+#  the output may differ on the random strategies
 # expected time: 10 seconds
 cd ..
 ```
 
 Check that `rational-experiment/out` has 27 files.
+
+```
+ls -1 rational-experiment/out | wc -l
+# 27
+``
 
 Rerun the trail analysis script and tex-rendering script:
 
@@ -107,8 +113,8 @@ cd ..
 
 Now rebuild `main.tex` and compare `main.pdf` to `fsm.pdf`.
 
-(If you used Docker, exit before rebuilding ... or install LaTeX in the
-Docker.)
+If you used Docker, exit before rebuilding ... or install LaTeX in the
+Docker.
 
 Unless you edit `main.tex` to show only the fsm plots in the final two
 figures, those figures will be larger in your `main.pdf` than in `fsm.pdf`.
