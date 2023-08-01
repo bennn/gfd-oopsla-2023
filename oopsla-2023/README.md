@@ -7,6 +7,12 @@ OOPSLA 2023
 
 <https://2023.splashcon.org/track/splash-2023-oopsla>
 
+Revision deadline: 2023-08-13
+
+• up to 27 pages due to added copyright notices, etc.
+• should not be anonymous
+• submit a detailed changelog
+
 
 
 Followup RQs (04/23 and beyond)
