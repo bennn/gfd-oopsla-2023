@@ -1,16 +1,22 @@
 %% -----------------------------------------------------------------------------
 
 \begin{abstract}
-Sound migratory typing promises a safe and smooth refactoring of untyped code
-bases to typed ones. Over the past few years, it has become clear that enforcing
-soundness with run-time checks imposes a large performance overhead, too large
-to deploy many of the partially typed programs.  Finding a smooth path from a
-configuration with performance problems to an acceptable one is difficult due to
-the exponential size of the migration lattice. The process requires an effective
-interpretation of feedback from profiling tools. This paper reports on the
-results of a rational-programmer experiment on tens of thousands of
-performance-debugging scenarios. These results shed light on how well particular
-uses of profiling tools work for these performance-debugging issues. At the same
-time, the experiment once again confirms the usefulness of the
+Sound migratory typing envisions a safe and smooth refactoring of untyped code
+bases to typed ones.
+However, the cost of enforcing safety with run-time checks is often
+prohibitively high, thus performance regressions are a likely occurrence.
+Additional types can often recover performance,
+but choosing the right points to type is difficult because
+of the exponential size of the migratory typing lattice.
+Profiling tools can guide the search systematically.
+This paper reports on the results of a rational-programmer experiment on tens
+of thousands of performance-debugging scenarios via 15 deterministic strategies
+for turning profiler output into an actionable next step.
+When it comes to eliminating overhead, by far the most effective strategy is
+to greedily pursue strong types; it succeeds in 60\% of scenarios when
+one mis-step is allowed.
+These results shed light on how well particular uses of profiling tools work
+for these performance-debugging issues.
+At the same time, the experiment once again confirms the usefulness of the
 rational-programmer method.
 \end{abstract}

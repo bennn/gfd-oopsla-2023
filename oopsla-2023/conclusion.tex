@@ -3,45 +3,62 @@
 
 Sound migratory typing comes with several advantages~\cite{lgfd-icfp-2021} 
 but also poses a serious performance-debugging challenge to
-programmers who wish to use it. To overcome performance-debugging problems,
-programmers tend to use profiling tools. Using such tools, however, also assumes
-that programmers know how to best interpret their feedback. This paper reports
-on the results of using the novel rational-programmer evaluation method for this
-problem.
+programmers who wish to use it.
+Profiling tools are designed to overcome performance problems, but the
+use of such tools requires an effective strategy for interpreting their output.
+This paper reports
+on the results of using the novel rational programmer evaluation method to
+systematically test the usefulness of five competing strategies across three
+outputs from off-the-shelf profilers.
 
-At the object level, the results essentially deliver several insights. First,
-the boundary profiler works well if used with any ``optimistic''
-interpretation strategy. That is, programmers should eliminate the hottest
-boundary, as identified by the boundary profiler, by making both modules
-use deep types. Second, if a program comes with a low overhead for all
-mixed-typed variants, the statistical profiler works reasonably well;
-otherwise the statistical profiler is unhelpful for performance-debugging
-problems in this context. Third, while profiling tools help with debugging
-problematic performance scenarios, the data collection also clarifies that for
-certain kinds of programs, the migration lattice contains a huge region
-of ``hopeless'' performance scenarios, rendering all strategies
-useless. In other words, profiling tools used with the proposed strategies do
-not suffice. Finally, the results weaken \citet{g-deep-shallow}'s report that
-adding shallow type enforcement is helpful; except for rare scenarios, none of
-the results here confirm his report.
+At the object level, the results deliver several insights:
+\begin{enumerate}
+  \item
+    The boundary profiler works well if used with any ``optimistic''
+    interpretation strategy. That is, programmers should eliminate the hottest
+    boundary, as identified by the boundary profiler, by making both modules
+    use deep types.
+
+  \item
+    If a program comes with a low overhead for all mixed-typed
+    variants, the statistical profiler works reasonably well; otherwise the
+    statistical profiler is unhelpful for performance-debugging problems in
+    this context.
+
+  \item
+    While profiling tools help with debugging
+    performance, the data also clarifies that for
+    certain kinds of programs, the migration lattice contains a huge region
+    of ``hopeless'' scenarios in which no strategy can succeed.
+    These regions call for fundamental improvements to deep and shallow checks.
+
+  \item
+    Finally, the results weaken \citet{g-deep-shallow}'s report that
+    adding shallow type enforcement is helpful; except for rare scenarios, none of
+    the results here confirm his report.
+\end{enumerate}
 
 At the meta level, the experiment once again confirms the value of the
-rational-programmer method. Massive simulations of satisficing rational
+rational programmer method. Massive simulations of satisficing rational
 programmers deliver indicative results that clearly contradict anecdotal reports
 of human programmers. As mentioned, a rational programmer is {\em not\/} an
 idealized human developer. It remains an open question whether and how the
 results apply to actual performance-debugging scenarios when human beings are
 involved.
 
-Finally, the rational-programmer experiment also suggests several ideas for
+Finally, the rational programmer experiment also suggests several ideas for
 future research. First, the experiment should be reproduced for alternative
 mixed-typed languages. Nothing else will confirm the value of the optimistic
-interpretations of feedback from the boundary profiler. Second, the
+strategy and the boundary profiler.
+It may also be the case that JIT technology, as demonstrated
+in Grace~\cite{rmhn-ecoop-2019} and Reticulated~\cite{vsc-dls-2019}, drastically improves the value
+of the conservative strategy and statistical profiler.
+Second, the
 experiment clearly demonstrates that existing profiling tools are not enough to
 overcome the performance challenges of sound migratory typing. Unless researchers
-can construct a performant compiler for a production language with sound migratory 
-typing, the community must improve the available profiling tools to navigate the
-migration lattice or invent new tools.
+can construct a performant compiler for a production language with sound
+types, the community must design better profiling tools to guide
+type migration.
 
 
 
@@ -62,4 +79,9 @@ migration lattice or invent new tools.
 %% MF what does this mean? 
 %% Would a simpler approach work just as well [CITE vmil]?
 
+\subsubsection*{Data Availability Statement}
+
+The data for this paper is available on Zenodo,
+along with scripts for reproducing the experiment
+and plotting the results~\cite{gdf-artifact-2023}.
 

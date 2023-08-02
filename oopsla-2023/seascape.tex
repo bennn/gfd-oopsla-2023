@@ -4,57 +4,53 @@ Over the years, developers have created many large systems in untyped languages.
 In the meantime, language implementors have created gradually typed siblings of
 these languages.  Since developers tend to enjoy the benefits of type-based IDE
 support and a blessing from the type checker, they are likely to add new
-components in the typed sibling language. Alternatively, when a developer is
-confronted with debugging an untyped component, it takes a large mental effort
+components in the typed sibling language. Alternatively, when a developer must
+debug an untyped component, it takes a large mental effort
 to reconstruct the informal types of fields, functions, and methods, and to make
 this effort pay off, it is best to turn the informal types into formal
 annotations. In either case, the result is a mixed-typed software system with
 boundaries between typed and untyped components.
 
-In a sound gradual language, these boundaries impose a performance penalty.  Languages can
-enforce sound types with deep or shallow checks. A deep check means that types are
-translated to higher-order contracts~\cite{ff-icfp-2002,tf-dls-2006,st-sfp-2006}.
-Higher-order contracts impose many kinds of performance penalties: they check all
-compound values when they cross a boundary; they wrap all higher-order values with
-proxies to delay checks; and such proxies also raise memory consumption. By
-contrast, a shallow check means that types are enforced only with tag-level
-assertions and only inside of typed components~\cite{vss-popl-2017,
-vksb-dls-2014}. Each check is inexpensive, but the more type annotations a
-programmer adds, the more run-time checks the compiler inserts for typed
-components. As a result, the performance penalty can become prohibitive in
-either case. If so, the developer faces a performance-debugging scenario.
+In a sound gradual language, these boundaries impose a performance penalty.
+Languages can enforce sound types without limiting
+expressiveness\footnote{Nom~\cite{mt-oopsla-2017} and Static
+Python~\cite{lgmvpk-pj-2023} use restrictive soundness
+checks with low costs.} in several ways~\cite{type-untyped}; the leading approaches
+are deep and shallow checks:
+\begin{itemize}
+  \item
+    Deep checks enforce types by translating them to higher-order
+    contracts at the boundaries to untyped code~\cite{ff-icfp-2002,tf-dls-2006,st-sfp-2006}.
+    Higher-order contracts impose many kinds of performance penalties: they
+    traverse compound values; they wrap higher-order values with proxies
+    to delay checks; and they raise memory consumption via the proxies.
+    If there are few boundaries, however, then deep checks impose few costs.
 
-To make this concrete, consider the \bmname{fsm} program from the GTP benchmark
+  \item
+    Shallow checks enforce types with tag-level
+    assertions that ask simple questions (is this a list?)
+    and never allocate proxies~\cite{vss-popl-2017, vksb-dls-2014}.
+    Each check is inexpensive, but the lack of proxies blurs the lines between
+    typed and untyped code and leads to a conservatively high number of checks.
+    Suppose a typed function expects a callback.
+    If the callback might be supplied by untyped code, then every call needs
+    a check around it to ensure soundness---even if most calls are safe.
+    In general, more shallow types lead to more checks.
+
+\end{itemize}
+In either case, the performance penalty can become too high.
+If so, the developer faces a performance-debugging scenario.
+
+To make these ideas concrete, consider the \bmname{fsm} program from the GTP benchmark
 suite~\cite{gtnffvf-jfp-2019,g-rep-2023}. The program is the creation of \citet{fsm},
 economists interested in simulating an economy of agents with deterministic
-strategies. Figure~\ref{f:fsm-code:a} shows the outline of the four-module
+strategies. \Cref{f:fsm-code:a} shows the outline of the four-module
 program: \code{auto} implements state machines; \code{pop} coordinates among
-machines; \code{main} drives the simulation and permits users to set a number of
-simulation parameters; and \code{util} provides helper functions.  Focusing on
-just the modules of this program suffices because in Typed Racket, the migration
-granularity is a module.
-
-The variant of \bmname{fsm} on the left of figure~\ref{f:fsm-code:a} is untyped.
-If a developer adds deep types to the \code{main} module, performance is
-significantly degraded. The mixed-typed variant runs almost three times
-($3x$) slower than the untyped one.  Switching to shallow types does not remedy
-the situation. 
-
-%% 3x not terrible compared to prior work [CITE popl], but still bad.
-%% Collapsible helps fsm but not in this particular config & not in fsmoo.
-
-At this point, the question is how to recover the performance of the untyped
-variant. The first option is to roll back the addition of types, but developers
-prefer typed code and dislike undoing the effort of adding types. The second one
-is to add (deep or shallow) types to a random module connected to \code{main}---following a
-``hunch'' like programmers sometimes do---but doing so can easily make things
-worse. For example, if the choice were the \code{auto} module with shallow
-types, then performance would degrade further (a 9x slowdown, to be
-precise). Finally, adding deep types to every module is the option that is almost
-always guaranteed to fix the situation, and in this context, it would produce a
-performance improvement over the untyped variant.  However, such a choice
-represents a heavy migration effort, which a programmer who simply
-wishes to fix \code{main} and deploy again may be reluctant to invest.
+machines; \code{main} drives the simulation;
+%% and permits users to set a number of simulation parameters
+and \code{util} provides helper functions.  Focusing on
+just the modules of this program suffices because the migration granularity
+in Typed Racket is by module (each module can be typed or untyped).
 
 %% -----------------------------------------------------------------------------
 %% fsm next steps:
@@ -170,14 +166,39 @@ Running time is 18.17% contracts
 \end{figure}
 %% -----------------------------------------------------------------------------
 
-Still, the idea to continue the migration effort is a good one, because we know
-that there are a fair number of well-performing
-variants as well as badly-performing ones. The question is how to make progress.
+The variant of \bmname{fsm} on the left of figure~\ref{f:fsm-code:a} is untyped.
+If a developer adds deep types to the \code{main} module, performance is
+significantly degraded. The mixed-typed variant runs almost three times
+($3x$) slower than the untyped one.  Switching to shallow types does not remedy
+the situation.
+At this point, the question is how to recover the performance of the untyped
+variant:
+\begin{itemize}
+  \item
+One option is to roll back the addition of types.
+  \item
+For developers who prefer typed code and dislike undoing the effort of
+adding types, a second option is to add
+(deep or shallow) types to a random module connected to \code{main}---following a
+``hunch'' like programmers sometimes do---but doing so can easily make things
+worse. For example, if the choice were the \code{auto} module with shallow
+types, then performance would degrade further (a 9x slowdown, to be
+precise).
+  \item
+If the developer adds deep types to every module, then \bmname{fsm}
+has no type boundaries and gets the full benefit of optimizations. Performance
+improves over the untyped variant.
+However, such a choice
+represents a heavy migration effort, which a programmer who simply
+wishes to fix \code{main} and deploy again may be reluctant to invest.
+\end{itemize}
+None of these options are compelling.
+Informed feedback is clearly needed for a solution that recovers performance
+with a reasonable effort.
 
-Clearly, informed feedback is needed for a solution that recovers performance
-with a reasonable effort. Lacking alternatives, a developer might reach for a
-profiling tool to determine the source of the performance
-degradation. Fortunately Racket comes with two such tools: 
+The natural choice is to reach for a
+profiling tool to determine the source of the slowdown.
+Racket fortunately comes with two such tools: 
 \begin{itemize}
 
 \item a traditional \emph{statistical profiler}, which identifies the time spent
@@ -187,16 +208,39 @@ degradation. Fortunately Racket comes with two such tools:
  specific module boundaries~\cite{astavf-feature-prf, staaf-feature-prf}.
  
 \end{itemize}
-Both tools are potentially useful due to the mechanics of deep and shallow types.
+Both tools are potentially useful and potentially limited due to the mechanics
+of deep and shallow types.
 In Racket, deep types compile to contracts at module
 boundaries~\cite{tf-popl-2008}, so the boundary profiler should identify the
 expensive ones.  Shallow types compile to assertions within typed
 code~\cite{glfd-pj-2022}, meaning the statistical profiler may uncover their
 cost.
+Take, for example, a function that averages a list of numbers:
 
-The bottom half of \cref{f:fsm-code} shows the output of the statistical
-profiler and the boundary profiler for the top-right (deep) variant of \bmname{fsm} in
-figure~\ref{f:fsm-code:a}, respectively.
+\begin{verbatim}
+  (: avg (-> [Listof Real] Real))
+  (define (avg l) (/ (sum l) (length l)))
+\end{verbatim}
+
+\noindent{}With deep checks, the function gets wrapped in a proxy before
+it crosses over to untyped code. The proxy checks that untyped calls
+fully match the type by traversing input lists.
+The boundary profiler attributes costs directly to the proxy.
+The statistical profile attributes costs to modules, but it may
+\emph{indirectly} discover the proxy if proxy checks cause a module
+to slow down.
+With shallow checks, the compiler bakes in a test for
+\code{list?}, which does not traverse the list.
+If the helper function \code{sum} is typed, then it also has checks
+that validate list elements.
+There are no contracts in the shallow version, so the boundary profiler
+cannot see any costs whatsoever.
+The statistical profiler is in a much better position because costs
+arise from extra code in each function.
+
+Back to \bmname{fsm}, the bottom half of \cref{f:fsm-code} shows the output of the statistical
+profiler and the boundary profiler for the top-right (deep) variant in
+figure~\ref{f:fsm-code:a}.
 
 \paragraph{Statistical profiler} \Cref{f:fsm-code:statistical} lists two
 rows from the statistical profiler; the full output has 28 rows.  The
@@ -223,28 +267,33 @@ computation rather than the overhead of type-checking.
 \paragraph{Boundary profiler} \Cref{f:fsm-code:boundary} shows nearly-complete
 output from the boundary profiler; only two contracts are omitted.  This
 profiling output attributes \code{18.17\%} of the total running time to
-contracts, specifically, to the contracts on the three functions whose names are
-prefixed with \code{interface:}. This output indicates that the contracts are
+contracts, specifically, to the contracts on the three functions whose names
+begin with an \code{interface:} prefix.
+This output indicates that the contracts are
 wrapped on untyped functions that flow into typed code. The modules involved are
 \code{main} and \code{pop}.  Since \code{pop} is the untyped one, the hint is to
 type it.
 
 Adding types to \code{pop} does improve performance. Concretely, this variant
 suffers from a 1.2x slowdown.  If this overhead is acceptable, the developer is
-done; otherwise, it might be necessary to continue with another round of
+done; otherwise, the search must continue with another round of
 profiling, searching, and typing.
 
 
 \paragraph{Summary}
 
 At first glance, the effort of eliminating a performance problem seems
-straightforward. Several factors complicate the search, however. First, a
-programmer has two typing options not just one. Second, for programs with more
-than four modules, the output of profiling tools is much more complex;
-identifying the next step in such a context is hard. Finally, adding types to the
+straightforward. Several factors complicate the search. First, a
+programmer has two typing options not just one. Second, the output from
+profiling tools is complex. Even for this small program, the statistical
+profiler outputs 100 lines;
+identifying the next step is hard. Finally, adding types to the
 profiler-identified module may degrade the performance even more, in which case
-the programmer may wish to give up. In sum, navigating a migration lattice with
-$3^N$ program configuration is a non-trivial effort, and developers deserve to
-know how well profiling tools help with this effort. 
+the programmer may wish to give up. In sum:
 
+\begin{quote} \em
+Navigating a migration lattice with
+$3^N$ program configuration is a non-trivial effort, and developers deserve to
+know how well profiling tools help with this effort.
+\end{quote}
 

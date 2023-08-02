@@ -5,83 +5,95 @@ untyped code base to a typed one~\cite{tf-dls-2006, tfffgksst-snapl-2017}. It
 realizes the safe part with the compilation of types to run-time checks that
 guarantee type-level integrity of each mixed-typed program configuration.
 Unfortunately, these run-time checks impose a large performance
-overhead~\cite{gtnffvf-jfp-2019}, making the path anything but smooth. While
-this problem is particularly stringent for deep run-time
-checks~\cite{tf-dls-2006, st-sfp-2006},\footnote{\citet{kas-pldi-2019}
-demonstrate a low overhead for a lambda-calculus-sized programming
-language. This research is yet to be applied to a language that supports more
-than a set of select micro-benchmarks.}  it also applies to shallow run-time
+overhead~\cite{gtnffvf-jfp-2019}, making the path anything but smooth.
+This problem is particularly stringent for deep run-time
+checks~\cite{tf-dls-2006, st-sfp-2006}, but it also applies to shallow run-time
 checking~\cite{gm-pepm-2018}.
+While improvements to deep and shallow can reduce the severity of the
+problem~(\cref{sec:related}), the core issue still remains---some configurations
+need more expensive checks than others.
 
 \citet{g-thesis-2020,g-deep-shallow} presents evidence that deep and shallow
-checks actually come with complementary strengths and weaknesses. Deep checking
-imposes a steep cost yet enables type-driven optimizations that off-set
-some---and sometimes more than all---of the cost as more type annotations are
-added. By contrast, shallow checking is a pay-as-you-go scheme; a developer pays
-only for the type annotations added and the worst-case cost seems to be capped
-at an order-of-magnitude. Hence, Greenman argues that developers should, in
+checks actually come with complementary strengths and weaknesses. Deep checks
+impose a steep cost at boundaries between typed and untyped code, yet they
+enable type-driven optimizations that can offset some of the cost---and sometimes
+all of it~\cite{s-northeastern-2015}.
+By contrast, shallow checks impose a low cost at every (potential) interaction
+with untyped code.
+Hence, Greenman argues that developers should, in
 principle, be able to mix and match deep and shallow checking to get the
 best-possible type checking benefits with a tolerable performance penalty.
-Greenman has implemented this idea for Typed Racket; programmers can
-switch from deep to shallow and back with a one-line edit.  Initial empirical data
-is promising: with a mixture of checks developers can avoid migration paths that
-result in unacceptable slowdowns with either deep or shallow checks alone.
-However, the mixture of deep and shallow checks makes it even more difficult to
-find a smooth migration path. With a purely shallow or purely deep type checking
-scheme, developers have to pick from $2^N$ configurations of a program with $N$
-components that can be typed or untyped. In a context with both deep and shallow
-checking, the size of the configurations space goes to $3^N$.
+Initial empirical data is promising: with the right mixture of checks,
+it is possible to avoid order-of-magnitude slowdowns that come from either
+deep or shallow checks alone.
+Finding a ``right'' mixture, however, presents a challenge because there
+are many possibilities to choose from.
+Whereas in a purely deep (or shallow) checking scheme, developers have
+$2^N$ configurations to choose from, with deep and shallow combined
+there are $3^N$ possibilities because each of the $N$ components in
+the program can be untyped, deep-typed, or shallow-typed.
 
-This situation raises the question:
+The large search space raises the following question:
 \begin{quote} \em
- how to navigate the migration lattice of a code base while keeping
- the performance penalty from run-time checks at acceptable levels.
-\end{quote}  
-Like all performance problems, this situation calls for the use of profiling
-tools. But, this conventional response merely refines the above question in two
-ways, namely,
+ How to navigate the migration lattice of a code base while keeping
+ the performance penalty from run-time checks at acceptable levels?
+\end{quote}
+Since this is a performance problem, a plausible answer is to use profiling tools.
+%% ... readymade ... off-the-cuff ... glib
+But, this conventional response merely refines the above question in two
+ways, namely:
 \begin{itemize} \em
+\item How to use feedback from various profiling tools to choose a next step; and
+\item Whether a sequence of choices leads to a configuration with tolerable performance.
+\end{itemize}
 
-\item how to use feedback from various profiling tools to guide a navigation; and
-
-\item how well feedback helps find a path from a bad configuration to one with
- tolerable performance.
-
-\end{itemize}   
-
-Such questions call for an empirical investigation, though using human
-developers for a large number of performance problems is too costly and too
-error-prone. Instead, this paper reports on the results of a \emph{rational
-programmer} experiment~\cite{lksfd-popl-2020,lgfd-icfp-2021}. The method employs algorithmic
-abstractions, dubbed rational programmers, that reify a falsifiable hypothesis
-about various ways of using profiling tools and interpreting their feedback.
-These algorithmic abstractions are then applied to a diverse population of
-problematic performance scenarios. A rational-programmer experiment simulates the
-satisficing behavior of developers in a large number of performance-debugging
-situations and thus enables a systematic comparison of different ways
-programmers can interpret profiler feedback.
+Such questions call for an empirical investigation.
+A user study is a viable way forward, but recruiting a large number
+of people to debug problems in unfamiliar code is costly and introduces
+confounding factors.
+Until recently, however, there was no other way to proceed systematically.
+Instead, this paper reports on the results of a \emph{rational programmer}
+experiment~\cite{lksfd-popl-2020,lgfd-icfp-2021,lgfd-icfp-2023}.
+The rational programmer method employs algorithmic abstractions (\emph{strategies})
+that are inspired by methods that actual humans can follow and that reify a
+falsifiable hypothesis about one way of using profiling tools and
+interpreting their feedback.
+Because the strategies are algorithms, it is straightforward to apply them
+to thousands of debugging scenarios and test whether they improve performance.
+In sum, the rational-programmer experiment enables a systematic comparison
+of different ways that human programmers might interpret profiler feedback.
+The winning strategies merit further study, while the losing ones can be
+cast aside.
 
 In short, this paper makes two contributions:
 \begin{itemize}
 
 \item At the object level, the results of the rational programmer experiment
- provide guidance to developers about how to best use the feedback from
+ provide guidance to developers about how to best use feedback from
  profilers during type migration.
 
-\item At the meta level, the application of the rational programmer method to
- the performance problems of type migration provides one more piece of evidence
- about its usefulness. 
-    
-\end{itemize}    
-The remainder of the paper is organized as follows.  Section~\ref{sec:seascape}
-uses an example to explain the problem in concrete terms. Section~\ref{sec:ideas}
-introduces the rational programmer method and shows how its use can help evaluate the
-effectiveness of a performance-debugging strategy systematically. Section
-\ref{sec:experiment} lays out the details of how these ideas translate to a
-large-scale quantitative experiment.  Section~\ref{sec:results} presents the data
-collected from the experiment.
-\Cref{sec:discussion} extracts lessons
-for developers and researchers.  Section~\ref{sec:related} places this work in
-the context of prior research.
-\Cref{sec:conclusion} puts this work in
-perspective with respect to future research.
+    \item[]\begin{itemize}
+      \item
+        The data that supports this experiment goes far beyond prior work
+        on deep and shallow types~\cite{g-deep-shallow} with over 5GB of
+        performance and profiling results.
+        This data is is available on Zenodo~\cite{gdf-artifact-2023}.
+    \end{itemize}
+
+\item At the meta level, this application of the rational programmer method to
+ the performance problems of type migration provides evidence for its versatility
+ as a tool for studying language pragmatics.
+
+\end{itemize}
+The remainder of the paper is organized as follows.  \Cref{sec:seascape}
+uses an example to explain the problem in concrete terms. \Cref{sec:ideas}
+introduces the rational programmer method and shows how its use can systematically
+evaluate the effectiveness of a performance-debugging strategy.
+\Cref{sec:experiment} lays out the details of how these ideas translate to a
+large-scale quantitative experiment.
+\Cref{sec:results} presents the data from the experiment, which
+explores scenarios at a module-level granularity in Typed Racket.
+\Cref{sec:discussion} extracts lessons for developers and researchers.
+\Cref{sec:related} places this work in the context of prior research.
+\Cref{sec:conclusion} puts this work in perspective with respect to future
+research.

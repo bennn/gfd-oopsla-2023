@@ -1,113 +1,85 @@
 %% -----------------------------------------------------------------------------
 
-When a developer confronts a newly created performance-debugging scenario, one
-possible response is to erase the types and to return to the {\em status quo
-ante\/}.  Another one is to use a profiling tool to reduce the overhead. If the
-second alternative is chosen, the question arises:
-\begin{quote} \em
+When a performance-debugging scenario arises, the key question is \emph{how
+to modify the program} to improve performance.
+Profiling tools provide data, but there are many ways to interpret this data.
+The rational programmer method is to proceed by enumerating possible
+interpretations and testing each one independently.
 
- how the developer should modify the program to obtain tolerable performance.
- 
-\end{quote}   
-The type-migration lattice suggests two answers.  The developer should either
-add types to an untyped component or toggle the run-time checks for a typed one
-from deep to shallow or vice versa.  After all, the fully typed program with
-deep types is often faster than its untyped
-counterpart; if so, migration is guaranteed to eliminate any performance
-problem sooner or later.
+To begin, the type-migration lattice suggests two general ways to modify code:
+either add types to an untyped component, or toggle
+the run-time checks in a typed component from deep to shallow or vice versa.
+The next step is to choose which component to modify.
+Since profiling tools identify components that contribute to performance
+degredation, the logical choice is to rank them---somehow---and modify the
+highest-priority one.
 
-Deciding which of the alternatives to pursue in a given situation poses the
-follow-up question:
-\begin{quote} \em
-
-how a developer should interpret the feedback from a profiling tool to
-choose a modification.
-
-\end{quote}   
-Operationally, this question asks how the feedback is turned into a
-modification at each step of the performance-debugging process.
-
-Unlike the first question, this second one does not have a simple answer.  At
-each step, the developer has to choose a specific component to modify.  The
-sequence of choices should result in a migratory path along which performance
-improves. Assuming that the chosen profiling tool identifies components that
-contribute to the performance degradation, it is rational for the programmer to
-rely on this feedback to rank the components and to identify the
-highest-priority one for adding types or for toggling its run-time checking.
-
-Stepping back, these two insights suggest an experiment to determine which
-profiling tool combined with which strategy helps developers make progress with
-performance debugging. For this experiment, the developer must choose a
-profiling tool---statistical or boundary---and a modification strategy.
-To determine the best combination(s) means to have developers work through a
-large number of performance-debugging scenarios. The result should help guide a
-developer with toggling or adding types to resolve performance-related
-problems during type migration.
-
-Since it is obviously impossible to ask a developer to work through thousands of
-performance-debugging scenarios, an alternative experimental method is needed.
-The rational-programmer method provides a framework for conducting such
+Stepping back, these two insights on possible modifications and ranking suggest
+an experiment to determine which profiling tool combined with which
+modification strategy helps developers make progress with performance
+debugging.
+To determine the best combination(s), developers must work through a
+large number of performance-debugging scenarios. The result should identify
+successful and unsuccessful strategies for ranking profiler output and
+modifying code.
+Of course, it is unrealistic to ask human developers to work through thousands
+of scenarios. An alternative experimental method is needed.
+The rational programmer method provides a framework for conducting such
 large-scale systematic examinations.
 
 The method is inspired by the well-established idea of rationality in
 economics~\cite{mill1874essays, henrich2001search}.  In more detail, a (bounded)
 rational agent is a mathematical model of an economic actor. Essentially, it
 abstracts an actual economic actor to an entity that, in any given
-transaction-scenario, acts strategically to maximize some kind of benefit.  Of
-course, the strategy cannot be fully rational given the bounded nature of human
-beings and the limits in available information. Hence, investigations in modern
-times use rational agents that are bounded; they do not make maximally optimal
-choices and settle for \emph{satisficing}~\cite{hs:satisfice} their goal.
+transaction-scenario, acts strategically to maximize some kind of benefit.
+In modern times, these agents are bounded rather than perfectly rational
+to reflect the limitations of human beings and of available information.
+They do not make maximally optimal choices but rather settle for
+\emph{satisficing}~\cite{hs:satisfice} their goal.
 
 Analogously, a rational programmer is a model of a developer who aims to
-resolve a problem in a work context---a scenario---with bounded resources.
+resolve problems with bounded resources.
 Specifically, it is an algorithm that implements a developer's bounded
-strategy for \emph{satisficing} its goal. Using such algorithms, it is
-possible to inspect the effectiveness of an approach on a large quantity
-of scenarios. In turn, comparing the results of such runs for different
-versions of the algorithms can inform human programmers about the success
-chances of a strategy in some specific work context. In short, a
-rational-programmer evaluation yields insights into the pragmatic value of
-work strategies. So far, the rational programmer has been used to evaluate
+strategy for {satisficing} a goal. Using such algorithms, it is
+possible to test strategies on a large quantity
+of scenarios and thereby inform 
+human programmers about the odds of success in similar contexts.
+In short, a
+rational programmer evaluation yields insights into the pragmatic value of
+work strategies.
+So far, the rational programmer has been used to evaluate
 strategies for debugging logical mistakes; this paper presents the first
-application to a performance problem. 
+application to a performance problem.\footnote{Prior work
+distinguishes between \emph{strategies} for interpreting data and
+\emph{modes} of the rational programmer, which combine a strategy and other
+parameters into an algorithm. In this paper, the strategy is the only
+parameter. Strategies uniquely identify modes, thus we use only the term
+strategy.}
 
 %% -----------------------------------------------------------------------------
-\paragraph{A sketch of a rational-programmer experiment for performance
-debugging migratory typing overhead problems.}  In the context of profiler-guided
+\paragraph{Experiment Sketch.}
+In the context of profiler-guided
 type migration, a rational programmer consists of two interacting pieces.  The
 first is strategy-agnostic; it consumes a program, measures its running time,
-and if the performance is tolerable, stops. Otherwise it faces a
-performance-debugging scenario and asks for guidance from the second,
-strategy-specific piece. This second piece profiles the given program---using
+and if the performance is tolerable, stops. Otherwise, the program is a
+performance-debugging scenario and the second,
+strategy-specific piece comes into play. This second piece profiles the given program---using
 the boundary profiler or the statistical profiler---and analyzes the
-profiling information. Based on this analysis, it modifies the program by adding
-types to some untyped component to eliminate a boundary or by toggling the run-time
-enforcement of types for a typed component. This modified version is handed back
-to the first piece of the rational programmer. 
+profiling information. Based on this analysis, it modifies the program
+as described above.
+This modified version is handed back
+to the first piece of the rational programmer.
 
-In fact, as the discussion implies, there are numerous versions of the
-rational programmer that differ in their strategy-specific piece. Prior
-work on the rational programmer~\cite{lgfd-icfp-2021} names these different
-versions the \emph{modes} of the rational programmer.  In the context of
-this paper, however, a strategy is the only non-generic and distinguishing
-part of each mode. Hence, for all practical purposes, 
-a mode and its strategy are one and the same. 
-
-Importantly, each strategy can be applied to realistic
-performance-debugging scenarios and attempt to resolve the problems.  For
-any given scenario, the strategy either succeeds in eliminating the
-performance overhead or fails. Failure occurs either because the strategy
-cannot propose a program modification, or because the modification it
-proposes worsens performance. 
-
-Data about successes and failures for different profiling strategies can
-shed light on their (relative) usefulness.  Intuitively, the success rate
-of a strategy (in)validates the hypothesis that it has pragmatic value.
-Similarly, the comparison of the success rates of two different strategies
-on the same scenario clarifies the relative pragmatic value of the two.
+There are many strategies that might prove useful.
+A successful strategy will tend to eliminate performance overhead,
+though perhaps after a few incremental steps.
+An unsuccessful strategy will either degrade performance, or fail
+to reach a fast configuration.
+Testing several strategies sheds light on their relative usefulness.
+If one strategy succeeds where another fails, it has higher relative value.
 Collecting the data necessary for drawing reliable conclusions calls for
 an experiment that pits a spread of strategies against each other on a
 large and diverse set of performance-debugging scenarios. Of course, the
 experiment may also reveal shortcomings of the profiling approach
-altogether---which then demands additional research from tool creators. 
+altogether---which then demands additional research from tool creators.
+
