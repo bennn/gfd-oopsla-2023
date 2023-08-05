@@ -42,10 +42,10 @@ Since this is a performance problem, a plausible answer is to use profiling tool
 %% ... readymade ... off-the-cuff ... glib
 But, this conventional response merely refines the above question in two
 ways, namely:
-\begin{itemize} \em
+\begin{itemize} \item[] \begin{itemize}\em
 \item How to use feedback from various profiling tools to choose a next step; and
 \item Whether a sequence of choices leads to a configuration with tolerable performance.
-\end{itemize}
+\end{itemize} \end{itemize}
 
 Such questions call for an empirical investigation.
 A user study is a viable way forward, but recruiting a large number
@@ -63,7 +63,7 @@ to thousands of debugging scenarios and test whether they improve performance.
 In sum, the rational-programmer experiment enables a systematic comparison
 of different ways that human programmers might interpret profiler feedback.
 The winning strategies merit further study, while the losing ones can be
-cast aside.
+set aside.
 
 In short, this paper makes two contributions:
 \begin{itemize}
@@ -89,7 +89,7 @@ The remainder of the paper is organized as follows.  \Cref{sec:seascape}
 uses an example to explain the problem in concrete terms. \Cref{sec:ideas}
 introduces the rational programmer method and shows how its use can systematically
 evaluate the effectiveness of a performance-debugging strategy.
-\Cref{sec:experiment} lays out the details of how these ideas translate to a
+\Cref{sec:experiment} translates these ideas to a
 large-scale quantitative experiment.
 \Cref{sec:results} presents the data from the experiment, which
 explores scenarios at a module-level granularity in Typed Racket.

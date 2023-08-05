@@ -3,58 +3,57 @@
 When a performance-debugging scenario arises, the key question is \emph{how
 to modify the program} to improve performance.
 Profiling tools provide data, but there are many ways to interpret this data.
-The rational programmer method is to proceed by enumerating possible
+The rational programmer method proceeds by enumerating possible
 interpretations and testing each one independently.
 
 To begin, the type-migration lattice suggests two general ways to modify code:
-either add types to an untyped component, or toggle
-the run-time checks in a typed component from deep to shallow or vice versa.
-The next step is to choose which component to modify.
+add types to an untyped component, or toggle the run-time checks in a typed
+component from deep to shallow or vice versa.
+The next question is which component to modify.
 Since profiling tools identify components that contribute to performance
-degredation, the logical choice is to rank them---somehow---and modify the
-highest-priority one.
+degredation, the logical choice is to rank them using a relevant, deterministic
+order and modify the highest-priority one.
 
-Stepping back, these two insights on possible modifications and ranking suggest
-an experiment to determine which profiling tool combined with which
-modification strategy helps developers make progress with performance
-debugging.
+Stepping back, these two insights on modifications and ordering suggest
+an experiment to determine which combinations of profiling tool,
+ordering, and modification strategy help developers make progress with
+performance debugging.
 To determine the best combination(s), developers must work through a
-large number of performance-debugging scenarios. The result should identify
-successful and unsuccessful strategies for ranking profiler output and
-modifying code.
+large and diverse set of performance-debugging scenarios.
+The result should identify successful and unsuccessful strategies for ranking
+profiler output and modifying code.
 Of course, it is unrealistic to ask human developers to work through thousands
 of scenarios. An alternative experimental method is needed.
-The rational programmer method provides a framework for conducting such
-large-scale systematic examinations.
 
-The method is inspired by the well-established idea of rationality in
-economics~\cite{mill1874essays, henrich2001search}.  In more detail, a (bounded)
+The rational programmer provides a framework for conducting such
+large-scale systematic examinations.
+It is inspired by the well-established idea of rationality in
+economics~\cite{mill1874essays, henrich2001search}.  In more detail, a
 rational agent is a mathematical model of an economic actor. Essentially, it
 abstracts an actual economic actor to an entity that, in any given
 transaction-scenario, acts strategically to maximize some kind of benefit.
-In modern times, these agents are bounded rather than perfectly rational
-to reflect the limitations of human beings and of available information.
-They do not make maximally optimal choices but rather settle for
-\emph{satisficing}~\cite{hs:satisfice} their goal.
-
+These agents are (typically) bounded rather than perfectly rational
+to reflect the limitations of human beings and of available information;
+they aim to \emph{satisficing}~\cite{hs:satisfice} their goal since
+they cannot make maximally optimal choices.
 Analogously, a rational programmer is a model of a developer who aims to
 resolve problems with bounded resources.
 Specifically, it is an algorithm that implements a developer's bounded
-strategy for {satisficing} a goal. Using such algorithms, it is
-possible to test strategies on a large quantity
-of scenarios and thereby inform 
-human programmers about the odds of success in similar contexts.
-In short, a
-rational programmer evaluation yields insights into the pragmatic value of
-work strategies.
+strategy for {satisficing} a goal, and thereby enables a large-scale
+experiment.
+Human programmers can use the outcomes of an experiment to decide whether
+``rational'' behavior seems to pay off.
+In other words, a rational programmer evaluation yields insights into the
+pragmatic value of work strategies.
+
 So far, the rational programmer has been used to evaluate
-strategies for debugging logical mistakes; this paper presents the first
-application to a performance problem.\footnote{Prior work
+strategies for debugging logical mistakes.\footnote{Prior work
 distinguishes between \emph{strategies} for interpreting data and
 \emph{modes} of the rational programmer, which combine a strategy and other
-parameters into an algorithm. In this paper, the strategy is the only
-parameter. Strategies uniquely identify modes, thus we use only the term
-strategy.}
+parameters into an algorithm. Our experiment has only one parameter, the
+strategy, and therefore the distinction between strategy and mode is
+unimportant here.}
+This paper presents the first application to a performance problem.
 
 %% -----------------------------------------------------------------------------
 \paragraph{Experiment Sketch.}
@@ -77,9 +76,6 @@ An unsuccessful strategy will either degrade performance, or fail
 to reach a fast configuration.
 Testing several strategies sheds light on their relative usefulness.
 If one strategy succeeds where another fails, it has higher relative value.
-Collecting the data necessary for drawing reliable conclusions calls for
-an experiment that pits a spread of strategies against each other on a
-large and diverse set of performance-debugging scenarios. Of course, the
-experiment may also reveal shortcomings of the profiling approach
-altogether---which then demands additional research from tool creators.
+Of course, the experiment may also reveal shortcomings of the profiling approach
+altogether---which would demand additional research from tool creators.
 
