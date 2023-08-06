@@ -10,14 +10,16 @@ This problem is particularly stringent for deep run-time
 checks~\cite{tf-dls-2006, st-sfp-2006}, but it also applies to shallow run-time
 checking~\cite{gm-pepm-2018}.
 While improvements to deep and shallow can reduce the severity of the
-problem~(\cref{sec:related}), the core issue still remains---some configurations
-need more expensive checks than others.
+problem~(\cref{sec:related}), in particular JIT technology for
+shallow~\cite{rmhn-ecoop-2019,vsc-dls-2019},
+the core issue remains---some configurations need more expensive checks than
+others.
 
 \citet{g-thesis-2020,g-deep-shallow} presents evidence that deep and shallow
 checks actually come with complementary strengths and weaknesses. Deep checks
 impose a steep cost at boundaries between typed and untyped code, yet they
-enable type-driven optimizations that can offset some of the cost---and sometimes
-all of it~\cite{s-northeastern-2015}.
+enable type-driven optimizations that can offset some of the
+cost~\cite{s-northeastern-2015}---and sometimes all of it.
 By contrast, shallow checks impose a low cost at every (potential) interaction
 with untyped code.
 Hence, Greenman argues that developers should, in

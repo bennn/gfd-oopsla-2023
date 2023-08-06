@@ -14,9 +14,9 @@ boundaries between typed and untyped components.
 In a sound gradual language, these boundaries impose a performance penalty.
 Languages can enforce sound types without limiting
 expressiveness\footnote{Nom~\cite{mt-oopsla-2017} and Static
-Python~\cite{lgmvpk-pj-2023} use restrictive soundness
-checks with low costs.} in several ways~\cite{type-untyped}; the leading approaches
-are deep and shallow checks:
+Python~\cite{lgmvpk-pj-2023} have low-cost but restrictive soundness
+checks.} in several ways~\cite{type-untyped}.
+The leading approaches are deep and shallow checks:
 \begin{itemize}
   \item
     Deep checks enforce types by translating them to higher-order
@@ -24,7 +24,8 @@ are deep and shallow checks:
     Higher-order contracts impose many kinds of performance penalties: they
     traverse compound values; they wrap higher-order values with proxies
     to delay checks; and they raise memory consumption via the proxies.
-    If there are few boundaries, however, then deep checks impose few costs.
+    If there are few boundaries, however, then deep checks impose few costs
+    and type-driven optimizations may exceed the performance of untyped code~\cite{gtnffvf-jfp-2019}.
 
   \item
     Shallow checks enforce types with tag-level

@@ -8,8 +8,8 @@ Profiling tools are designed to overcome performance problems, but the
 use of such tools requires an effective strategy for interpreting their output.
 This paper reports
 on the results of using the novel rational programmer evaluation method to
-systematically test the usefulness of five competing strategies across three
-outputs from off-the-shelf profilers.
+systematically test the usefulness of five competing strategies on two
+off-the-shelf profilers.
 
 At the object level, the results deliver several insights:
 \begin{enumerate}
@@ -34,8 +34,10 @@ At the object level, the results deliver several insights:
 
   \item
     Finally, the results weaken \citet{g-deep-shallow}'s report that
-    adding shallow type enforcement is helpful; except for rare scenarios, none of
-    the results here confirm his report.
+    adding shallow type enforcement is helpful.
+    While shallow can quickly reduce costs in many configurations, it is
+    rarely useful as a stepping stone toward fast performance.
+    If parity with untyped code is the goal, deep types are the way forward.
 \end{enumerate}
 
 At the meta level, the experiment once again confirms the value of the
