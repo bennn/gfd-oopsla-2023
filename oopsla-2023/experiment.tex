@@ -1,12 +1,12 @@
 %% -----------------------------------------------------------------------------
 
 Turning the sketch from section~\ref{sec:ideas} into a large-scale
-automated experiment requires formal descriptions: the profiling
-strategies of the rational programmer; and the notion of debugging
+automated experiment requires formal descriptions for both the profiling
+strategies of the rational programmer and the notion of debugging
 scenario. As the preceding section discusses, given a scenario, a strategy
-identifies the next migration step, which should yield a performant
+identifies the next migration step, which should yield either an acceptable
 program or another performance-debugging scenario.  The preceding section
-also implies that a strategy's response is one of three possibilities: (1)
+also implies that the migration step is one of three possibilities: (1)
 to add types and to specify their enforcement regime (deep, shallow); (2)
 to toggle from one regime to another; or (3) to fail to act. Hence it is
 possible to specify strategies independently of the scenarios per se.
@@ -14,14 +14,13 @@ Equipped with formal descriptions, it is possible to turn the generic
 research question of the introduction into questions with a quantitative
 nature.
 
-This section provides the required formal descriptions.
-Section~\ref{subsec:strategies} presents the profiling strategies.
-Section~\ref{subsec:lattice} characterizes performance-debugging
+\Cref{subsec:strategies} presents the profiling strategies.
+\Cref{subsec:lattice} characterizes performance-debugging
 scenarios, which act as starting navigation points,
- and how a type-based migration is a path
-through a lattice of program configurations. Using these definitions, It
-also lays out the criteria for successes and failures for strategies. Finally,
-section~\ref{subsec:questions} formalizes the precise experimental
+and how a type-based migration is a path
+through a lattice of program configurations.
+It also lays out the criteria for successes and failures for strategies.
+Finally, \cref{subsec:questions} formalizes the precise experimental
 questions and the experimental procedure that answers them.
 
 %% -----------------------------------------------------------------------------

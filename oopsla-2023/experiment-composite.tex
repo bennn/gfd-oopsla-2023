@@ -1,21 +1,20 @@
 %% -----------------------------------------------------------------------------
-\begin{figure}[b]
+\begin{figure}[t]
  
   \newcommand{\desc}[1]{\parbox[t]{19.5em}{#1\\[-2mm]}}
  
   \def\desca{\desc{Splits the boundaries in the given program to those between
     typed components and the rest.  Delegates to \featopt{} to produce a
-    modification for the given program, but rank boundaries in the first group
-    higher than those in the second group while determining the most expensive
-    boundary.}}
+    modification for the given program, but ranks boundaries in the first group
+    higher than those in the second group. }}
 
   \def\descb{\desc{Like \featcostopt{} but it delegates to \featcon{}.}}
 
   \def\descc{\desc{Separates the typed components that have boundaries with
     other typed components from the rest of the components in the given
     program. Delegates to \statselfopt{} to produce a modification for the given
-    program, but rank boundaries between components in the first group higher
-    than the rest while determining the most expensive boundary.}}
+    program, but ranks boundaries between components in the first group higher
+    than the rest to determine the most expensive boundary.}}
 
    \def\descd{\desc{Like \statselfcostopt{} but it delegates to \stattotalopt{}.}}
 
@@ -23,15 +22,13 @@
 
    \def\descf{\desc{Like \statselfcostopt{} but it delegates to \stattotalcon{}.}}
 
-   \def\descg{\desc{If the number of typed components in the given program is
-     above a threshold $N$, it delegates to \featopt{}. Otherwise, it delegates
-     to \featcon{}.}}
+   \def\descg{\desc{If less than \pct{50} of components in the program
+     have types, it delegates to \featcon{}. Otherwise, it delegates
+     to \featopt{}.}}
 
-   \def\desch{\desc{Like \featconf{}; it delegates to \statselfopt{}
-     or \statselfcon{} instead.}}
+   \def\desch{\desc{Like \featconf{} but it delegates to \statself{}.}}
 
-  \def\descj{\desc{Like \featconf{}; it delegates to \stattotalopt{}
-     or \stattotalcon{} instead.}}
+  \def\descj{\desc{Like \featconf{} but it delegates to \stattotal{}.}}
 
  \begin{tabular}{l l l}
     {\bf Profiler} & {\bf Response} & {\bf Description}  \\ \hline
@@ -54,8 +51,8 @@
  \end{tabular}
 
  
-  \caption{The Composite Strategies of the Experiment and their Descriptions}
-  \Description{The Composite Strategies of the Experiment and their Descriptions}
+  \caption{Composite strategies use profiler data and current types to form a response}
+  \Description{Composite strategies use profiler data and current types to form a response}
   \label{f:cstrategies}
 \end{figure}
 %% -----------------------------------------------------------------------------

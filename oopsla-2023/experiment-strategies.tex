@@ -1,11 +1,11 @@
 %% -----------------------------------------------------------------------------
 Every program \program{} is a collection of interacting components $\component$.
-Some components have deep types, some shallow ones, and some
+Some components have deep types, some have shallow ones, and some
 are untyped. Independently of their types, a component $\component{}_1$, may
 import another component $\component{}_2$, which establishes a \emph{boundary}
 between them, across which they exchange values at run time. Depending on the
 kind of types at the two sides of the boundary, a value exchange can trigger
-run-time checks, which may degrade the performance.
+run-time checks, which may degrade performance.
 
 A profiling strategy should thus aim to eliminate the most costly
 boundaries in a program. In formal terms, a profiling strategy is a
@@ -18,40 +18,43 @@ where component $c$ obtains deep types (if necessary) ; if $c$ is typed,
 the strategy just requests toggling from shallow to deep.  If a strategy's
 result is the empty set, it cannot figure out how to proceed.
 
+\paragraph{Basic strategies.}  \Cref{f:bstrategies} describes six basic
+strategies that rational programmers may use.
+The strategies differ along two levels: how to use profiler data to identify
+a boundary and how to modify the boundary toward lower costs.
+
+At the first level, the basic strategies choose a profiler and
+(when necessary) an ordering for its output.
+The profiler is either \featkw{} or \statkw{}~(\cref{sec:seascape}).
+With the \boundary{} profiler, the output is a list of boundaries
+ordered by cost, so there is no need for the rational programmer
+to choose an ordering.
+With the \statistical{} profiler, the output is a list of components
+each with two types of costs: the \totalkw{} time spent in either the component
+or its dependencies, and the \selfkw{} time spent in the component alone.
+Because both costs are potentially useful, the rational programmers choose
+between them.
+Having ordered the components, these rational programmers must then identify a
+boundary.
+They start with the top-ranked component and seek a boundary to a component
+with \emph{stricter} types because those boundaries incur run-time checks.
+Here, deep is stricter than shallow and shallow is stricter than untyped.
+If the strategy cannot identify such a boundary, it moves to the next-ranked
+component (again in terms of either \selfkw{} or \totalkw{} time).
+If there are no components remaining, the strategy fails.
+
 \input{experiment-basics}
-
-\paragraph{Basic strategies.}  Figure~\ref{f:bstrategies} describes six basic
- strategies that rational programmers may use. 
-
-At the first level, the basic strategies differ in whether they employ the
- \featkw{} or the \statkw{} profiler to profile the given program.  Those that
- use the first kind of profiler can directly identify the most costly boundary
- in \program{} and suggest a modification of either of the two components.
- Those that use the second cannot directly identify a boundary.  Instead they
- focus on the most costly component $\component{}_1$ in terms of either
- \selfkw{} or \totalkw{} time.  From there, they pick one of the boundaries
- between $\component{}_1$ and any of the components that it depends on or that
- depend on it. The goal is to find a boundary between $\component{}_1$ and a
- component $\component{}_2$ where $\component{}_2$ has \emph{stricter} types
- than $\component{}_1$, because in this case, the interactions across the
- boundary are likely to generate costly run-time type checks. Here, deep is
- stricter than shallow, and shallow is stricter than untyped. If the strategy
- cannot identify such a boundary, it moves on to the next costly component
- (again in terms of either \selfkw{} or \totalkw{} time). Once it eventually
- identifies a target boundary, the strategy decides how to migrate the
- two components.
 
 At the second level, basic strategies differ in how they migrate the two sides
  of their target boundary. Strategies that are \optkw{} turn the types at either
- side of the boundary to deep. After all, when two components with deep types
- interact, no checks take place and, better still, deep enforcement may even
- enable type-driven compiler optimizations for the two components.  Hence, such
- a migration may eliminate the cost of the boundary entirely.  Experience shows,
- however, that switching to deep type enforcement for a component may cause a
- ripple effect. The new deeply enforced types may increase the cost of other
- boundaries between (one of) the two components and a third one. By contrast,
- \conkw{} strategies choose shallow enforcement of types for both sides of the
- target boundary. The rationale behind this choice is that, if both sides of a
+ side of the boundary to deep.
+ This action eliminates the cost of the boundary and enables type-driven
+ optimizations in both components.
+ But, it may also create boundaries to other components in a kind of ripple
+ effect with potentially disastrous costs.
+ By contrast, \conkw{} strategies choose shallow enforcement of types for both
+ sides of the target boundary.
+ The rationale behind this choice is that, if both sides of a
  boundary have shallow types, the interactions across the boundary cost less
  than if only one is deep and, at the same time, unlike with \optkw{}
  strategies, there is no risk of a ripple effect.
@@ -59,38 +62,44 @@ At the second level, basic strategies differ in how they migrate the two sides
 \input{experiment-composite.tex}
 
 \paragraph{Composite strategies.} While the basic strategies ignore the cost of
- adding types to an untyped components, developers do not. Adding types to an
- entire module in Typed Racket may require a significant effort. Hence, the
- experiment includes composite strategies that account for this cost.
+ writing type annotations for an untyped components, developers do not.
+ Adding types to an entire module in Typed Racket may require a significant
+ effort.
+ Similarly, the likelihood of ripple-effect costs depends on the number
+ of typed components in the program.
+ With few types, the cost of introducing one deep component may well be high;
+ with many types, the ripple cost is probably low.
+ Hence, the experiment includes composite strategies that take account of the
+ types currently in the codebase before choosing how to respond to profile data.
 
-Figure~\ref{f:cstrategies} lists these composite strategies. In addition to the
- performance cost reported in the profile, the \costkw{} strategies rank the
- cost of boundaries in terms of the labor needed to equip the two components
- with types.  They give priority to those boundaries that involve components
+\Cref{f:cstrategies} lists these composite strategies.
+ The \costkw{} strategies rank the cost of boundaries in terms of the labor needed to equip the two components
+ with types in addition to the costs reported by the profiler.
+ They give priority to those boundaries that involve components
  that are already typed.  For those, migration just means toggling their type
- enforcement regime, which is essentially no labor.  As pointed out, ripple
- effects also factor into the decisions that strategies have to make. The
- \confkw{} strategies decide whether to be \optkw{} or \conkw{} based on how
- many components are already typed.  When most components are untyped, the risk
- of a ripple effect outweighs the benefits of an \optkw{} strategy. Hence
- strategies favor a \conkw{} approach for sparsely typed programs and an
- \optkw{} strategy for densely typed ones.
+ enforcement regime, which is essentially no labor.
+ The \confkw{} strategies use a heuristic to avoid ripple effects.
+ Instead of committing to a type-enforcement regime up front
+ (optimistically or conservatively), they choose shallow when most components
+ are untyped and deep when most are typed.
 
-\paragraph{Baseline Strategies} An experiment must include baselines, i.e., the
- building block for a null hypothesis. In terms of strategies, the experiment
- needs a \agnostickw{} strategy.  If this \agnostickw{} strategy is less
- successful in eliminating performance problems than the profiling ones, then
- the feedback from the profiler plays a meaningful role; otherwise, the
- experiment is meaningless.
+\paragraph{Baseline Strategies} An experiment must include a baseline, i.e., the
+ building block for a null hypothesis.
+ Since profilers are the focus of this experiment, baselines must be
+ \agnostickw{}.
+ If strategies that ignore profiler data do worse than the basic and composite
+ strategies, then feedback from the profiler evidently plays a meaningful role.
+ Otherwise, comparisons among profiler-aware strategies are meaningless.
 
 The results presented in the next section include two 
  \agnostickw{} strategies. The first one, \randkw{}, aims to invalidate the null
  hypothesis with random choices. Specifically, it picks a random boundary with
- types of different strictness and suggests the modification of the two sides of the
- target boundary in either an \optkw{} or a \conkw{} manner.  The second
- \agnostickw{} strategy, \togglekw{}, is due to~\citet{g-deep-shallow}. It
- serves as a point of comparison with Greenman's results, which do not rely on
- profiling information. If the given program uses a mixture of shallow and deep
- enforcement, the strategy recommends that all
- typed components toggle to deep enforcement. If all typed components already use deep, it
- recommends toggling the enforcement to shallow.
+ types of different strictness and flips a coin to choose either an
+ \optkw{} or a \conkw{} modification to both sides.
+ The second \agnostickw{} strategy, \togglekw{}, is due to~\citet{g-deep-shallow}
+ and serves as a point of comparison to prior work.
+ It modifies all typed components to use the same checks, deep or shallow,
+ depending on which regime gives the best performance.
+ It never adds types to an untyped component, which means this strategy has
+ only one chance to improve performance.
+

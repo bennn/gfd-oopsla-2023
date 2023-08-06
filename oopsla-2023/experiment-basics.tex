@@ -2,7 +2,7 @@
 
 \def\with{with {\em total\/} in place of {\em self\/}}
 
-\begin{figure}[htb]
+\begin{figure}[t]
 
   \newcommand{\desc}[1]{\parbox[t]{24em}{#1\\[-2mm]}}
   
@@ -16,9 +16,8 @@
   \def\descc{\desc{Uses the statistical profiler to identify the component
     $\component{}_1$ with the highest self time in the given program that has a
     boundary with at least one component $\component{}_2$ that has stricter
-    types than $\component{}_1$.  Then it picks the component $\component{}_2$
-    that has the highest self time, and recommends that both
-    $\component{}_1$ and $\component{}_2$ obtain deep types.}}
+    types than $\component{}_1$.
+    It recommends deep types for $\component{}_1$, $\component{}_2$.}}
 
   \def\descd{\desc{Like \statselfopt{} \with}}
 
@@ -43,8 +42,8 @@
  \end{tabular}
 
  
-  \caption{The Basic Strategies of the Experiment and their Descriptions}
-  \Description{The Basic Strategies of the Experiment and their Descriptions}
+  \caption{How the basic strategies find and respond to slow boundaries}
+  \Description{How the basic strategies find and respond to slow boundaries}
   \label{f:bstrategies}
 \end{figure}
 %% -----------------------------------------------------------------------------

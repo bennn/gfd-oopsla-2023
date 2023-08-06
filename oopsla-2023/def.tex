@@ -5,6 +5,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \usepackage{tcolorbox}
+\usepackage{siunitx}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -39,11 +40,15 @@
 
 %% strategies
 
+\newcommand{\boundary}{boundary}
+\newcommand{\feat}{\boundary}
+\newcommand{\statistical}{statistical}
+
 \newcommand{\sfont}[1]{\textit{#1}}
 
-\newcommand{\featkw}{\sfont{boundary}}
+\newcommand{\featkw}{\sfont{\boundary}}
 
-\newcommand{\statkw}{\sfont{statistical}}
+\newcommand{\statkw}{\sfont{\statistical}}
 
 \newcommand{\totalkw}{\sfont{total}}
 
@@ -151,4 +156,4 @@
 
 \newcommand{\takikawa}{\ensuremath{T}}
 
-
+\newcommand{\pct}[1]{\SI{#1}{\percent}}
