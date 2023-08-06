@@ -1,99 +1,107 @@
 \newcommand{\gtpurl}{\url{https://docs.racket-lang.org/gtp-benchmarks/index.html}}
 %% -----------------------------------------------------------------------------
 
-Gradual type migration is an open and challenging problem for realistic
-programs~\cite{rch:in-out-infer-gt, km:ts-type-evo,
+Gradual type migration is an open and challenging problem~\cite{rch:in-out-infer-gt, km:ts-type-evo,
 mp:gt-decidable, ccew:gt-migrate, gc:gt-infer,
 cagg-solver-based-migration,clps-popl-2020,js-infer,ruby-static-infer,unif-infer,
 msi:gt-infer-hm,dyn-infer-ruby,profile-guided-typing,jstrace,gen-ts-decl,
-lambdanet,nl2ptype,learn-types-big-data,ml-ts}. For
-any untyped component, a migrating programmer has to choose
-practical type annotations from among an often infinite number of theoretical
+lambdanet,nl2ptype,learn-types-big-data,ml-ts}.
+For any untyped component, a migrating programmer has to choose
+practical type annotations from among an often-infinite number of theoretical
 ones. But, to make a rational-programmer experiment computationally feasible, it
 is necessary to avoid this dimension.
 
 Fortunately, the construction of the corpus of scenarios from a carefully
-selected set of suitable seed programs can solve the problem. For
-instance, the established GTP
+selected set of suitable seed programs can solve the problem.
+The established GTP
 benchmarks~\cite{gtnffvf-jfp-2019,g-rep-2023} are
 representative of the programming styles in the Racket world, and they
 come with well-chosen type annotations for all their components.  Hence,
 the migration lattices can be pre-constructed for all benchmark programs.
 It is thus possible to apply a strategy to any performance-debugging
-scenario in this lattice---a program with intolerable performance---and
-use the strategy's recommendations and the known types of the components
+scenario (a program with intolerable performance) in this lattice and
+use the strategy's recommendations
 to chart a path through the program's migration lattice.
 
-Intuitively,  a strategy \strategyvar{} picks points from the migration
-lattice in an attempt to turn a $\program{}_0$ to a program $\program{}_n$
-in  a step-wise manner. Each intermediate point from $\program{}_0$ to
-$\program{}_n$ derives from applying the recommendation of \strategyvar{}
-to its input to obtain the next $\program{}_i$.  In essence,
+Intuitively, a strategy \strategyvar{} attempts to convert a program $\program{}_0$
+into an improved program $\program{}_n$ in  a step-wise manner.
+Each intermediate point $\program{}_i$ from $\program{}_0$ to
+$\program{}_n$ is the result of applying the \strategyvar{}
+to the current program.
+In essence,
 $\strategyvar{}$ constructs a \emph{migration path}, a sequence of
 programs ${\program{}_0}, \ldots, {\program{}_n}$ from a migration
 lattice. If \strategyvar{} cannot make a recommendation at any point along
-this path, migration halts without a result. The following
-definitions translate these points into rigorous language. 
+this path, migration halts.
+The following definitions formalize these points.
 
 \paragraph{The Migration Lattice.}  All programs $\program{}_i$ are nodes in the
-\emph{migration lattice} \lattice{\program{}_u} where ${\program{}_u}$, is like
-${\program{}_i}$ but all its components are untyped. The bottom element of
-\lattice{\program{}_u} is ${\program{}_u}$; its top elements are
-${\program{}_u}$'s fully typed versions $\program{}_t$ (with some combination of
-deep and shallow). In between these extreme points are all the remaining
-\emph{configurations} of $\program{}_u$. The $3^N$ configurations of
-\lattice{\program{}_u} are ordered: $\ordered{\program{}_i}{\program{}_j}$ iff
-$\program{}_j$ has at least one component that is untyped in
-$\program{}_j$. Hence the lattice is organized in \emph{levels} of incomparable
-configurations, each of which lacks types for the same components but differs
-from others in the choice of enforcement regime for one (or more) of its typed
-components.  $\orderqed{\program{}_i}{\program{}_j}$ denotes that either
-$\program{}_i$ and $\program{}_j$ are at the same level or $\program{}_i$ is at
-some level below $\program{}_j$.
+\emph{migration lattice} \lattice{\program{}_t} where ${\program{}_t}$, is like
+${\program{}_i}$ but all its components have types (either deep or
+shallow).\footnote{Although there are several possible choices for
+$\program_t$, they all denote the same lattice. By contrast, a lattice
+based on untyped code (\lattice{\program{}_u}) is ambiguous without a
+pre-determined set of types.}
+The nodes remove types and/or toggle between deep and shallow checks.
+The bottom element of \lattice{\program{}_t} is ${\program{}_u}$, the untyped
+program.
+The $3^N$ configurations of \lattice{\program{}_t} are ordered:
+$\ordered{\program{}_i}{\program{}_j}$ iff
+the untyped components in ${\program{}_i}$ are a subset
+of those in ${\program{}_j}$.
+Hence the lattice is organized in \emph{levels} of incomparable
+configurations.
+Every configuration in the same level has the same set of untyped components
+but a distinct combinations of deep and shallow checks in the typed ones.
+The notation $\orderqed{\program{}_i}{\program{}_j}$ denotes that either
+$\ordered{\program{}_i}{\program{}_j}$ or $\program{}_i$ and $\program{}_j$
+are at the same level.
 
 A migration path corresponds to a collection of configurations $\program{}_i$,
-$0 \leq i < n$, such that $\orderqed{\program{}_i}{\program{}_{i+1}}$. In fact,
-either $\program{}_i$ and $\program{}_{i+1}$ are at the same level or they are
-at two neighboring ones.  This statement is the formal equivalent to the
+$0 \leq i < n$, such that $\orderqed{\program{}_i}{\program{}_{i+1}}$.
+This statement is the formal equivalent to the
 description from the preceding section that strategies either add types to a
 single previously untyped component or toggle the type enforcement of existing
-typed components.\footnote{None of the strategies modifies a boundary where both
-side are untyped. Such boundaries are invisible to the boundary
-profiler, and the strategies that use the statistical one explicitly filter them
-out. Ditto for the profiler-agnostic ones.}  In other words, a migration path is
-a weakly ascending chain in
-\lattice{\program{}_u}.
+typed components.
+(No strategy, including the agnostic ones, modifies a boundary where both sides
+are untyped.)
+In other words, a migration path is a weakly ascending chain in
+\lattice{\program{}_t}.
 
 
 \paragraph{Performance-debugging scenarios and success criteria.} Completing the
 formal description of the experiments demands answers to two more questions.
-
-The first concerns the selection of the starting points for the
-strategy-driven migrations,
-i.e., the \emph{performance-debugging scenarios}.  The
-answer is that every configuration $\program$ that exhibits performance
-degradation compared to $\program{}_u$ above a certain threshold is an
-interesting starting point for a rational-programmer exploration.
+The first concerns the selection of the starting points for the strategy-driven
+migrations, i.e., the \emph{performance-debugging scenarios}.
+Which configurations $\program_i$ quality as slow?
+Since type checks are the source of performance overhead, the appropriate
+way to measure costs is by comparing $\program_i$ to the untyped configuration
+$\program_u$:
 
 \begin{quote} \em
 
-Given a migration lattice \lattice{\program{}_u},
-a \emph{performance-debugging scenario} is a configuration $\program$ in \lattice{\program{}_u} 
-iff
-\slowdown{\program}{\program{}_u} > \takikawa{},\\
- where \slowdown{\program}{\program{}_u} is the ratio of the performance of \program{} over the performance of $\program{}_u$,\\ 
- and $\takikawa{}$ is a constant that signifies the maximum acceptable performance degradation.
+Given a migration lattice, a \emph{performance-debugging scenario} is a
+  configuration $\program$ such that \slowdown{\program}{\program{}_u} > \takikawa{}.
+  \begin{itemize} \item[] \begin{itemize}
+    \item
+      \slowdown{\program}{\program{}_u} is the ratio of the performance of
+      \program{} over the performance of $\program{}_u$
+    \item
+      $\takikawa{}$ is a
+      constant that signifies the maximum acceptable performance degradation
+  \end{itemize} \end{itemize}
 \end{quote}
 
 The second question is about differentiating successful from failing migrations.
-In this case, there are two answers. Strictly speaking, performance should
+Strictly speaking, performance should
 always improve, otherwise the programmer may not wish to invest any more effort
-into migration.  In the worst case, performance might stay the same for a few
-migration steps, before it becomes tolerable.
+into migration.
+In the worst case, performance might stay the same for a few
+migration steps before it becomes tolerable:
 
 \begin{quote} \em
 
-A migration path ${\program{}_0} \ldots {\program{}_n}$ in a lattice \lattice{\program{}_u}
+A migration path ${\program{}_0} \ldots {\program{}_n}$ in a lattice \lattice{\program{}_t}
 is \emph{strictly successful}
 iff
 \begin{enumerate}
@@ -102,18 +110,17 @@ iff
   \item for all $0 \leq i < n$, $\slowdown{\program{}_{i+1}}{\program{}_{i}} \leq 1$.
  \end{enumerate} 
 \end{quote}
-The construction of a strictly successful migration path requires a strategy
-that suggests modifications that monotonically improve the performance of  a
-program en route to making it performant.
+To achieve strict success, a strategy must monotonically improve performance.
 
-The alternative to strict success is to represent a programmer who tolerates
-occasional setbacks. Accepting that a migration path may come with $k$ setbacks,
-a $k$-loose success relaxes the requirement for monotonicity $k$ times.
+An alternative to strict success is to tolerate occasional setbacks.
+Accepting that a migration path may come with $k$ setbacks where performance
+gets worse, a $k$-loose success relaxes the requirement for monotonicity $k$
+times:
 
 \begin{quote} \em
 
 A migration path ${\program{}_0} \ldots {\program{}_n}$ in a
-lattice \lattice{\program{}_u} is \emph{$k$-loosely successful}
+lattice \lattice{\program{}_t} is \emph{$k$-loosely successful}
 iff 
 \begin{enumerate}
   \item  $\program{}_0$ is a performance-debugging scenario,
@@ -125,10 +132,10 @@ iff
   \end{enumerate} 
 \end{quote}
 The construction of a $k$-loose successful migration path allows a strategy to
-temporarily worsen performance. The constant $k$ is an
+temporarily degrade performance. The constant $k$ is an
 upper bound on the number of missteps.
 
-A patient programmer may wish to relax this constraint even more.
+A patient programmer may tolerate an unlimited number of setbacks:
 
 \begin{quote} \em
 A migration path ${\program{}_0} \ldots {\program{}_n}$ is $N$-loosely successful if 

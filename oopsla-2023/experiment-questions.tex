@@ -9,7 +9,7 @@ questions precisely:
 
 \item[$Q_{X/Y}$] Is strategy $X$ more successful than strategy $Y$ in this
   context?
-  
+
 \end{description}
 
 Answering $Q_X$ boils down to determining the success and failures of
@@ -18,7 +18,7 @@ scenarios in all available lattices. If, for a large number of scenarios,
 $X$ charts migration paths that are strictly successful, the answer is
 positive. Essentially, the large number of scenarios is evidence that when a
 rational programmer reacts to profiler feedback following $X$, it is likely to
-succeed with tuning the performance of mixed-typed code. Notably, the above
+improve performance. Notably, the above
 description uses the strict notion of success, which sets a high bar.
 Hence, the rational programmer not only manages to tune performance at
 a tolerable level but each suggestion of its strategy brings the rational
@@ -31,11 +31,11 @@ reports the data collected for the notion of $N$-loose success.
 While an answer to $Q_X$ constitutes an evaluation of a strategy $X$ for
 interpreting profiler feedback in absolute terms, an answer to $Q_{X/Y}$ is
 about the relative value of $X$ versus some other strategy
-$Y$. Answering this second question asks whether the proportion of scenarios
-where $X$ charts a successful path but $Y$ does not is higher that
-the proportion of scenarios where $Y$ charts a successful path but
-$X$ does not. Of course, the answer may not be clear cut as $X$ and $Y$
-may perform equally well in most scenarios or may have complementary success
+$Y$. This second question asks whether the proportion of scenarios
+in which $X$ succeeds and $Y$ fails is higher that
+the proportion of scenarios where $Y$ succeeds and
+$X$ fails. Of course, the answer may not be clear cut as $X$ and $Y$
+may perform equally well in most scenarios, or may have complementary success
 records. But, relaxing the notion of success by different factors $k$ may
 help distinguish $X$ and $Y$ based on the quality of the feedback they produce.
 
@@ -53,7 +53,7 @@ experimental plan:
 \item Calculate the migration paths for each strategy for
   each scenario.
 
-\item Compute and compare the successes and failures of the strategies.
+\item Compare the successes and failures of the strategies.
 
 \end{enumerate}
 
