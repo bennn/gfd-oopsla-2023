@@ -4,15 +4,17 @@
   Sound migratory typing envisions a safe and smooth refactoring of
   untyped code bases to typed ones.  However, the cost of enforcing safety
   with run-time checks is often prohibitively high, thus performance
-  regressions are a likely occurrence.  Additional types can often recover
-  performance, but choosing the right points to type is difficult because
-  of the exponential size of the migratory typing lattice. In principal
-  though, migration could be guided by an effective interpretation of feedback from
-  profiling tools.  To examine this hypothesis, this paper  follows the
-  rational programmer method, and reports on the results of an experiment
-  on tens of thousands of performance-debugging scenarios via 15
-  deterministic strategies for turning profiler output into an actionable
-  next step.  Specifically, by far the most effective strategy is to
-  greedily pursue deep types; it succeeds in 60\% of scenarios when at
-  most one performance degradation is tolerable along the way.  
+  regressions are a likely occurrence.  Additional types can often
+  recover performance, but choosing the right components to type is difficult
+  because of the exponential size of the migratory typing lattice. In
+  principal though, migration could be guided by an effective
+  interpretation of feedback from profiling tools.  To examine this
+  hypothesis, this paper  follows the rational programmer method, and
+  reports on the results of an experiment on tens of thousands of
+  performance-debugging scenarios via 15 deterministic strategies for
+  turning profiler output into an actionable next step.  By far the most
+  effective strategy is the addition of deep types that eliminate the most
+  costly boundaries between type and untyped components; the strategy
+  succeeds in 60\% of scenarios when at most one performance degradation
+  is tolerable along the way.  
 \end{abstract}
