@@ -170,8 +170,8 @@ Running time is 18.17% contracts
 The variant of \bmname{fsm} on the left of figure~\ref{f:fsm-code:a} is untyped.
 If a developer adds deep types to the \code{main} module, performance is
 significantly degraded. The mixed-typed variant runs almost three times
-($3x$) slower than the untyped one.  Switching to shallow types does not remedy
-the situation.
+($3x$) slower than the untyped one.  Switching to shallow types is a one-line
+change to the module language, but does not remedy the situation.
 At this point, the question is how to recover the performance of the untyped
 variant:
 \begin{itemize} \item[] \begin{itemize}

@@ -145,3 +145,19 @@ A migration path ${\program{}_0} \ldots {\program{}_n}$ is $N$-loosely successfu
   \end{enumerate}
 \end{quote}
 
+Although prior work shows that many configurations of the GTP Benchmarks
+run slowly, it is an open question whether successful migration paths
+exist---even in the $N$-loose case.
+It might be the case that all configurations can reach a fast point near the
+top of the lattice.
+\citet{gtnffvf-jfp-2019} approach the $N$-loose question, but severely limit
+the length of paths.
+\citet{g-deep-shallow} consider only paths that start from the untyped
+configuration and end at a fully-typed one.
+Both studies thus exclude configurations that have high overhead but can
+systematically reach a fast point (say: $80x \rightarrow 70x \rightarrow 20x
+\rightarrow 1x$).
+That said, before the rational-programmer framework it was by no means
+clear how to study migration paths systematically.
+
+

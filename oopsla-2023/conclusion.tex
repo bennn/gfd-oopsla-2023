@@ -35,9 +35,11 @@ At the object level, the results deliver several insights:
   \item
     Finally, the results weaken \citet{g-deep-shallow}'s report that
     adding shallow type enforcement is helpful.
-    While shallow can quickly reduce costs in many configurations, it is
-    rarely useful as a stepping stone toward fast performance.
-    If parity with untyped code is the goal, deep types are the way forward.
+    While toggling to shallow can reduce costs to a 3x overhead in many
+    configurations~(\cref{f:strategy-overall}), the poor results for the
+    configuration-aware strategies indicate that it is not a useful stepping
+    stone toward fast (1x) points.
+    If parity with untyped code is the goal, deep types are the way to go.
 \end{enumerate}
 
 At the meta level, the experiment once again confirms the value of the
@@ -85,5 +87,5 @@ type migration.
 
 The data for this paper is available on Zenodo,
 along with scripts for reproducing the experiment
-and plotting the results~\cite{gdf-artifact-2023}.
+and analyzing the results~\cite{gdf-artifact-2023}.
 

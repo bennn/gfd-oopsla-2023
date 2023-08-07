@@ -1,0 +1,388 @@
+The main changes to the paper are:
+
+- Section 1: Acknowledge the benefits of JITs for shallow/transient (and
+  point ahead to related work for details). Name the data as a contribution.
+- Section 2: Give more background on gradual typing and checking strategies.
+- Section 4.2: Fix the formalism error. Clarify that prior work does not
+  show that our experiment is doomed to give a negative result.
+- Section 5: Give more information about the experiment.
+- Section 8: List general takeaways in the conclusion, clarify the existing
+  takeaways.
+
+Below we give point-by-point remarks about fixes.
+
+Line numbers refer to our Revision PDF, not to the diff PDF.
+
+
+> Review #201A
+> ===========================================================================
+> * Updated: 23 Jun 2023 8:33:44pm EDT
+> 
+> Update after the rebuttal
+> -------------------------
+> ### Response to four "incorrect statements"
+> I'll grant that I don't quite know anymore why I wrote that it is well-known
+> that a large chunk of configurations are hopeless to fix. For whether any
+> useful paths exist, there are the two papers (jfp'19 and pldi'22) you mentioned
+> that give actual numbers. Now you state that that is a totally different
+> question from what you were asking, and I am not really convinced that it is.
+> Just looking at  Figure 3 in the original popl'16 paper, which shows the
+> lattice for the `suffixtree` benchmark (6 modules), shows that there is no good
+> path through the lattice from the bottom, and that the overheads are not just
+> contained in a single layer (i.e. any bad configuration closer to the untyped
+> configuration will still encounter more bad configurations on the way to the
+> top). As such, while well-known fact might be hyperbole, it's certainly a
+> widespread expectation.
+
+l.508 compares directly to prior work
+
+> As for "Figure 5" showing the "optimal" strategy, I'd say that that is not
+> quite what I had in mind. The other strategies have some limits on the paths
+> they will entertain (loose/strict...). An optimal search could/should be run
+> under the same constraints, not just as unlimited search.
+
+No comment.
+
+> Finally, on the reproducing earlier numbers, you make some good points; in
+> particular, on closely re-reading Greenman's paper, it seems true that he
+> actually did not measure all 3^N configurations. The newer versions of Racket
+> argument is fair, though if the older numbers existed might still be trumped. 
+
+l.80 compares our data to recent work
+
+> ### About the rational programmer method
+> I think we may be talking past each other here. 
+> 
+> > This argument skims over the key question that the rational programmer lets
+> > us answer: how to choose a "next" configuration. 
+> 
+> I thought that 
+> 
+> > does the output of profiler X indicate a (path to a) reachable "next"
+> > configuration whose performance is either better than the threshold or at least
+> > better than right now?
+> 
+> captures that.
+
+No fix. The trouble here is that there are many ways that one might use
+profiler output to find a next configuration.
+
+> > On the contrary, it was the rational programmer method that provided the
+> > template and tools for designing the experiment. Prior work contemplated
+> > migration questions (popl'16, jfp'19) but lacked a compelling way to answer
+> > them. This work managed to do it by instantiating the rational programmer.
+> 
+> "I am at location X in the lattice and want to add more types without making
+> the program too slow. I don't just want to try out all possible ways of adding
+> types to different parts to decide which is best, so something that indicates
+> where my efforts might best be focused would help me decide." still seems like
+> the obvious way to do it. The results of the paper show that that strategy's
+> success rate is still not great, and I claim that that in the given setting
+> that was obvious from the start, which may have been the reason why no
+> published work has considered it so far. So my point is that this paper lacks a
+> compelling way to answer migration questions, too.
+
+l.508 explains why it was not obvious from the start
+
+> > The review seems to deny that there is value in exploring the rational
+> > programmer method across different aspects of language pragmatics. Why?
+> 
+> This may be an artifact of this particular setting, but as I said, this is
+> about the most obvious ways one would go about doing an experiment about
+> gradual typing migration. I do not know whether it's application in other
+> settings was as obvious, and if there is a theme across multiple settings, then
+> that might also be worth studying (in a separate paper). However, in this
+> instance, the abstract makes it seem like there is something much deeper going
+> on than there actually is. So from my point of view, the appropriate level of
+> reference to the rational programmer method is a single sentence that states
+> that the experimental methodology here matches it.
+
+No comment.
+
+> ### Other comments
+> > The results were a significant surprise to us -- and we have a large amount
+> > of experience with the design, implementation, and evaluation of gradually
+> > typed languages. Based on Greenman's work (pldi'22) and Siek's extensive work
+> > on Reticulated Python, we fully expected shallow types to help in the lower
+> > half of the lattice. We will state this starting hypothesis in the paper.
+> 
+> Okay, based on the information that you are the first to actually measure the
+> 3^N lattice, that would actually be a contribution of the paper, and should be
+> listed as such, even though it is kind of incidental to the rest of the work.
+
+l.80 lists the contribution
+
+> > The overwhelming success of TypeScript and underwhelming success of sound
+> > gradual typing suggests that, at the moment, only gradual typing researchers
+> > and Typed Racket enthusiasts (which includes commercial users) put up with
+> > slowdowns.
+> 
+> I agree that it's unlikely that the slowdowns inherent in gradually-typed
+> Racket are acceptable to many users, but this argument makes it sound like
+> original JavaScript and original Racket had the same levels of popularity and
+> people then picked one of their typed versions based on their implementation of
+> gradual typing...
+> 
+> What I was trying to say is that from an experimental design point, choosing
+> these hard cutoffs was unfortunate. The original graphs in the popl'16 paper
+> tried to avoid such cutoffs, instead trying to plot how far one would get with
+> whatever cutoff one would want to make (and then the text settled on
+> 3-deliverable as an example benchmark, which people have then used to justify
+> the 3x cutoff). For benchmarks like `take5`, `dungeon`, and `mbta`, it would
+> still have been interesting to see if you could get to a better place, even if
+> that place was not as good as one might hope.
+
+The cutoffs are indeed unfortunate, but adding a cutoff dimension on top of the
+looseness dimension would not work on paper.
+
+> > User studies do not answer the same questions as the rational programmer.
+> > They could tell us what strategies some individual (and small number of) users
+> > choose to interpret profiler output, or whether a user can follow a specified
+> > strategy. They are not suited to test the overall effectiveness of a strategy
+> > because of the limited patience of humans and the huge number of confounding
+> > variables involved. By contrast, the rational programmer can test the
+> > effectiveness of a strategy and thereby recommend it (or not) to users -- on
+> > tens of thousands of scenarios.
+> 
+> This again is about who this paper is for. As a tool, the profiler is only
+> effective if actual users use it effectively. I agree that this does not answer
+> the same question as the rational programmer. I was just saying that your
+> framing made the paper sound as if it was about something useful for actual
+> users.
+
+l.74 has revised framing
+
+> Review #201B
+> ===========================================================================
+> * Updated: 23 Jun 2023 9:35:37am EDT
+> 
+> Meta Review
+> -----------
+> After an in-depth discussion of the paper, the reviewers recognised the
+> following arguments for the paper: 
+> 
+>  * **Pro** this paper experimentally confirms what we already expect: that
+>    Racket adds overheads at "boundaries" between typed and untyped modules, so
+>    it's best to profile module boundaries to see that overhead — although
+>    there's less going on than the writing implies.
+> 
+>  * **Con** this paper experimentally confirms what we already expect: that
+>    Racket adds overheads at "boundaries" between typed and untyped modules, so
+>    it's best to profile module boundaries to see that overhead — although
+>    there's less going on than the writing implies.
+>
+> While the experiment confirms the general expectation, actually having done the
+> experiment still has value.  We recommend that the paper be conditionally
+> accepted, subject ensuring all the changes are made from response, plus other
+> similar issues are addressed in the final version.
+> 
+> We also recommend that the revised draft takes care to characterise the
+> contributions of the paper accurately. The paper should make the simplicity of
+> the basic idea clearer in the introduction, abstract, and conclusion (that
+> Racket adds overheads at "boundaries" between typed and untyped modules, so
+> it's best to profile module boundaries to see that overhead); to highlight the
+> most valuable technical contribution: the large-scale investigation of
+> migration paths, plus the full N^3 measurements.  The  claims listed in the
+> introduction of the current draft are actually quite weak, while the claims
+> implied by the way this draft is written are rather too strong.
+
+Sections 1-4 in the revision have gone through an extensive editing pass.
+
+l.194 shows type checks in an example function
+
+> Comments for authors
+> --------------------
+> 
+> not sure why "functional langauges" is a keyword
+> 
+> line 24 and many places elsewhere - there's an assumption in the
+> writing that e.g. shallow or transient checks will always slow down
+> a program linearly. Blowing my students' trumperts, Roberts et al 2016
+> shows that's shouldn't be the case for  jitted implementation.
+
+l.31 removed the assumption, added a cite to Roberts
+
+> reflecting on that point - there are also complementary implementation
+> assumptions coming through in the "lessons' section. what I mean here
+> is he assumption that typed code is always going to be faster than
+> untyped code. That's obviously the case in Racket (either version, I
+> guess you're running on top of Chez, probably worth mentioning) but
+> not necessarily the case. So again, unfortunately things are more
+> implementation dependent than we would like.
+
+l.609 yes we used Racket-on-Chez
+
+> a few short!  very short!  code examples showing deep vs shallow type
+> checks might help.  Also how modules set their type checking policy?
+
+l.194 added a short example
+
+l.132 subtly mention that policies come from the module language (#lang)
+
+> 111 be good to know module granularity earlier in the intro
+
+l.90 added module granularity
+
+> and then towards the end, I'd be really interested to know any
+> thoughts or even opinions about granularity questions.  If a utility
+> module has a hundred strihg functions, but an application uses only
+> one ("leftpad", say) doesn't that make it more expensive to fix if
+> that module isn't typed - because you'd have to type every function in
+> the module?  alternatively could you refactor the module or even put a
+> typed version of leftpad ihto a separate module, type that one, then
+> bind the rest of the code to use just that one?
+>
+> dunno why I thought about MLKit's extensive use or profiling for
+> memory, but I did.  The issue there - I think - is that good MLKit
+> performance depends on the region inference which is *implicit* in the
+> source code - unless you print out the AST post region inference,
+> which has *explicit* regions, or look at the profiler to find out
+> what's going wrong, which again identifies *explicit* regions.
+> 
+> howmuch of the difficulty here is that especially "deep" typechekcs
+> are implicit in Racket source.  if they were made explcit (dunno how)
+> would that help? 
+> 
+> could the boundary profiler just count the number of crossings, rather
+> than the time?  
+> 
+> 
+> 216 often faster, so sometime it isn't :-)
+> 
+> Fig2 not clear the terms "conservative" and "optimistic" help here.
+> isn't "optimistic" just deep and "conservative" shallow?
+
+TODO ben: I like this. The human motivation needs to be clear up front, but thenceforth its
+better to use deep/shallow
+
+> 333 rational programmers  -- but rational programmers aren't
+> programmers, they're *not* people!  could reword to avoid that
+> implication.  Yes, I'm being really picky.  yes that's because there's
+> an implcit bias to longer reviews.
+
+TODO yes we should remove "rational programmers"
+
+> 386 or elsewhwere - is it worth talking about the difficulty -
+> especailly of the philosphy implied by the "migratory" approach, that
+> programmers can just annotation types into their programs *without
+> restructuring that code* - i.e. without following an implicit model of
+> typed programming - writing code that can in principle be typed but
+> has not been.  Again this is implementation dependent.  One example
+> because I'm old (and yes, I know Racket has option types which would
+> do this job) --- 30 years ago, in Self, say you wantedw to record an
+> *optional integer*.  Classic dyanmic langauge would be ot put a null
+> in the slot, or false, or something. Self's advice was to have a
+> Boolean slot, and then a separate integer slot, separating them by
+> type, befause otherwise the VM's type predictors would get
+> confused. That is: write dynamically typed code as if it were typed.
+> while Racket's type system is indeed a wonderous thing, there must
+> surely be cases where the available types are inadequate to describe a
+> program's behaviour.
+> 
+> 550 cite / expand GPT benchmarks &^ justify the choice
+
+l.445 done
+
+> 584 WOW!  that's a serious benchmarking effort!! 
+> 
+> howdo you know you got "reliable performance measures" on the cloud?
+> did you test for that?
+> how do you know you're out of VM warmup effects?
+> (see Edd Barrett et al, OOPSLA 2017).
+
+l.605 we made sure to reserve whole servers on CloudLab
+
+> If I take 561-564 at face value, it seems you did 11 runs; it seems
+> there's an assumption neither boundary nor statistical profiler would
+> interact with the VM or optimiser; simimlarly your measurements are
+> just one run each for stat and boundary profiler for each
+> configuraiton?   Is that right?  if not, fix it!
+> if so, can you justify it?   why not do 1 startup run,
+> 4 genreal runs, three runs with each profiler? 
+
+l.890 add the low #runs as a threat
+> 
+> I thought Fig9 was a misprint.  Cute, but perhaps always put figures
+> after the first mention in the tet
+
+l.800 moved this figure after its prose; same goes for the others
+
+> To encourage accountability, I'm signing my reviews in 2023.
+> For the record, I am James Noble, kjx@acm.org
+> 
+> Questions for author response
+> -----------------------------
+> * I don't seem to have many questions.
+> I made this one up:
+> 
+> * does boundary profiling really line up with deep types,
+> and shallow profiling really line up with shallow types?
+> Not sure why I got that impression early on, but I did.
+
+l.200 and l.205 add a brief mention of profilers vs. checks
+
+> * OK there is the "leftpad" question below.
+> 
+> * and this one: how can programmers tell if their slowdown is caused by
+>   type-checking vs by a slow algorithm. Perhaps I wrote an O(N^2)
+>   leftpad?  e.g. at line 388 - reseachers care, but why would
+>   programmers care whether the slowness is caused by their code or the
+>   typechecking?   Would e.g. an op[tion to *turn off all checking* at
+>   the module level - e.g. treat migratory types as if they were
+>   optionala* help answer this question?
+>   is that answer implementation dependent?
+> 
+> * like that one, other questions are really just suggestions so I
+> I'm putting the rest in the suggestions list.
+> 
+> * how accurate is this cynical take: typed racket generates the best
+>   code when fully ("deeply") typed and gradual typing imposes costs at
+>   module boundaries. Therefore: to speed up code, use the boundary
+>   profiler, and make things deeply typed.
+> 
+> 
+> 
+> Review #201C
+> ===========================================================================
+> Comments for authors
+> --------------------
+> In several places, the draft makes universal assertions about fully-typed
+> programs that use all deep types.  In Section 2, starting with a running
+> example of a partially-typed program (hence one whose performance is presumably
+> impacted by type checking overhead at runtime), the draft asserts "adding deep
+> types to every module is the option that is almost always guaranteed to solve
+> the problem."  This assumption is important, because it means you can navigate
+> the program lattice monotonically. Later, in Section 3, the draft says "the
+> fully-typed program with deep types is often faster than its untyped
+> counterpart."  This is a slightly different statement – it asserts that more
+> types is the remedy not only for the performance overhead of partial typing but
+> also a move towards better performance compared to any untyped program.  I am
+> afraid that I am just a systems programmer and not a user of gradually-typed
+> Racket, so I struggle to understand why these assertions are certainly true.
+> It seems to me that adding runtime checks adds overhead, and I need help
+> understanding why it sometimes doesn't.
+
+l.111 reworded the background on deep checks, similarly in the rest of sec. 2
+
+> Section 4.2 – "the 3**n configurations of [the lattice] are ordered: Pi < Pj
+> iff Pj has at least one component that is untyped in Pj."  Putting aside what
+> appears to be a typo, this still does not appear to say what I think the
+> authors intend.  I think you probably mean something like Pi < Pj iff for all
+> components c, if c is typed in Pi it is typed in Pj, AND there exists some
+> component c' that is typed in Pj but not in Pi.  Otherwise, I am confused.
+
+l.460: fixed, thanks again!
+
+> Although this is not the sort of evaluation that I am accustomed to reading, I
+> found it very interesting.
+> 
+> The threats to validity and and prior work sections are simply excellent.
+> 
+> Questions for author response
+> -----------------------------
+> Q1: How do these results generalize beyond the walled garden of gradually-typed
+> Racket?  
+> 
+> Q2: More specifically, is "boundary profiler" really an 'approach' in the same
+> sense that "statistical profilers" are, or is it a specific artifact?
+> 
