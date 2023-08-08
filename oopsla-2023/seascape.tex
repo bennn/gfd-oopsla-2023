@@ -11,32 +11,37 @@ this effort pay off, it is best to turn the informal types into formal
 annotations. In either case, the result is a mixed-typed software system with
 boundaries between typed and untyped components.
 
-In a sound gradual language, these boundaries impose a performance penalty.
-Languages can enforce sound types without limiting
-expressiveness\footnote{Nom~\cite{mt-oopsla-2017} and Static
-Python~\cite{lgmvpk-pj-2023} have low-cost but restrictive soundness
-checks.} in several ways~\cite{type-untyped}.
-The leading approaches are deep and shallow checks:
+In a sound gradual language, these boundaries impose a performance penalty
+because of the enforcement of types.
+Among the several approaches to the sound enforcement of
+gradual types that do not limit
+ expressiveness~\cite{type-untyped},\footnote{Nom~\cite{mt-oopsla-2017} and Static
+Python~\cite{lgmvpk-pj-2023} have low-cost but restrictive
+checks.} the two leading ones are deep and shallow checks:
 \begin{itemize}
   \item
-    Deep checks enforce types by translating them to higher-order
-    contracts at the boundaries to untyped code~\cite{ff-icfp-2002,tf-dls-2006,st-sfp-2006}.
-    Higher-order contracts impose many kinds of performance penalties: they
-    traverse compound values; they wrap higher-order values with proxies
-    to delay checks; and they raise memory consumption via the proxies.
-    If there are few boundaries, however, then deep checks impose few costs
-    and type-driven optimizations may exceed the performance of untyped code~\cite{gtnffvf-jfp-2019}.
+    Deep checks enforce types with higher-order contracts that monitor the
+    boundaries between typed and untyped
+    code~\cite{ff-icfp-2002,tf-dls-2006,st-sfp-2006}.  Higher-order
+    contracts impose many kinds of performance penalties: they traverse
+    compound values; they wrap higher-order values with proxies to delay
+    checks; and they raise memory consumption due to the proxies'
+    allocation.  If there are few boundaries, however, then deep checks
+    impose few costs and type-driven optimizations may exceed the
+    performance of untyped code~\cite{gtnffvf-jfp-2019}.
 
   \item
-    Shallow checks enforce types with tag-level
-    assertions that ask simple questions (is this a list?)
-    and never allocate proxies~\cite{vss-popl-2017, vksb-dls-2014}.
-    Each check is inexpensive, but the lack of proxies blurs the lines between
-    typed and untyped code and leads to a conservatively high number of checks.
-    Suppose a typed function expects a callback.
-    If the callback might be supplied by untyped code, then every call needs
-    a check around it to ensure soundness---even if most calls are safe.
-    In general, more shallow types lead to more checks.
+    Shallow checks enforce types with tag-level assertions injected at
+    compile-time at strategic places in typed code. Shallow's assertions
+    ask simple questions (is this a list?) and never allocate
+    proxies~\cite{vss-popl-2017, vksb-dls-2014}.  Each check is
+    inexpensive, but the lack of proxies blurs the lines between typed and
+    untyped code and leads to a conservatively high number of checks.
+    Suppose a typed function expects a callback.  To account for the case
+    that the callback is supplied by untyped code, every call needs a
+    result check around it to ensure soundness---even if most calls are
+    safe.  In general, the addition of more shallow types leads to more
+    checks.
 
 \end{itemize}
 In either case, the performance penalty can become too high.
@@ -210,12 +215,11 @@ Racket fortunately comes with two such tools:
 
 \end{itemize} \end{itemize}
 Both tools are potentially useful and potentially limited due to the mechanics
-of deep and shallow types.
-In Racket, deep types compile to contracts at module
-boundaries~\cite{tf-popl-2008}, so the boundary profiler should identify the
-expensive ones.  Shallow types compile to assertions within typed
-code~\cite{glfd-pj-2022}, meaning the statistical profiler may uncover their
-cost.
+of deep and shallow types. Specifically, the contract-based enforcement of
+deep types should be a good match for the boundary profiler but not
+for the statistical profiler. In contrast, the case for shallow's assertion should be
+the opposite, meaning the statistical profiler may uncover 
+costs that the boundary profiler misses.
 Take, for example, a function that averages a list of numbers:
 
 \begin{verbatim}
@@ -226,21 +230,20 @@ Take, for example, a function that averages a list of numbers:
 \begin{itemize}
   \item
     With deep checks, the function gets wrapped in a proxy, which is
-    derived from the type, before it crosses over to untyped code.
-    The proxy checks that untyped calls
-    fully match the type by traversing input lists.
-    The \emph{boundary profiler} is well-suited to discover if these
-    checks are expensive because it attributes costs directly to proxies.
-    By contrast, the statistical profiler would seem less likely to
-    succeed because it attributes costs to modules; however, it may
-    indirectly discover expensive proxies if they slow down an enclosing
-    module.
+    derived from the type, before it crosses over to untyped code.  The
+    proxy checks that untyped calls fully match the type by traversing
+    input lists.  The \emph{boundary profiler} is well-suited to
+    discover if these checks are expensive because it attributes costs
+    directly to proxies.  Conversely, the statistical profiler seems less
+    likely to be useful because it breaks down cost by module; however, it
+    may indirectly produce useful information if the proxy slows
+    down a module that calls \code{avg}.
   \item
-    With shallow checks, the compiler bakes in a test for
+    With shallow checks, the compiler injects in the definition of \code{avg} a test for
     \code{list?}, which does not traverse the list.
     If the helper function \code{sum} is typed, then it also has checks
     that validate list elements.
-    Because there are no contracts in the shallow version, only checks, the
+    Because there are no contracts in the shallow version, only simple checks, the
     boundary profiler cannot measure the cost of the types.
     The \emph{statistical profiler} is in a much better position to find
     costs because they arise from extra code in each function.
@@ -252,7 +255,7 @@ figure~\ref{f:fsm-code:a}.
 
 \paragraph{Statistical profiler} \Cref{f:fsm-code:statistical} lists two
 rows from the statistical profiler; the full output has 28 rows.  The
-first row, labeled \code{[17]}, covers a large percentage (\code{68\%}) of the
+first row, labeled \code{[17]}, covers a large percentage (\code{68.6\%}) of the
 total running time, and it refers to a function named \code{evolve}, which is
 defined in the \code{main} module. The line suggests that calls from
 \code{evolve} to other modules account for a high percentage of the total cost.
@@ -277,8 +280,8 @@ output from the boundary profiler; only two contracts are omitted.  This
 profiling output attributes \code{18.17\%} of the total running time to
 contracts, specifically, to the contracts on the three functions whose names
 begin with an \code{interface:} prefix.
-This output indicates that the contracts are
-wrapped on untyped functions that flow into typed code. The modules involved are
+This output indicates that proxies are
+wrap untyped functions that flow into typed code. The modules involved are
 \code{main} and \code{pop}.  Since \code{pop} is the untyped one, the hint is to
 type it.
 

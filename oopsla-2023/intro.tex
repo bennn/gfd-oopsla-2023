@@ -39,10 +39,9 @@ the program can be untyped, deep-typed, or shallow-typed.
 
 The large search space raises the following question:
 \begin{quote} \em
- How to navigate the migration lattice of a code base away from a
-  configuration with unacceptable performance while keeping
- the performance penalty from run-time checks at tolerable levels along
-  the way?
+ How to navigate the migration lattice of a code base from a
+  configuration with unacceptable performance to one with acceptable
+  performance?
 \end{quote}
 Since this is a performance problem, a plausible answer is to use profiling tools.
 %% ... readymade ... off-the-cuff ... glib
@@ -51,7 +50,7 @@ ways, namely:
 \begin{itemize} \item[] \begin{itemize}\em
 \item How to use feedback from various profiling tools to choose a next step; and
 \item Whether a sequence of choices leads to a configuration with
-  acceptable performance along a tolerable migration path.
+  acceptable performance.
 \end{itemize} \end{itemize}
 
 Such questions call for an empirical investigation.
