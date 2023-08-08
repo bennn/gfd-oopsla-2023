@@ -9,7 +9,7 @@ debug an untyped component, it takes a large mental effort
 to reconstruct the informal types of fields, functions, and methods, and to make
 this effort pay off, it is best to turn the informal types into formal
 annotations. In either case, the result is a mixed-typed software system
-with parts that have types and parts that do not.
+with components that have types and parts that do not.
 
 In a sound gradual language, the enforcement of types inflicts a performance penalty.
 Among the several enforcement approaches that do not limit
@@ -20,24 +20,24 @@ checks.} the two leading ones are deep and shallow types:
   \item
     Deep types use higher-order contracts to monitor the
     boundaries between typed and untyped
-    code~\cite{ff-icfp-2002,tf-dls-2006,st-sfp-2006}.  Higher-order
+    components~\cite{ff-icfp-2002,tf-dls-2006,st-sfp-2006}.  Higher-order
     contracts impose many kinds of performance penalties: they traverse
     compound values; they wrap higher-order values with proxies to delay
     checks; and they raise memory consumption due to the proxies'
     allocation.  If there are few boundaries, however, then deep types
     impose few costs and type-driven optimizations may exceed the
-    performance of untyped code~\cite{gtnffvf-jfp-2019}.
+    performance of the untyped code base~\cite{gtnffvf-jfp-2019}.
 
   \item
     Shallow types do not explicitly enforce types at boundaries but
     delegate checking to tag-level assertions injected at
-    compile-time at strategic places in typed code. Shallow's assertions
+    compile-time at strategic places in typed components. Shallow's assertions
     ask simple questions (is this a list?) and never allocate
     proxies~\cite{vss-popl-2017, vksb-dls-2014}.  Each check is
     inexpensive, but the lack of proxies blurs the boundary between typed and
-    untyped code and leads to a conservatively high number of checks.
+    untyped components and leads to a conservatively high number of checks.
     Suppose a typed function expects a callback.  To account for the case
-    that the callback is supplied by untyped code, every call needs a
+    that the callback is supplied by an untyped component, every call needs a
     result check around it to ensure soundness---even if most calls are
     safe.  In general, the addition of more shallow types leads to more
     checks.
@@ -284,7 +284,7 @@ profiling output attributes \code{18.17\%} of the total running time to
 contracts, specifically, to the contracts on the three functions whose names
 begin with an \code{interface:} prefix.
 This output indicates that proxies are
-wrap untyped functions that flow into typed code. The modules involved are
+wrap untyped functions that flow into typed components. The modules involved are
 \code{main} and \code{pop}.  Since \code{pop} is the untyped one, the hint is to
 type it.
 

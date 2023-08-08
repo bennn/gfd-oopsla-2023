@@ -6,12 +6,13 @@ Profiling tools provide data, but there are many ways to interpret this data.
 The rational programmer method proceeds by enumerating possible
 interpretations and testing each one independently.
 
-To begin, the type-migration lattice suggests two general ways to modify code:
-add types to an untyped component, or toggle the run-time checks in a typed
-component from deep to shallow or vice versa.
+To begin, the type-migration lattice suggests two general ways to modify a
+code base:
+add types to an untyped component, or toggle the types of a typed one
+from deep to shallow or vice versa.
 The next question is which component to modify.
-Since profiling tools identify components that contribute to performance
-degredation, the logical choice is to rank them using a relevant, deterministic
+Since profiling tools identify parts of the code base that contribute to performance
+degradation, the logical choice is to rank them using a relevant, deterministic
 order and modify the highest-priority one.
 
 Stepping back, these two insights on modifications and ordering suggest
@@ -22,7 +23,8 @@ To determine the best combination(s), developers must work through a
 large and diverse set of performance-debugging scenarios.
 The result should identify successful and unsuccessful strategies for ranking
 profiler output and modifying code.
-Of course, it is unrealistic to ask human developers to work through thousands
+Of course, it is unrealistic to ask human developers to follow faithfully different
+strategies through thousands
 of scenarios. An alternative experimental method is needed.
 
 The rational programmer provides a framework for conducting such
@@ -41,7 +43,7 @@ resolve problems with bounded resources.
 Specifically, it is an algorithm that implements a developer's bounded
 strategy for {satisficing} a goal, and thereby enables a large-scale
 experiment.
-Human programmers can use the outcomes of an experiment to decide whether
+Developers can use the outcomes of an experiment to decide whether
 ``rational'' behavior seems to pay off.
 In other words, a rational programmer evaluation yields insights into the
 pragmatic value of work strategies.
