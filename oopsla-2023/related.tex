@@ -1,8 +1,3 @@
-campora chen predictions
-
-concrete limiting expressiveness
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 This work touches a range of existing strands of research. At
@@ -13,7 +8,7 @@ sources of inspiration are research on gradual type migration and
 profiling techniques.  At the meta-level, this work builds on and extends
 prior results on the rational programmer method.
 
-\paragraph{Performance Tuning and Gradual Typing} 
+\paragraph{Performance of Gradual Types} 
 
 \citet{gtnffvf-jfp-2019} demonstrate the grim performance problems of deep
 gradual types.
@@ -79,8 +74,8 @@ and techniques based on machine learning
 (ML)~\cite{lambdanet,nl2ptype,learn-types-big-data,ml-ts}. The dynamic
 and ML-based techniques exhibit the most scalable results so far as they
 can produce accurate annotations for a range of components in the wild,
-such as JavaScript libraries. However, as the authors of a recent
-ML-based work~\cite{ml-ts} note, the problem is far from solved.
+such as JavaScript libraries.
+However, as \citet{ml-ts} note, the problem is far from solved.
 % ``automatically predicting type annotations is a challenging task and much
 % work remains to be done.''
 Moreover, no existing technique takes into account feedback from profilers to
@@ -88,7 +83,19 @@ guide migration.
 One opportunity for future work is to combine the profiling strategies in this
 paper with migration techniques in the context of automatic or
 human-in-the-loop tools.
- 
+
+\citet{ccw-icfp-2018} combine type migration with a static cost semantics
+to predict the relative performance of configurations in a migration lattice.
+This approach is compelling because it avoids the need to run mixed-typed
+programs; whereas our work measures $3^N$ configurations, they measure
+only the untyped configuration and still identify a fastest point.
+It would be interesting to extend their migration and static-cost tools to
+a full-featured type system (at least with universal and union types),
+and to test whether the approach can find \emph{satisficing} configurations
+as well as the fastest one.
+%% TODO do we have satisficing configs througout the lattice?
+
+
 \paragraph{Performance Tuning with Profilers} Profilers are the de facto
 tool that developers use to understand the causes of performance bugs. 
 Tools such as GNU gprof~\cite{gprof} established statistical (sampling) 
