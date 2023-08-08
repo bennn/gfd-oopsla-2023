@@ -208,7 +208,7 @@ Racket fortunately comes with two such tools:
 \begin{itemize} \item[] \begin{itemize}
 
 \item a traditional \emph{statistical profiler}, which identifies the time spent
- in modules; and
+ in applications; and
 
 \item a \emph{boundary profiler}, which  attributes the cost of types-as-contracts to
  specific module boundaries~\cite{astavf-feature-prf, staaf-feature-prf}.
@@ -217,10 +217,11 @@ Racket fortunately comes with two such tools:
 Both tools are potentially useful and potentially limited due to the mechanics
 of deep and shallow types. Specifically, the contract-based enforcement of
 deep types should be a good match for the boundary profiler but not
-for the statistical profiler. In contrast, the case for shallow's assertion should be
-the opposite, meaning the statistical profiler may uncover 
-costs that the boundary profiler misses.
-Take, for example, a function that averages a list of numbers:
+for the statistical profiler. In contrast, the case for shallow's
+assertion should favor the statistical but not the bundary profiler.
+Take, for example, a function that averages a list of numbers, which
+imposes compareable run-time checking cost with deep and shallow but in
+different ways:
 
 \begin{verbatim}
   (: avg (-> [Listof Real] Real))         ;; deep: enforce type as a contract

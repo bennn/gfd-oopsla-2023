@@ -188,6 +188,9 @@ l.74 has revised framing
 
 Sections 1-4 in the revision have gone through an extensive editing pass.
 
+This remark is misleading because shallow types do not impose cost on
+module boundaries.
+
 l.194 shows type checks in an example function
 
 > Comments for authors
