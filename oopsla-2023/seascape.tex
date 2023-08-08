@@ -186,7 +186,7 @@ One option is to roll back the addition of types.
 For developers who prefer typed code and dislike undoing the effort of
 adding types, a second option is to add
 (deep or shallow) types to a random module connected to \code{main}---following a
-``hunch'' like programmers sometimes do---but doing so can easily make things
+``hunch'' like developers sometimes do---but doing so can easily make things
 worse. For example, if the choice were the \code{auto} module with shallow
 types, then performance would degrade further (a 9x slowdown, to be
 precise).
@@ -195,7 +195,7 @@ If the developer adds deep types to every module, then \bmname{fsm}
 has no type boundaries and gets the full benefit of optimizations. Performance
 improves over the untyped variant.
 However, such a choice
-represents a heavy migration effort, which a programmer who simply
+represents a heavy migration effort, which a developer who simply
 wishes to fix \code{main} and deploy again may be reluctant to invest.
 \end{itemize} \end{itemize}
 None of these options are compelling.
@@ -296,12 +296,12 @@ profiling, searching, and typing.
 
 At first glance, the effort of eliminating a performance problem seems
 straightforward. Several factors complicate the search. First, a
-programmer has two typing options not just one. Second, the output from
+developer has two typing options not just one. Second, the output from
 profiling tools is complex. Even for this small program, the statistical
 profiler outputs 100 lines;
 identifying the next step is hard. Finally, adding types to the
 profiler-identified module may degrade the performance even more, in which case
-the programmer may wish to give up. In sum:
+the developer may wish to give up. In sum:
 
 \begin{quote} \em
 Navigating a migration lattice with

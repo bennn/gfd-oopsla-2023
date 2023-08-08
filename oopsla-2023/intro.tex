@@ -10,7 +10,7 @@ This problem is particularly stringent for deep run-time
 checks~\cite{tf-dls-2006, st-sfp-2006}, but it also applies to shallow run-time
 checking~\cite{gm-pepm-2018}.
 While improvements to deep and shallow can reduce the severity of the
-problem~(\cref{sec:related}), in particular JIT technology for
+problem, in particular JIT technology for
 shallow~\cite{rmhn-ecoop-2019,vsc-dls-2019},
 the core issue remains---some configurations need more expensive checks than
 others.
@@ -39,7 +39,7 @@ the program can be untyped, deep-typed, or shallow-typed.
 
 The large search space raises the following question:
 \begin{quote} \em
- How to navigate the migration lattice of a code base from a
+ How to navigate the $3^N$ migration lattice of a code base from a
   configuration with unacceptable performance to one with acceptable
   performance?
 \end{quote}
@@ -67,7 +67,9 @@ interpreting their feedback.
 Because the strategies are algorithms, it is straightforward to apply them
 to thousands of debugging scenarios and test whether they improve performance.
 In sum, the rational programmer experiment enables a systematic comparison
-of different ways that human programmers might interpret profiler feedback.
+of different ways that human developers\footnote{The remainder of the
+paper uses the term ``developer'' to distinguish between humans and the
+rational programmer.} might interpret profiler feedback.
 The winning strategies merit further study, while the losing ones can be
 set aside.
 
