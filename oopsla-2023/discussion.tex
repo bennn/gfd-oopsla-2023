@@ -1,5 +1,5 @@
 The results of the rational-programmer experiment suggest a few concrete lessons
-for the working programmer and also for language designers. Before diving into
+for the developers and also for language designers. Before diving into
 the details, it is necessary to look at the data for some individual benchmarks
 (section~\ref{subsec:data}). The data is illustrative of the general lessons
 (section~\ref{subsec:lessons}). Finally, readers should be aware some specific
@@ -52,7 +52,7 @@ at~\cref{fig:bh},
 which display the empty plots for \bmname{mbta} and
 \bmname{take5}. Neither migration lattice of these benchmarks comes with any
 hopeful performance-debugging scenarios~(\cref{t:blackhole}).
-Because a working programmer does not know the complete migration lattice
+Because a developer does not know the complete migration lattice
 and therefore cannot predict whether a scenario is hopeful, general lessons
 must not depend on the full lattice either.
 
@@ -75,9 +75,9 @@ Given the general results from the preceding section and the data from the
 individual benchmarks~(see preceding subsection and
 \ifappendix{\cref{s:bm-sky}}{supplementary material}),
 the experiment
-suggests three lessons for working programmers and one for language designers. 
+suggests three lessons for developers and one for language designers. 
 
-When a programmer faces a performance-debugging scenario, the question is
+When a developer faces a performance-debugging scenario, the question is
 whether to reach for a profiling tool and what kind. The general results and the
 results for many individual benchmarks give a clear, two-part answer.
 First, the boundary profiler is superior to the statistical profiler for
@@ -87,56 +87,67 @@ For small programs with a handful of components and single-digit overheads,
 the results show that toggling all existing types or randomly choosing a
 boundary are more effective strategies.
 
-When a programmer has reached for the boundary profiler, the next question is how
+When a developer has reached for the boundary profiler, the next question is how
 to interpret its feedback. The data implies a single
 answer.  If the boundary profiler is able to identify a particular boundary as a
-cause of the intolerable performance, the programmer is best served by
+cause of the intolerable performance, the developer is best served by
 converting both sides of the boundary to use deep types. This modification
 may prioritize toggling existing shallow types to deep before adding deep
 types to untyped components. Prioritizing in this order follows from the data
 for the cost-aware optimistic strategy which is on par with the (cost-unaware)
 \emph{optimistic} strategy.
 
-Finally, as a programmer applies an optimistic strategy, configurations along
-the migration path may suffer from performance problems that are worse than the original
-ones. In this case, the question is whether the programmer should continue with
-the performance-debugging effort. The data suggests that one setback is
-a bad sign (\pct{10} of configurations succeed despite one setback) and two
-setbacks means that success is unlikely.
-Changing to a different strategy is unlikely to help.
+Finally, as a developer applies an optimistic strategy, configurations
+along the migration path may suffer from performance problems that are
+worse than the original ones. In this case, the question is whether the
+developer should continue with the performance-debugging effort. The data
+suggests that one setback is a bad sign (\pct{10} of configurations
+succeed despite one setback) and anything more than two setbacks means
+that success is highly unlikely.  Changing to a different strategy is
+unlikely to help.
 
 %%bg: unclear from the data ... we know N-loose 1x > strict 3x, but what about strict for each? also 1x might require longer paths
-%% Finally, a reader may wonder whether the programmer should relax the high
-%% standards of eliminating the entire performance overhead.  That is, the question
-%% is whether a mixed-typed program should run as fast as its (possibly
-%% non-existent) untyped variant. But, the antenna data disagrees with relaxing the
-%% standard. With the exceptions of low-overhead programs, a profiling strategy is
-%% as likely to produce an overhead-free configuration as it is to produce a
-%% configuration with some reasonably bounded ($3$x) overhead.
+%% cd: rewrote to address Ben's point
+Finally, a reader may wonder whether developers should relax the high
+standards of eliminating the entire performance overhead.  That is, the
+question is whether a mixed-typed program should run as fast as its
+(possibly non-existent) untyped variant. But, the antenna data disagrees
+with relaxing the standard. With the exceptions of low-overhead programs,
+if a developer is willing to tolerate a small number of performance
+degradations along the way, a profiling strategy is as likely to produce
+a migration path that finds an overhead-free configuration as it is to
+produce a configuration with some reasonably bounded ($3$x) overhead.
 
-Language designers can extract a single lesson from the data.
-The addition of shallow type enforcement to
-Typed Racket~\cite{g-deep-shallow} does not seem to help with the navigation of the migration
-lattice. All conservative profiling strategies, which prioritize shallow over
-deep, are inferior to the optimistic profiling strategies---which prefer deep
-enforcement. 
+Language designers can extract a single lesson from the data.  The
+addition of shallow types to the implementation of Typed
+Racket~\cite{g-deep-shallow} does not seem to help with the navigation of
+the migration lattice. All conservative profiling strategies, which
+prioritize shallow over deep, are inferior to the optimistic profiling
+strategies---which prefer deep enforcement. Possibly this is because
+existing profiling technology is not sufficiently sensitive to detect the
+aggregate cost of shallow's assertions.  Hence, language designers that
+want to apply lessons from Typed Racket to another linguistic environment
+are better off investing on deep types and a boundary profiler.  Further
+research on techniques for compiling and profiling
+gradually typed languages seems necessary to unlock the potential, if any,
+of shallow types (see \Cref{sec:conclusion}).
 
 %% -----------------------------------------------------------------------------
 \subsection{Threats to Validity} \label{subsec:threats}
 
 The validity of the conclusions may suffer from two kinds of threats to their
 general validity.  The first one concerns the experimental setup. The second
-category is about extrinsic aspects of the rational-programmer method.
+category is about extrinsic aspects of the rational programmer method.
 
 As for method-internal threats, the most important one is that the GTP Benchmarks
 may not be truly representative of Racket programs in the wild. Several benchmarks
 are somewhat small with simple dependency graphs and low performance overheads.
-Since programmers typically confront performance-debugging scenarios with large,
+Since developers typically confront performance-debugging scenarios with large,
 high-overhead programs, they will have to apply the general lessons with some
 caution. The problem is that such programs may come with large hopeless regions in
 the migration lattice. Concretely, once a program belongs to the part of the
 lattice with high performance degradation, no profiling strategy will help the
-programmer escape it.
+developer escape it.
 As~\cref{fig:bh2} illustrates for the \bmname{acquire} benchmark, the random
 strategy works better for such large programs than any profiling strategy.  It
 remains an open question how often hopeless scenarios occur in the wild.
@@ -163,17 +174,22 @@ complete modules. One alternative is to migrate more than one module at a time. 
 second alternative is to split modules into several typed and untyped
 submodules~\cite{f:submodules}.  
 
-The design of the experiment attempts to mitigate all of the method-internal
-threats. Specifically, the experiment setup pays tribute to these threats with
-the use of the most standard suite of usable benchmarks and the careful design of
-the strategies.  Still, the reader must keep them in mind when drawing
-conclusions. The data for one configuration is rather limited due to time
-constraints, with 8 performance measurements and 1 run for each profiler.
-A small improvement would be to run the profiler several times and choose
-a ``median'' result.
+A third internal thread is that the large scale of the experiment imposes
+feasibility constraints on the collected data. Specifically, the experiment 
+collects (and averages) only 8 performance measurements per scenario plus one 
+for each profiler.
+
+The design of the experiment attempts to mitigate all of the
+method-internal threats. Specifically, the experiment setup pays tribute
+to these threats with the use of the most standard suite of usable
+benchmarks and the careful design of the strategies. Moreover, the
+collected data was produced on dedicated machines, and was 
+checked for instabilities or evidence of situations that may 
+affect the measurements, such as warmup effects.  
+Still, the reader must keep them in mind when drawing conclusions.
 
 As for the method-external threats, the most important one is that the experiment
-relies on a single language and is eco-system. While this choice is necessary for
+relies on a single language and its eco-system. While this choice is necessary for
 an apples-to-apples comparison of strategies, it is unclear how the results apply
 to other language and tool settings. Another aspect of this threat is that the
 experiment involves only two profilers. While the statistical one is like those
@@ -192,14 +208,14 @@ model acted as a compass that helped compiler writers improve their product
 substantially over the same time period.
 
 Like such models, the rational programmer is a simplified one.  While the
-rational programmer experiment assumes that a programmer takes all
+rational programmer experiment assumes that a developer takes all
 information into account and sticks to a well-defined, possibly costly
-process, a human programmer may make guesses, follow hunches, and take
-shortcuts. Hence, the conclusions from the rational-programmer
-investigation may not match the experience of working programmers. Further
+process, a developer may make guesses, follow hunches, and take
+shortcuts. Hence, the conclusions from the rational programmer
+investigation may not match the experience of developers. Further
 research that goes beyond the scope of this paper is necessary to
-establish a connection between the behavior of rational and human
-programmers.  
+establish a connection between the behavior of rational programmers
+and human developers.  
 
 That said, the behavioral simplifications of the rational programmer are
 analogous to the strategic simplifications that theoretical and practical models
