@@ -86,15 +86,16 @@ paper with migration techniques in the context of automatic or
 human-in-the-loop tools.
 
 \citet{ccw-icfp-2018} combine type migration with a static cost semantics
-to predict the relative performance of configurations in a migration lattice.
-This approach is compelling because it avoids the need to run mixed-typed
-programs; whereas our work measures $3^N$ configurations, they measure
-only the untyped configuration and still identify a fastest point.
-It would be interesting to extend their migration and static-cost tools to
-a full-featured type system (at least with universal and union types),
-and to test whether the approach can find \emph{satisficing} configurations
-as well as the fastest one.
-%% TODO do we have satisficing configs througout the lattice?
+and variational typing to predict the approximate performance of
+configurations in a migration lattice.  This approach is promising because
+it avoids the need to profile mixed-typed programs; the proposed tool
+analyzes source code to identify configurations with \emph{relative} good
+performance compared to the rest of the lattice. Unlike the profiler-based
+strategies of this paper, the tool does not handle a full-featured type
+system (with universal and union types). Moreover, due to the relative
+character of static cost semantics, it does not identify
+successful migration paths as described in~\Cref{sec:experiment}.
+
 
 
 \paragraph{Performance Tuning with Profilers} Profilers are the de facto
@@ -128,7 +129,7 @@ Unlike this paper, prior work on profilers and gradual typing does not
 examine how to translate profiler feedback to developer actions.
 The suggested repair is to remove expensive types.
 In general, most profiling tools do not make recommendations to
-programmers. The Zoom profiler~\cite{zoom} was one
+developers. The Zoom profiler~\cite{zoom} was one
 notable exception, though its recommendations were phrased in
 terms of assembly language rather than high-level code.
 
@@ -142,7 +143,7 @@ levels of abstraction, such as VM cost, syscall cost, and application
 cost. A concept-based profiler groups performance costs based on
 user-defined portions of a codebase called concepts~\cite{concepts}.
 It would be interesting to study alternative profiling and performance
-analysis techniques in future rational-programmer experiments.
+analysis techniques in future rational programmer experiments.
 
 
 \paragraph{The Rational Programmer}
