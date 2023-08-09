@@ -83,15 +83,15 @@ configurations.
 \Cref{t:data-collection} (top) shows the division of work across
 servers from CloudLab~\cite{cloudlab}.
 Each server ran a sequence of measurement tasks and nothing else;
-no other users ran jobs during our reservation time.
+no other users ran jobs during the experiment's reservation time.
 \Cref{t:data-collection} (bottom) lists the specifications of
-the machines we used.
+the machines used.
 In total, the results take up 5GB of disk space.
-Measurements began in July 2022 and finished only in April 2023.
+Measurements began in July 2022 and finished in April 2023.
 
 For all but two benchmarks, the measurements used a recent version
 of Racket (v8.6.0.2, on Chez~\cite{racket-chez}) and the Typed Racket that ships with it.
-The expections are \bmname{dungeon} and \bmname{morsecode},
+The exceptions are \bmname{dungeon} and \bmname{morsecode},
 which pulled in updates to Typed Racket that significantly affected
 their performance.\footnote{\url{https://github.com/racket/typed-racket/pull/1282}, \url{https://github.com/racket/typed-racket/pull/1316}}
 Fixing these issues was not necessary for the rational programmer experiment
@@ -131,12 +131,12 @@ per se, but makes the outcome more relevant to current versions of Racket.
 
 \paragraph{Basic Observations}
 
-The measurements confirm that the GTP Benchmark are useful for
-the rational-programmer experiment~(\cref{t:baseline-trouble}).
+The measurements confirm that the GTP benchmarks are suitable for
+the rational programmer experiment~(\cref{t:baseline-trouble}).
 With $T = 1$ as the notion of success, all but two benchmarks
 have plenty of performance-debugging scenarios.
 Going by configurations rather than benchmarks, over \pct{80} of all
-configuration are interesting starting points for the experiment.
+configurations are interesting starting points for the experiment.
 
 %% -----------------------------------------------------------------------------
 \begin{figure}[ht]
@@ -158,8 +158,8 @@ rate of the strategy for increasingly loose notions of success for $T = 1$.  The
 lowest, widest part of each bar represents the percentage of scenarios where the
 strategy is strictly successful. The next three levels represent $1$-loose,
 $2$-loose, and $3$-loose success percentages.  The striped spire is for
-$N$-loose successes.  And finally, the antenna uses the even weaker notion of
-strict success for $T = 3$.
+$N$-loose successes.  And finally, the antenna corresponds to a
+strict success but for $T = 3$.
 
 The strategies come with a wide range of success rates: 
 \begin{itemize}
@@ -168,7 +168,7 @@ The strategies come with a wide range of success rates:
     finding strict success in almost \pct{40} of all scenarios. 
     With a $2$-loose relaxation, success rises to above \pct{50}.
     The results are far worse, however, with \emph{statistical (total)} or \emph{statistical (self)}
-    profilers, both of which rarely succeed.
+    profiling, both of which rarely succeed.
 
   \item
     \emph{Cost-aware optimistic} is almost as successful as optimistic when driven
@@ -186,7 +186,8 @@ The strategies come with a wide range of success rates:
     \emph{Configuration-aware optimistic} navigation with
     \featkw{} succeeds in approximately \pct{36} of all
     configurations under strict and just over \pct{50} with $3$-loose.
-    With \emph{statistical (total)} and \emph{statistical (self)} profilers,
+    With \emph{statistical (total)} and \emph{statistical (self)}
+    profiling,
     the success rate drops to \pct{10} even for $N$-loose.
 
   \item
@@ -216,9 +217,9 @@ This second possibility is likely due to the current implementation of shallow
 types~\cite{g-deep-shallow}, which rarely achieves a speedup relative to untyped
 code.
 
-To distinguish between these two possibilities, figure~\ref{f:strategy-overall}
-reports the success rates with antennas. These thin lines atop each ``building''
-count strict successes when $T = 3$ is acceptable.  The
+To distinguish between these two possibilities,
+figure~\ref{f:strategy-overall} includes the antennas that
+reports strict successes when $T = 3$ is acceptable.  The
 number 3x is the classic, arbitrary Takikawa constant for ``acceptable'' gradual typing
 overhead~\cite{vss-popl-2017,bbst-oopsla-2017}.  Changing to 2x or 4x does not
 significantly change the outcome.
@@ -240,7 +241,7 @@ the performance cannot improve to the $T=1$ goal.
 
 \Cref{t:blackhole} lists the number of scenarios in each benchmark and the
 percentage of hopeful ones. A low percentage in the third column (labeled ``\%
-Hopeful'') of this table means that the experiment is stacked against the rational
+Hopeful'') of this table means that the experiment is stacked against any rational
 programmer.  For several benchmarks, this is indeed the case.  Worst of all are
 \bmname{mbta}, \bmname{dungeon}, and \bmname{take5}, which have zero hopeful
 scenarios.  Three others are only marginally better: \bmname{forth},
@@ -291,16 +292,17 @@ boundary} are the average across three runs.  The standard deviation is slightly
 higher than before ($<\pct{0.12}$).
 
 For the optimistic strategies, the results are much better.
-They succeed in an additional \pct{10} of
-scenarios under strict success, and the $N$-loose results improve along
-the same lines.  With statistical profilers, the optimistic strategies
+With boundary profiling, they succeed in an additional \pct{10} of
+scenarios under either strict or $N$-loose success.  
+With statistical profiling, the optimistic strategies
 improve slightly.
 
-Unfortunately, the conservative strategies perform no better than before.
+Unfortunately, the conservative strategies perform no better than for all
+scenarios.
 In fact, the antennae
 in~\cref{f:strategy-hope} are shorter than the antennae
 in~\cref{f:strategy-overall}.  This means that conservative strategies
-succeeded in the 3x sense in a small number of hopeless scenarios that
+succeeded in the strict 3x sense in a small number of hopeless scenarios that
 do not appear in~\cref{f:strategy-hope}.
 
 
