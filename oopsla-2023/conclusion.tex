@@ -1,14 +1,14 @@
 
 %% -----------------------------------------------------------------------------
 
-Sound migratory typing comes with several advantages~\cite{lgfd-icfp-2021} 
+Sound migratory typing comes with several advantages~\cite{lgfd-icfp-2021,lgfd-icfp-2023} 
 but also poses a serious performance-debugging challenge to
 programmers who wish to use it.
 Profiling tools are designed to overcome performance problems, but the
 use of such tools requires an effective strategy for interpreting their output.
 This paper reports
-on the results of using the novel rational programmer evaluation method to
-systematically test the usefulness of five competing strategies on two
+on the results of using the novel rational programmer  method to
+systematically test the pragmatics of five competing strategies that use two
 off-the-shelf profilers.
 
 At the object level, the results deliver several insights:
@@ -38,7 +38,7 @@ At the object level, the results deliver several insights:
     While toggling to shallow can reduce costs to a 3x overhead in many
     configurations~(\cref{f:strategy-overall}), the poor results for the
     configuration-aware strategies indicate that it is not a useful stepping
-    stone toward fast (1x) points.
+    stone toward performant (1x) configurations.
     If parity with untyped code is the goal, deep types are the way to go.
 \end{enumerate}
 
