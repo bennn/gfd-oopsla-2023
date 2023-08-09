@@ -5,10 +5,10 @@ Gradual type migration is an open and challenging problem~\cite{rch:in-out-infer
 mp:gt-decidable, ccew:gt-migrate, gc:gt-infer,
 cagg-solver-based-migration,clps-popl-2020,js-infer,ruby-static-infer,unif-infer,
 msi:gt-infer-hm,dyn-infer-ruby,profile-guided-typing,jstrace,gen-ts-decl,
-lambdanet,nl2ptype,learn-types-big-data,ml-ts}.
-For any untyped component, a migrating programmer has to choose
+lambdanet,nl2ptype,learn-types-big-data,ml-ts, ccw-icfp-2018}.
+For any untyped component, a migrating developer has to choose
 practical type annotations from among an often-infinite number of theoretical
-ones. But, to make a rational-programmer experiment computationally feasible, it
+ones. But, to make a rational programmer experiment computationally feasible, it
 is necessary to avoid this dimension.
 
 Fortunately, the construction of the corpus of scenarios from a carefully
@@ -39,20 +39,21 @@ The following definitions formalize these points.
 \emph{migration lattice} \lattice{\program{}_t} where ${\program{}_t}$, is like
 ${\program{}_i}$ but all its components have types (either deep or
 shallow).\footnote{Although there are several possible choices for
-$\program_t$, they all denote the same lattice. By contrast, a lattice
-based on untyped code (\lattice{\program{}_u}) is ambiguous without a
+$\program_t$, each denotes a unique lattice. By contrast, a lattice
+based an untyped program (\lattice{\program{}_u}) is ambiguous without a
 pre-determined set of types.}
-The nodes remove types and/or toggle between deep and shallow checks.
+In other words, a component in ${\program{}_i}$ may have no types 
+or toggled types compared to ${\program{}_t}$.
 The bottom element of \lattice{\program{}_t} is ${\program{}_u}$, the untyped
 program.
-The $3^N$ configurations of \lattice{\program{}_t} are ordered:
+The $3^N$ nodes of \lattice{\program{}_t} are ordered:
 $\ordered{\program{}_i}{\program{}_j}$ iff
 the untyped components in ${\program{}_i}$ are a subset
 of those in ${\program{}_j}$.
 Hence the lattice is organized in \emph{levels} of incomparable
 configurations.
 Every configuration in the same level has the same set of untyped components
-but a distinct combinations of deep and shallow checks in the typed ones.
+but a distinct combination of deep and shallow types for the typed ones.
 The notation $\orderqed{\program{}_i}{\program{}_j}$ denotes that either
 $\ordered{\program{}_i}{\program{}_j}$ or $\program{}_i$ and $\program{}_j$
 are at the same level.
@@ -61,7 +62,7 @@ A migration path corresponds to a collection of configurations $\program{}_i$,
 $0 \leq i < n$, such that $\orderqed{\program{}_i}{\program{}_{i+1}}$.
 This statement is the formal equivalent to the
 description from the preceding section that strategies either add types to a
-single previously untyped component or toggle the type enforcement of existing
+single previously untyped component or toggle the type enforcement regime of existing
 typed components.
 (No strategy, including the agnostic ones, modifies a boundary where both sides
 are untyped.)
@@ -70,7 +71,7 @@ In other words, a migration path is a weakly ascending chain in
 
 
 \paragraph{Performance-debugging scenarios and success criteria.} Completing the
-formal description of the experiments demands answers to two more questions.
+formal description of the experiment demands answers to two more questions.
 The first concerns the selection of the starting points for the strategy-driven
 migrations, i.e., the \emph{performance-debugging scenarios}.
 Which configurations $\program_i$ quality as slow?
@@ -85,19 +86,18 @@ Given a migration lattice, a \emph{performance-debugging scenario} is a
   \begin{itemize} \item[] \begin{itemize}
     \item
       \slowdown{\program}{\program{}_u} is the ratio of the performance of
-      \program{} over the performance of $\program{}_u$
+      \program{} over that of $\program{}_u$
     \item
-      $\takikawa{}$ is a
-      constant that signifies the maximum acceptable performance degradation
+      $\takikawa{}$ signifies the maximum acceptable performance degradation
   \end{itemize} \end{itemize}
 \end{quote}
 
 The second question is about differentiating successful from failing migrations.
 Strictly speaking, performance should
-always improve, otherwise the programmer may not wish to invest any more effort
+always improve, otherwise the developer may not wish to invest any more effort
 into migration.
 In the worst case, performance might stay the same for a few
-migration steps before it becomes tolerable:
+migration steps before it becomes acceptable:
 
 \begin{quote} \em
 
@@ -135,7 +135,7 @@ The construction of a $k$-loose successful migration path allows a strategy to
 temporarily degrade performance. The constant $k$ is an
 upper bound on the number of missteps.
 
-A patient programmer may tolerate an unlimited number of setbacks:
+A patient developer may tolerate an unlimited number of setbacks:
 
 \begin{quote} \em
 A migration path ${\program{}_0} \ldots {\program{}_n}$ is $N$-loosely successful if 
@@ -144,20 +144,5 @@ A migration path ${\program{}_0} \ldots {\program{}_n}$ is $N$-loosely successfu
   \item $\slowdown{\program{}_n}{\program{}_u} \leq \takikawa{}$  
   \end{enumerate}
 \end{quote}
-
-Although prior work shows that many configurations of the GTP Benchmarks
-run slowly, it is an open question whether successful migration paths
-exist---even in the $N$-loose case.
-It might be the case that all configurations can reach a fast point near the
-top of the lattice.
-\citet{gtnffvf-jfp-2019} approach the $N$-loose question, but severely limit
-the length of paths.
-\citet{g-deep-shallow} consider only paths that start from the untyped
-configuration and end at a fully-typed one.
-Both studies thus exclude configurations that have high overhead but can
-systematically reach a fast point (say: $80x \rightarrow 70x \rightarrow 20x
-\rightarrow 1x$).
-That said, before the rational-programmer framework it was by no means
-clear how to study migration paths systematically.
 
 
