@@ -8,7 +8,7 @@ kind of types at the two sides of the boundary, a value exchange can trigger
 run-time checks, which may degrade performance.
 
 A profiling strategy should thus aim to eliminate the most costly
-boundaries in a program. In formal terms, a profiling strategy is a
+checks in a program. In formal terms, a profiling strategy is a
 function that consumes a program \program{} and, after determining its
 profile, returns a set of pairs $(\component{}, \type{})$. Here \type{} is
 either \deep{} or \shallow{}. Each such pair prescribes a modification of
@@ -21,27 +21,25 @@ result is the empty set, it cannot figure out how to proceed.
 \paragraph{Basic strategies.}  \Cref{f:bstrategies} describes six basic
 strategies that rational programmers may use.
 The strategies differ along two levels: how to use profiler data to identify
-a boundary and how to modify the boundary toward lower costs.
+a set of checks and how to modify the program toward lower costs.
 
-At the first level, the basic strategies choose a profiler and
-(when necessary) an ordering for its output.
-The profiler is either \featkw{} or \statkw{}~(\cref{sec:seascape}).
-With the \boundary{} profiler, the output is a list of boundaries
-ordered by cost, so there is no need for the rational programmer
-to choose an ordering.
-With the \statistical{} profiler, the output is a list of components
-each with two types of costs: the \totalkw{} time spent in either the component
-or its dependencies, and the \selfkw{} time spent in the component alone.
+At the first level, the basic strategies choose a profiler and (when
+necessary) an ordering for its output.  The profiler is either \featkw{}
+or \statkw{}~(\cref{sec:seascape}).  With the \boundary{} profiler, the
+output is a list of boundaries ordered by cost, so there is no need for
+the rational programmer to choose an ordering.  With the \statistical{}
+profiler, the output is a list of functions each with two types of costs:
+the \totalkw{} time spent in  calls of a function including its
+dependencies, and the \selfkw{} time spent in the function code alone.
 Because both costs are potentially useful, the rational programmers choose
-between them.
-Having ordered the components, these rational programmers must then identify a
-boundary.
-They start with the top-ranked component and seek a boundary to a component
-with \emph{stricter} types because those boundaries incur run-time checks.
+between them.  Having ordered the function, these rational programmers
+must then identify a boundary.  They start with the top-ranked function
+and seek a boundary between the function's component and a component with
+\emph{stricter} types because the types at those boundaries incur run-time checks.
 Here, deep is stricter than shallow and shallow is stricter than untyped.
-If the strategy cannot identify such a boundary, it moves to the next-ranked
-component (again in terms of either \selfkw{} or \totalkw{} time).
-If there are no components remaining, the strategy fails.
+If the strategy cannot identify such a boundary, it moves to the
+next-ranked function (again in terms of either \selfkw{} or \totalkw{}
+time).  If there are no functions remaining, the strategy fails.
 
 \input{experiment-basics}
 
@@ -52,7 +50,7 @@ At the second level, basic strategies differ in how they migrate the two sides
  optimizations in both components.
  But, it may also create boundaries to other components in a kind of ripple
  effect with potentially disastrous costs.
- By contrast, \conkw{} strategies choose shallow enforcement of types for both
+ By contrast, \conkw{} strategies choose shallow types for both
  sides of the target boundary.
  The rationale behind this choice is that, if both sides of a
  boundary have shallow types, the interactions across the boundary cost less
@@ -62,14 +60,14 @@ At the second level, basic strategies differ in how they migrate the two sides
 \input{experiment-composite.tex}
 
 \paragraph{Composite strategies.} While the basic strategies ignore the cost of
- writing type annotations for an untyped components, developers do not.
+ writing type annotations for an untyped component, developers do not.
  Adding types to an entire module in Typed Racket may require a significant
  effort.
  Similarly, the likelihood of ripple-effect costs depends on the number
  of typed components in the program.
- With few types, the cost of introducing one deep component may well be high;
- with many types, the ripple cost is probably low.
- Hence, the experiment includes composite strategies that take account of the
+ With few types, the cost of introducing one component with deep types may well be high;
+ with many types, the chance of a ripple effect is probably low.
+ Hence, the experiment includes composite strategies that take into account the
  types currently in the codebase before choosing how to respond to profile data.
 
 \Cref{f:cstrategies} lists these composite strategies.
@@ -97,7 +95,7 @@ The results presented in the next section include two
  types of different strictness and flips a coin to choose either an
  \optkw{} or a \conkw{} modification to both sides.
  The second \agnostickw{} strategy, \togglekw{}, is due to~\citet{g-deep-shallow}
- and serves as a point of comparison to prior work.
+ and serves as a point of comparison to that prior work.
  It modifies all typed components to use the same checks, deep or shallow,
  depending on which regime gives the best performance.
  It never adds types to an untyped component, which means this strategy has
