@@ -93,7 +93,7 @@ provides natural guidance on how to impose structure on the problem.
 > published work has considered it so far. So my point is that this paper lacks a
 > compelling way to answer migration questions, too.
 
-lines 79--85 and lines 508 explain why the most successful strategy  was
+lines 79--85 and lines 561--570 explain why the most successful strategy  was
 not obvious from the start. 
 
 Also as the abstract, plus sections 5 and 6 describe: (1) the strategy is
@@ -244,7 +244,7 @@ line 31 discusses the assumption and adds a reference to Roberts.
 > not necessarily the case. So again, unfortunately things are more
 > implementation dependent than we would like.
 
-line 631 states that we used Racket-on-Chez.
+line 619 states that we used Racket-on-Chez.
 
 > a few short!  very short!  code examples showing deep vs shallow type
 > checks might help.  Also how modules set their type checking policy?
@@ -288,7 +288,7 @@ line 103 explains the module granularity aspect of the paper's setting.
 > Fig2 not clear the terms "conservative" and "optimistic" help here.
 > isn't "optimistic" just deep and "conservative" shallow?
 
-We consider ``optimistic'' and ``conservative'' terms hat bring out the risks
+We consider ``optimistic'' and ``conservative'' terms that bring out the risks
 that come with each strategy in a way that ``deep'' and ``shallow'' does
 not (due to the strong association with the corresponding typing regimes). 
 
@@ -335,7 +335,7 @@ and justifies the choice.
 > how do you know you're out of VM warmup effects?
 > (see Edd Barrett et al, OOPSLA 2017).
 
-line 626 explains that we made sure to reserve whole servers on CloudLab.
+The paragraph starting at line 613 explains that we made sure to reserve whole servers on CloudLab.
 
 > If I take 561-564 at face value, it seems you did 11 runs; it seems
 > there's an assumption neither boundary nor statistical profiler would
@@ -345,7 +345,8 @@ line 626 explains that we made sure to reserve whole servers on CloudLab.
 > if so, can you justify it?   why not do 1 startup run,
 > 4 genreal runs, three runs with each profiler? 
 
-line 922 adds this threat and line 927 explains mitigation steps.
+The paragraph starting at line 922 adds this threat and the following
+paragraph explains mitigation steps.
 
 > 
 > I thought Fig9 was a misprint.  Cute, but perhaps always put figures
