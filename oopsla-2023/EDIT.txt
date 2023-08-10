@@ -50,7 +50,7 @@ PDF, not to the diff PDF.
 
 The POPL '16 paper is about 2^N lattices, not 3^N. See lines 56--59. 
 
-l.561 compares directly to prior work that deals with 2^N lattices. 
+The paragraph starting at line 561 compares directly to prior work that deals with 3^N lattices. 
 
 > Finally, on the reproducing earlier numbers, you make some good points; in
 > particular, on closely re-reading Greenman's paper, it seems true that he
