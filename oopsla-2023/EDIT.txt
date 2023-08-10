@@ -1,17 +1,31 @@
 The main changes to the paper are:
 
-- Section 1: Acknowledge the benefits of JITs for shallow/transient (and
-  point ahead to related work for details). Name the data as a contribution.
-- Section 2: Give more background on gradual typing and checking strategies.
-- Section 4.2: Fix the formalism error. Clarify that prior work does not
-  show that our experiment is doomed to give a negative result.
-- Section 5: Give more information about the experiment.
-- Section 8: List general takeaways in the conclusion, clarify the existing
-  takeaways.
 
-Below we give point-by-point remarks about fixes.
+- Abstract and section 1 clarify that the main result of the experiment
+  points to deep types for costly boundaries as the most successful strategy.
+  They also give a concrete success rate for this strategy. Finally, section 1
+  explains why this result is a surprise given prior preliminary work (see
+  contributions list). 
+- Section 1 expands the list of contributions to include the collection of
+  data about migration paths, and explains why the data goes well beyond
+  data collected by prior work. 
+- Section 1 points to the benefits of JITs for shallow/transient. Section
+  7 references work that supports these benefits, and section 8 mentions
+  that future related research can improve the results of this
+  paper. 
+- Section 2 expands on the background on gradual typing and checking strategies.
+- Section 4.2 comes with fixed formalisms. 
+- Section 4.3 explains why prior work does not answer the research
+  questions of this paper.
+- Section 5 gives more information about the collection of measurements.
+- Section 8 lists and clarifies general takeaways.
 
-Line numbers refer to our Revision PDF, not to the diff PDF.
+
+Besides the above, there are numerous prose improvements through out the
+paper.  Below we give remarks about fixes in response to specific points
+from the reviews.
+
+Line numbers refer to the Revision PDF, not to the diff PDF.
 
 
 > Review #201A
@@ -34,7 +48,9 @@ Line numbers refer to our Revision PDF, not to the diff PDF.
 > top). As such, while well-known fact might be hyperbole, it's certainly a
 > widespread expectation.
 
-l.508 compares directly to prior work
+The POPL '16 paper is about 2^N lattices, not 3^N.
+
+l.561 compares directly to prior work that deals with 3^N lattices. 
 
 > As for "Figure 5" showing the "optimal" strategy, I'd say that that is not
 > quite what I had in mind. The other strategies have some limits on the paths
@@ -48,7 +64,7 @@ No comment.
 > actually did not measure all 3^N configurations. The newer versions of Racket
 > argument is fair, though if the older numbers existed might still be trumped. 
 
-l.80 compares our data to recent work
+l. 79 compares our data to that of prior work (first contribution).
 
 > ### About the rational programmer method
 > I think we may be talking past each other here. 
@@ -64,8 +80,10 @@ l.80 compares our data to recent work
 > 
 > captures that.
 
-No fix. The trouble here is that there are many ways that one might use
-profiler output to find a next configuration.
+No fix. As sections 2 and 3 explain the interpretation of profiler output
+is not straightforward. The rational programmer method, where the design of
+comparable strategies (including baselines) plays an integral part, guides
+us on how to impose structure on the problem.
 
 > > On the contrary, it was the rational programmer method that provided the
 > > template and tools for designing the experiment. Prior work contemplated
@@ -82,7 +100,16 @@ profiler output to find a next configuration.
 > published work has considered it so far. So my point is that this paper lacks a
 > compelling way to answer migration questions, too.
 
-l.508 explains why it was not obvious from the start
+l. 79 and l.508 explain why the most successful strategy  was not obvious from the start. 
+
+Also as the abstract, and sections 5 and 6 describe: (1) the strategy is
+effective in 50% of scenarios when accepting 2 setbacks; (2) the number of
+setbacks is a good indicator for when a developer should stop relying on
+profiling for migration; and (3) if there is a successful migration path,
+meaning no black holes, the strategy's success rate goes up to 70%. So
+yes, the results are not optimal, but the strategy is a
+pragmatic approach that fares better and scales further than previous
+proposals. 
 
 > > The review seems to deny that there is value in exploring the rational
 > > programmer method across different aspects of language pragmatics. Why?
@@ -110,7 +137,7 @@ No comment.
 > 3^N lattice, that would actually be a contribution of the paper, and should be
 > listed as such, even though it is kind of incidental to the rest of the work.
 
-l.80 lists the contribution
+l.79 lists the contribution.
 
 > > The overwhelming success of TypeScript and underwhelming success of sound
 > > gradual typing suggests that, at the moment, only gradual typing researchers
@@ -132,8 +159,11 @@ l.80 lists the contribution
 > still have been interesting to see if you could get to a better place, even if
 > that place was not as good as one might hope.
 
-The cutoffs are indeed unfortunate, but adding a cutoff dimension on top of the
-looseness dimension would not work on paper.
+Adding a cutoff dimension on top of the looseness dimension would
+complicate the presentation of the data immensely. Moreover, l. 700 states that
+considering cutoffs around 3x does not affect the conclusions of the
+experiment. Finally, the artifact allows other researchers to examine our
+data using any cutoff they want. 
 
 > > User studies do not answer the same questions as the rational programmer.
 > > They could tell us what strategies some individual (and small number of) users
@@ -150,7 +180,13 @@ looseness dimension would not work on paper.
 > framing made the paper sound as if it was about something useful for actual
 > users.
 
-l.74 has revised framing
+l.67 explains the relationship between user studies and the rational
+programmer method. The contribution starting at l.85 describes who the
+results of the paper can benefit and how (besides PL researchers).
+Specifically for developers, it is worth mentioning that the fact that
+they do not currently employ a strategy does not entail that they cannot
+learn it if its benefits and mechanics are explained. At least, as
+educators, we hope that's the case...
 
 > Review #201B
 > ===========================================================================
@@ -188,10 +224,13 @@ l.74 has revised framing
 
 Sections 1-4 in the revision have gone through an extensive editing pass.
 
-This remark is misleading because shallow types do not impose cost on
-module boundaries.
+We would like to clarify something about the comment about boundaries in
+Racket. Shallow types diffuse checks (and their costs) through out typed
+code in a way that is not obvious how to connect to a specific boundary.
+The paragraph starting at l.116 and the example at l.209 explain how this
+complicates the setting that the paper examines.
 
-l.194 shows type checks in an example function
+
 
 > Comments for authors
 > --------------------
@@ -203,7 +242,7 @@ l.194 shows type checks in an example function
 > a program linearly. Blowing my students' trumperts, Roberts et al 2016
 > shows that's shouldn't be the case for  jitted implementation.
 
-l.31 removed the assumption, added a cite to Roberts
+l.31 discusses the assumption and adds a reference to Roberts.
 
 > reflecting on that point - there are also complementary implementation
 > assumptions coming through in the "lessons' section. what I mean here
@@ -213,18 +252,18 @@ l.31 removed the assumption, added a cite to Roberts
 > not necessarily the case. So again, unfortunately things are more
 > implementation dependent than we would like.
 
-l.609 yes we used Racket-on-Chez
+l.609 states that we used Racket-on-Chez.
 
 > a few short!  very short!  code examples showing deep vs shallow type
 > checks might help.  Also how modules set their type checking policy?
 
-l.194 added a short example
+l.209  discusses type checking strategies through a small example. 
 
-l.132 subtly mention that policies come from the module language (#lang)
+l.132 mentions that policies come from the module language (#lang)
 
 > 111 be good to know module granularity earlier in the intro
 
-l.90 added module granularity
+l.90 explains the module granularity aspect of the paper's setting.
 
 > and then towards the end, I'd be really interested to know any
 > thoughts or even opinions about granularity questions.  If a utility
@@ -255,15 +294,19 @@ l.90 added module granularity
 > Fig2 not clear the terms "conservative" and "optimistic" help here.
 > isn't "optimistic" just deep and "conservative" shallow?
 
-TODO ben: I like this. The human motivation needs to be clear up front, but thenceforth its
-better to use deep/shallow
+We believe that ``optimistic'' and ``conservative'' brings out the risks
+that come with each strategy in a way that ``deep'' and ``shallow'' does
+not (due to the strong association with the corresponding typing regimes). 
+The paragraph at l. 380 discusses this dimension of the nomenclature.  
+
 
 > 333 rational programmers  -- but rational programmers aren't
 > programmers, they're *not* people!  could reword to avoid that
 > implication.  Yes, I'm being really picky.  yes that's because there's
 > an implcit bias to longer reviews.
 
-TODO yes we should remove "rational programmers"
+
+l.97 states that we use ``developers'' to refer to humans. 
 
 > 386 or elsewhwere - is it worth talking about the difficulty -
 > especailly of the philosphy implied by the "migratory" approach, that
@@ -284,7 +327,7 @@ TODO yes we should remove "rational programmers"
 > 
 > 550 cite / expand GPT benchmarks &^ justify the choice
 
-l.445 done
+l.465 adds a reference and expands on the benchmarks choice. 
 
 > 584 WOW!  that's a serious benchmarking effort!! 
 > 
@@ -293,7 +336,7 @@ l.445 done
 > how do you know you're out of VM warmup effects?
 > (see Edd Barrett et al, OOPSLA 2017).
 
-l.605 we made sure to reserve whole servers on CloudLab
+l.626 explains that we made sure to reserve whole servers on CloudLab.
 
 > If I take 561-564 at face value, it seems you did 11 runs; it seems
 > there's an assumption neither boundary nor statistical profiler would
@@ -303,12 +346,12 @@ l.605 we made sure to reserve whole servers on CloudLab
 > if so, can you justify it?   why not do 1 startup run,
 > 4 genreal runs, three runs with each profiler? 
 
-l.890 add the low #runs as a threat
+l.922 adds this threat and l.927 explains mitigation steps.
 > 
 > I thought Fig9 was a misprint.  Cute, but perhaps always put figures
 > after the first mention in the tet
 
-l.800 moved this figure after its prose; same goes for the others
+Figure have been moved after their prose (see l .811)
 
 > To encourage accountability, I'm signing my reviews in 2023.
 > For the record, I am James Noble, kjx@acm.org
@@ -322,7 +365,7 @@ l.800 moved this figure after its prose; same goes for the others
 > and shallow profiling really line up with shallow types?
 > Not sure why I got that impression early on, but I did.
 
-l.200 and l.205 add a brief mention of profilers vs. checks
+l.202 discusses profiling strategies and type checking regimes.
 
 > * OK there is the "leftpad" question below.
 > 
@@ -365,7 +408,8 @@ l.200 and l.205 add a brief mention of profilers vs. checks
 > It seems to me that adding runtime checks adds overhead, and I need help
 > understanding why it sometimes doesn't.
 
-l.111 reworded the background on deep checks, similarly in the rest of sec. 2
+l.116 expands on  deep and shallow checks. In addition section 2 has been
+rewritten with the goal to eliminate previous dependencies on background knowledge. 
 
 > Section 4.2 – "the 3**n configurations of [the lattice] are ordered: Pi < Pj
 > iff Pj has at least one component that is untyped in Pj."  Putting aside what
@@ -374,7 +418,7 @@ l.111 reworded the background on deep checks, similarly in the rest of sec. 2
 > components c, if c is typed in Pi it is typed in Pj, AND there exists some
 > component c' that is typed in Pj but not in Pi.  Otherwise, I am confused.
 
-l.460: fixed, thanks again!
+l.480 fixes the issue. Thanks!
 
 > Although this is not the sort of evaluation that I am accustomed to reading, I
 > found it very interesting.
