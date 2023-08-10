@@ -20,12 +20,12 @@ The main changes to the paper are:
 - Section 5 gives more information about the collection of measurements.
 - Section 8 lists and clarifies general takeaways.
 
+Besides the above, we have improved the prose in minor ways through out the paper.  
 
-Besides the above, there are numerous prose improvements through out the
-paper.  Below we give remarks about fixes in response to specific points
-from the reviews.
 
-Line numbers refer to the Revision PDF, not to the diff PDF.
+What follows are pointers from the remarks in the reviews to places in the
+paper that respond to those remarks. Line numbers refer to the Revision
+PDF, not to the diff PDF. 
 
 
 > Review #201A
@@ -48,23 +48,16 @@ Line numbers refer to the Revision PDF, not to the diff PDF.
 > top). As such, while well-known fact might be hyperbole, it's certainly a
 > widespread expectation.
 
-The POPL '16 paper is about 2^N lattices, not 3^N.
+The POPL '16 paper is about 2^N lattices, not 3^N. See lines 56--59. 
 
-l.561 compares directly to prior work that deals with 3^N lattices. 
-
-> As for "Figure 5" showing the "optimal" strategy, I'd say that that is not
-> quite what I had in mind. The other strategies have some limits on the paths
-> they will entertain (loose/strict...). An optimal search could/should be run
-> under the same constraints, not just as unlimited search.
-
-No comment.
+l.561 compares directly to prior work that deals with 2^N lattices. 
 
 > Finally, on the reproducing earlier numbers, you make some good points; in
 > particular, on closely re-reading Greenman's paper, it seems true that he
 > actually did not measure all 3^N configurations. The newer versions of Racket
 > argument is fair, though if the older numbers existed might still be trumped. 
 
-l. 79 compares our data to that of prior work (first contribution).
+lines 79--85 compare our data to that of prior work (first contribution).
 
 > ### About the rational programmer method
 > I think we may be talking past each other here. 
@@ -80,10 +73,10 @@ l. 79 compares our data to that of prior work (first contribution).
 > 
 > captures that.
 
-No fix. As sections 2 and 3 explain the interpretation of profiler output
-is not straightforward. The rational programmer method, where the design of
-comparable strategies (including baselines) plays an integral part, guides
-us on how to impose structure on the problem.
+As sections 2 and 3 explain the interpretation of profiler output is not
+straightforward. The rational programmer method, where the design of
+comparable strategies (including baselines) plays an integral part,
+provides natural guidance on how to impose structure on the problem.
 
 > > On the contrary, it was the rational programmer method that provided the
 > > template and tools for designing the experiment. Prior work contemplated
@@ -100,31 +93,16 @@ us on how to impose structure on the problem.
 > published work has considered it so far. So my point is that this paper lacks a
 > compelling way to answer migration questions, too.
 
-l. 79 and l.508 explain why the most successful strategy  was not obvious from the start. 
+lines 79--85 and lines 508 explain why the most successful strategy  was
+not obvious from the start. 
 
-Also as the abstract, and sections 5 and 6 describe: (1) the strategy is
+Also as the abstract, plus sections 5 and 6 describe: (1) the strategy is
 effective in 50% of scenarios when accepting 2 setbacks; (2) the number of
 setbacks is a good indicator for when a developer should stop relying on
 profiling for migration; and (3) if there is a successful migration path,
 meaning no black holes, the strategy's success rate goes up to 70%. So
-yes, the results are not optimal, but the strategy is a
-pragmatic approach that fares better and scales further than previous
-proposals. 
-
-> > The review seems to deny that there is value in exploring the rational
-> > programmer method across different aspects of language pragmatics. Why?
-> 
-> This may be an artifact of this particular setting, but as I said, this is
-> about the most obvious ways one would go about doing an experiment about
-> gradual typing migration. I do not know whether it's application in other
-> settings was as obvious, and if there is a theme across multiple settings, then
-> that might also be worth studying (in a separate paper). However, in this
-> instance, the abstract makes it seem like there is something much deeper going
-> on than there actually is. So from my point of view, the appropriate level of
-> reference to the rational programmer method is a single sentence that states
-> that the experimental methodology here matches it.
-
-No comment.
+yes, the results are not ideal, but the strategy is a
+pragmatic approach that fares better than previous proposals. 
 
 > ### Other comments
 > > The results were a significant surprise to us -- and we have a large amount
@@ -137,7 +115,7 @@ No comment.
 > 3^N lattice, that would actually be a contribution of the paper, and should be
 > listed as such, even though it is kind of incidental to the rest of the work.
 
-l.79 lists the contribution.
+lines 79--85 list the contribution as requested. 
 
 > > The overwhelming success of TypeScript and underwhelming success of sound
 > > gradual typing suggests that, at the moment, only gradual typing researchers
@@ -160,10 +138,12 @@ l.79 lists the contribution.
 > that place was not as good as one might hope.
 
 Adding a cutoff dimension on top of the looseness dimension would
-complicate the presentation of the data immensely. Moreover, l. 700 states that
-considering cutoffs around 3x does not affect the conclusions of the
-experiment. Finally, the artifact allows other researchers to examine our
-data using any cutoff they want. 
+complicate the presentation of the data immensely. Moreover, lines 700--7-8
+explain that considering cutoffs around 3x does not affect the conclusions
+of the experiment.
+
+The artifact---submitted and approved---will allow other researchers to
+examine our data using any cutoff they want.
 
 > > User studies do not answer the same questions as the rational programmer.
 > > They could tell us what strategies some individual (and small number of) users
@@ -180,13 +160,19 @@ data using any cutoff they want.
 > framing made the paper sound as if it was about something useful for actual
 > users.
 
-l.67 explains the relationship between user studies and the rational
-programmer method. The contribution starting at l.85 describes who the
-results of the paper can benefit and how (besides PL researchers).
-Specifically for developers, it is worth mentioning that the fact that
-they do not currently employ a strategy does not entail that they cannot
-learn it if its benefits and mechanics are explained. At least, as
-educators, we hope that's the case...
+lines 67--76 explain the relationship between user studies and rational
+programmer experiments. The paper does not claim that the latter replace
+the former; what it does state is that developers could execute similar
+algorithms as the rational programmer and, if they did, the experiment
+predicts their success rates. 
+
+The explanation of the object-level contribution, starting at line 85,
+clarifies this point. Specifically for developers, it is worth mentioning
+that even they do not currently employ any strategic debugging algorithms,
+this does not mean that they cannot learn it. Researchers as university
+educators can and must explain its benefits for motivation and its
+mechanics for instruction. At least, as educators, we should hope that this
+is the case.
 
 > Review #201B
 > ===========================================================================
@@ -222,15 +208,21 @@ educators, we hope that's the case...
 > introduction of the current draft are actually quite weak, while the claims
 > implied by the way this draft is written are rather too strong.
 
-Sections 1-4 in the revision have gone through an extensive editing pass.
+See above for specific reactions. Additionally sections 1-4 of the revised
+version should benefit from several prose simplifications and an added
+example. 
 
-We would like to clarify something about the comment about boundaries in
-Racket. Shallow types diffuse checks (and their costs) through out typed
-code in a way that is not obvious how to connect to a specific boundary.
-The paragraph starting at l.116 and the example at l.209 explain how this
-complicates the setting that the paper examines.
+Having said this, we must respond to the comment concerning boundaries in
+Racket. Although it is correct that deep types impose module-boundary
+costs, this is not the case for shallow types. The latter diffuse checks
+(and their costs) throughout typed code in a way that is connected to any
+specific boundary.
 
-
+The paragraph starting at line 116, supplemented by an example starting at
+line 209, explains how this diffusion of checks complicates the problem. At
+the start of the experiment, we had expected that at least one of the
+profilers would discover "hot" checks in shallow-type code, but as the
+results show, this is not the case.
 
 > Comments for authors
 > --------------------
@@ -242,7 +234,7 @@ complicates the setting that the paper examines.
 > a program linearly. Blowing my students' trumperts, Roberts et al 2016
 > shows that's shouldn't be the case for  jitted implementation.
 
-l.31 discusses the assumption and adds a reference to Roberts.
+line 31 discusses the assumption and adds a reference to Roberts.
 
 > reflecting on that point - there are also complementary implementation
 > assumptions coming through in the "lessons' section. what I mean here
@@ -252,18 +244,20 @@ l.31 discusses the assumption and adds a reference to Roberts.
 > not necessarily the case. So again, unfortunately things are more
 > implementation dependent than we would like.
 
-l.609 states that we used Racket-on-Chez.
+line 631 states that we used Racket-on-Chez.
 
 > a few short!  very short!  code examples showing deep vs shallow type
 > checks might help.  Also how modules set their type checking policy?
 
-l.209  discusses type checking strategies through a small example. 
+line 209-210 add one 2-line example to illustrate the differences between
+checking strategies. 
 
-l.132 mentions that policies come from the module language (#lang)
+lines 132-134 mention that the investigated policies are due to the
+module-based gradual typing approach (#lang)
 
 > 111 be good to know module granularity earlier in the intro
 
-l.90 explains the module granularity aspect of the paper's setting.
+line 103 explains the module granularity aspect of the paper's setting.
 
 > and then towards the end, I'd be really interested to know any
 > thoughts or even opinions about granularity questions.  If a utility
@@ -294,10 +288,14 @@ l.90 explains the module granularity aspect of the paper's setting.
 > Fig2 not clear the terms "conservative" and "optimistic" help here.
 > isn't "optimistic" just deep and "conservative" shallow?
 
-We believe that ``optimistic'' and ``conservative'' brings out the risks
+We consider ``optimistic'' and ``conservative'' terms hat bring out the risks
 that come with each strategy in a way that ``deep'' and ``shallow'' does
 not (due to the strong association with the corresponding typing regimes). 
-The paragraph at l. 380 discusses this dimension of the nomenclature.  
+
+Also, we are afraid that overloading 'deep' and 'shallow' (in _unrelated_
+ways) would overload readers. 
+
+The paragraph starting at line 380 discusses this dimension of the nomenclature.  
 
 
 > 333 rational programmers  -- but rational programmers aren't
@@ -306,7 +304,7 @@ The paragraph at l. 380 discusses this dimension of the nomenclature.
 > an implcit bias to longer reviews.
 
 
-l.97 states that we use ``developers'' to refer to humans. 
+line 97, footnote, states that we use only ``developers'' to refer to humans. 
 
 > 386 or elsewhwere - is it worth talking about the difficulty -
 > especailly of the philosphy implied by the "migratory" approach, that
@@ -327,7 +325,8 @@ l.97 states that we use ``developers'' to refer to humans.
 > 
 > 550 cite / expand GPT benchmarks &^ justify the choice
 
-l.465 adds a reference and expands on the benchmarks choice. 
+line 465 adds a reference to the GTP benchmarks (a newly published paper)
+and justifies the choice. 
 
 > 584 WOW!  that's a serious benchmarking effort!! 
 > 
@@ -336,7 +335,7 @@ l.465 adds a reference and expands on the benchmarks choice.
 > how do you know you're out of VM warmup effects?
 > (see Edd Barrett et al, OOPSLA 2017).
 
-l.626 explains that we made sure to reserve whole servers on CloudLab.
+line 626 explains that we made sure to reserve whole servers on CloudLab.
 
 > If I take 561-564 at face value, it seems you did 11 runs; it seems
 > there's an assumption neither boundary nor statistical profiler would
@@ -346,12 +345,13 @@ l.626 explains that we made sure to reserve whole servers on CloudLab.
 > if so, can you justify it?   why not do 1 startup run,
 > 4 genreal runs, three runs with each profiler? 
 
-l.922 adds this threat and l.927 explains mitigation steps.
+line 922 adds this threat and line 927 explains mitigation steps.
+
 > 
 > I thought Fig9 was a misprint.  Cute, but perhaps always put figures
 > after the first mention in the tet
 
-Figure have been moved after their prose (see l .811)
+The figure is at line 811, after the relevant prose, in the revision. 
 
 > To encourage accountability, I'm signing my reviews in 2023.
 > For the record, I am James Noble, kjx@acm.org
@@ -365,7 +365,7 @@ Figure have been moved after their prose (see l .811)
 > and shallow profiling really line up with shallow types?
 > Not sure why I got that impression early on, but I did.
 
-l.202 discusses profiling strategies and type checking regimes.
+line 202 discusses profiling strategies and type checking regimes.
 
 > * OK there is the "leftpad" question below.
 > 
@@ -408,8 +408,9 @@ l.202 discusses profiling strategies and type checking regimes.
 > It seems to me that adding runtime checks adds overhead, and I need help
 > understanding why it sometimes doesn't.
 
-l.116 expands on  deep and shallow checks. In addition section 2 has been
-rewritten with the goal to eliminate previous dependencies on background knowledge. 
+The long paragraph, starting at line 116, expands on deep and shallow
+checks. In addition the revision of the prose of section 2 eliminates
+dependencies on much background knowledge.
 
 > Section 4.2 – "the 3**n configurations of [the lattice] are ordered: Pi < Pj
 > iff Pj has at least one component that is untyped in Pj."  Putting aside what
@@ -418,18 +419,5 @@ rewritten with the goal to eliminate previous dependencies on background knowled
 > components c, if c is typed in Pi it is typed in Pj, AND there exists some
 > component c' that is typed in Pj but not in Pi.  Otherwise, I am confused.
 
-l.480 fixes the issue. Thanks!
+line 480 fixes the issue. Thanks!
 
-> Although this is not the sort of evaluation that I am accustomed to reading, I
-> found it very interesting.
-> 
-> The threats to validity and and prior work sections are simply excellent.
-> 
-> Questions for author response
-> -----------------------------
-> Q1: How do these results generalize beyond the walled garden of gradually-typed
-> Racket?  
-> 
-> Q2: More specifically, is "boundary profiler" really an 'approach' in the same
-> sense that "statistical profilers" are, or is it a specific artifact?
-> 
