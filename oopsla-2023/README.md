@@ -74,3 +74,15 @@ Scripts:
 - code/stuck.rkt
 - code/shallow-help.rkt
 
+
+latexdiff
+---
+
+Run command below, then delete the "acks" from the diff file.
+
+```
+latexdiff -c ldiff.cfg --exclude-text="section,subsection,subsubsection" submission/paper.tex revision/paper.tex > diff/diff.tex
+```
+
+
+
