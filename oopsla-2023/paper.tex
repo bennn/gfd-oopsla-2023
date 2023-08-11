@@ -121,10 +121,11 @@
 
 \input{ackn}
 
+\ifappendix{\appendix \input{appendix}}{}
+\clearpage
+
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{bib}
-
-\ifappendix{\appendix \input{appendix}}{}
 
 \end{document}
 

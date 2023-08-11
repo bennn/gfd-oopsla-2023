@@ -46,7 +46,7 @@ But, pathologies still remain.
 Navigation techniques are an important complement to performance improvements.
 
 Several language designs take a hybrid approach to gradual types
-so that programmers can avoid the costs of deep checks.
+so that developers can avoid the costs of deep checks.
 Thorn and StrongScript use a mixture of
 \emph{optional} and \emph{concrete} types~\citep{wzlov-popl-2010,rzv-ecoop-2015}.
 Optional types never introduce run-time checks (same as TypeScript~\cite{bat-ecoop-2014} or Flow~\cite{cvgrl-oopsla-2017}).
@@ -85,17 +85,14 @@ One opportunity for future work is to combine the profiling strategies in this
 paper with migration techniques in the context of automatic or
 human-in-the-loop tools.
 
-\citet{ccw-icfp-2018} combine type migration with a static cost semantics
-and variational typing to predict the approximate performance of
-configurations in a migration lattice.  This approach is promising because
-it avoids the need to profile mixed-typed programs; the proposed tool
-analyzes source code to identify configurations with \emph{relative} good
-performance compared to the rest of the lattice. Unlike the profiler-based
-strategies of this paper, the tool does not handle a full-featured type
-system (with universal and union types). Moreover, due to the relative
-character of static cost semantics, it does not identify
-successful migration paths as described in~\Cref{sec:experiment}.
-
+Herder~\cite{ccw-icfp-2018} combines variational typing, a static migration
+technique, with a cost semantics in order to estimate relative performance.
+By contrast to our resource-intensive profiling method, Herder is able to find
+the fastest configuration in several benchmarks without running any benchmark
+code.
+However, Herder does not yet handle a full-featured type system (e.g., with union
+and universal types), and futher experiments are needed to test whether its
+approximations can find satisficing configurations as well as the best-case one.
 
 
 \paragraph{Performance Tuning with Profilers} Profilers are the de facto

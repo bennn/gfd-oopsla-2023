@@ -150,7 +150,7 @@ lattice with high performance degradation, no profiling strategy will help the
 developer escape it.
 As~\cref{fig:bh2} illustrates for the \bmname{acquire} benchmark, the random
 strategy works better for such large programs than any profiling strategy.  It
-remains an open question how often hopeless scenarios occur in the wild.
+remains an open question how often hopeless regions occur in the wild.
 
 \begin{figure}[ht]
   \def\lbl#1{\bmname{#1}}
@@ -162,32 +162,34 @@ remains an open question how often hopeless scenarios occur in the wild.
   \caption{An example of a large program with a large hopeless region}
   \label{fig:bh2}
   \Description{An example of a large program with a large hopeless region} 
-\end{figure}  
+\end{figure}
 
 The second most important internal threat concerns the design of the strategies.
-While the set of strategies looks large and seems to cover a wide range of
-approaches, it is far from complete. For example, certain combinations of the
+While the set of strategies covers the basic approaches to navigation,
+it is far from complete. For example, certain combinations of the
 chosen strategies---say, the optimistically cost-aware one with the random
 one---might deliver better results than pursuing a pure strategy.  Another
-weakness of the strategies is that their migration steps apply to single,
-complete modules. One alternative is to migrate more than one module at a time. A
-second alternative is to split modules into several typed and untyped
-submodules~\cite{f:submodules}.  
+weakness of the strategies is that their migration steps are small.
+One alternative is to migrate a few modules at a time, similar to the toggling
+strategy.
+A second alternative is to split modules into several typed and untyped
+submodules~\cite{f:submodules}.
+On a more technical level, the rational programmers organize statistical
+profile output by application (see \code{Idx} in~\cref{f:fsm-code:statistical})
+rather than by module.
+Grouping by module may lead to better recommendations.
+%% TODO if by-module, how to group total time??
 
 A third internal thread is that the large scale of the experiment imposes
 feasibility constraints on the collected data. Specifically, the experiment 
-collects (and averages) only 8 performance measurements per scenario plus one 
-for each profiler.
+collects (and averages) only eight performance measurements per scenario
+and only one for each profiler.
 
-The design of the experiment attempts to mitigate all of the
-method-internal threats. Specifically, the experiment setup pays tribute
-to these threats with the use of the most standard suite of usable
-benchmarks and the careful design of the strategies. Moreover, the
-collected data was produced on dedicated machines, and was 
-checked for instabilities, or evidence of situations that may 
-affect the measurements such as warmup effects (all but a few
-configurations have sufficiently large running times).  
-Still, the reader must keep them in mind when drawing conclusions.
+The design of the experiment attempts to mitigate the
+method-internal threats. For example, we collected data on
+single-user machines and checked the output for evidence of major
+instabilities.
+Still, the reader must keep these threats in mind when drawing conclusions.
 
 As for the method-external threats, the most important one is that the experiment
 relies on a single language and its eco-system. While this choice is necessary for

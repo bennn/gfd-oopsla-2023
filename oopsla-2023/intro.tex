@@ -21,9 +21,8 @@ impose a steep cost at boundaries between typed and untyped code, yet as
 the addition of types eliminates such boundaries, they
 enable type-driven optimizations that can offset some of the
 cost~\cite{s-northeastern-2015}---and sometimes all of it.
-By contrast, shallow checks impose a low cost at every potential interaction
-with untyped code, yet as the addition of types increases the number of
-checks, they result in an increasing accumulative cost.
+By contrast, shallow checks impose a low cost at boundaries, but the addition
+of types almost always increases the overall number of checks.
 Hence, Greenman argues that developers should, in
 principle, be able to mix and match deep and shallow checking to get the
 best-possible type checking benefits with a tolerable performance penalty.
@@ -31,7 +30,7 @@ Initial empirical data is promising: with the right mixture of checks,
 it is possible to avoid order-of-magnitude slowdowns that come from either
 deep or shallow checks alone.
 Finding a ``right'' mixture, however, presents a challenge because there
-are many possibilities to choose from.
+are exponentially many possibilities to choose from.
 Whereas in a purely deep (or shallow) checking scheme, developers have
 $2^N$ configurations to choose from, with deep and shallow combined
 there are $3^N$ possibilities because each of the $N$ components in
@@ -83,23 +82,21 @@ In short, this paper makes three contributions:
     interpreting profiling output on  more than one hundred thousand scenarios using the GTP
     benchmarks~\cite{g-rep-2023}. It yields
      5GB of performance and profiling data, which
-    is available on
-    Zenodo~\cite{gdf-artifact-2023}.
-  
+    is available online~\cite{gdf-artifact-2023}.
+
 \item At the object level, the results of the rational programmer
-  experiment provide guidance to developers about how to best use feedback
-    from profilers during type migration. Specifically, 
-    migrating to deep types the piece of code with the most costly
-    boundary with other parts of the code base
-    outperforms all other  strategies on the scenarios of
-    the experiment. This result is a \emph{surprise} given~\citet{g-deep-shallow}'s
-    preliminary data, which implies that shallow types, or the combination of shallow and deep
-    types, may contribute better options.
+    experiment provide guidance to developers about how to best use feedback
+    from profilers during type migration. The winning strategy
+    identifies the most expensive boundary and migrates its components
+    to use deep types.
+    This result is a \emph{surprise} given~\citet{g-deep-shallow}'s
+    preliminary data, which implies that combinations of shallow and
+    deep types should lead to the lowests costs overall.
 
      \item[]\begin{itemize}
       \item
          Hence, the results also inform language designers about
-         performance dividends from investing in  the combination.
+         performance dividends from investing in combinations of deep and shallow types.
     \end{itemize}
 
 

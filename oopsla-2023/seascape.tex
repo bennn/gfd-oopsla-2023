@@ -216,11 +216,11 @@ Racket fortunately comes with two such tools:
 Both tools are potentially useful and potentially limited due to the mechanics
 of deep and shallow types. Specifically, the contract-based enforcement of
 deep types should be a good match for the boundary profiler but not
-for the statistical profiler. In contrast, the case for shallow's
-assertion should favor the statistical but not the boundary profiler.
-Take, for example, a function that averages a list of numbers, which
-imposes comparable run-time checking cost with deep and shallow but in
-different ways:
+for the statistical profiler. In contrast, shallow checks
+should favor the statistical but not the boundary profiler.
+For example, the function below averages a list of numbers.
+While the total run-time costs of deep or shallow types are comparable
+for this function, those costs arise in different ways:
 
 \begin{verbatim}
   (: avg (-> [Listof Real] Real))         ;; deep: enforce type as a contract
@@ -229,32 +229,33 @@ different ways:
 
 \begin{itemize}
   \item
-    With deep types, the function gets wrapped in a proxy the boundary
-    between \code{avg} and its untyped clients, which is
-    derived from the type, before \code{avg} crosses over to a client.  The
-    proxy checks that untyped clients fully conform the type by traversing
-    input lists.  The \emph{boundary profiler} is well-suited to
+    With deep types, the function gets wrapped in a proxy at the boundary
+    between \code{avg} and its untyped clients.
+    The proxy checks that clients send only lists that contain
+    only real numbers.
+    The \emph{boundary profiler} is well-suited to
     discover if these checks are expensive because it attributes costs
-    directly to proxies that form the boundary.  Conversely, the statistical profiler seems less
-    likely to be useful because it breaks down cost by application; however, it
-    may indirectly produce useful information if the proxy slows
+    directly to proxies.
+    Conversely, the statistical profiler is less
+    likely to be useful because it breaks down cost by application.
+    It may, however, discover the costs indirectly if the proxy slows
     down calls to functions that, in turn, call \code{avg}.
   \item
-    With shallow types, the compiler injects in the definition of \code{avg} a test for
-    \code{list?}, which does not traverse the list.
-    If the helper function \code{sum} is typed, then it also has checks
-    that validate list elements.
+    With shallow types, the compiler rewrites the body of \code{avg} to
+    check that its clients send only lists. This check does not examine
+    list elements, but the helper function \code{sum} will check elements
+    as it accesses them.
     Because there are no contracts and explicit boundaries
     in the shallow version, only simple inlined checks, the
     boundary profiler cannot measure the cost of the types.
     The \emph{statistical profiler} is in a much better position to find
-    costs because they arise from extra code in each function.
+    costs because they arise from extra code in the function.
 \end{itemize}
 
 Back to \bmname{fsm}, 
 the bottom half of \cref{f:fsm-code} shows the output of the statistical
 profiler and the boundary profiler for the top-right variant in
-figure~\ref{f:fsm-code:a} where \code{main} has deep types.
+\cref{f:fsm-code:a} where \code{main} has deep types.
 
 \paragraph{Statistical profiler} \Cref{f:fsm-code:statistical} lists two
 rows from the statistical profiler; the full output has 28 rows.  The

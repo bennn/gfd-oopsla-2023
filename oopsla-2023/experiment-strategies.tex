@@ -28,18 +28,18 @@ necessary) an ordering for its output.  The profiler is either \featkw{}
 or \statkw{}~(\cref{sec:seascape}).  With the \boundary{} profiler, the
 output is a list of boundaries ordered by cost, so there is no need for
 the rational programmer to choose an ordering.  With the \statistical{}
-profiler, the output is a list of functions each with two types of costs:
-the \totalkw{} time spent in  calls of a function including its
-dependencies, and the \selfkw{} time spent in the function code alone.
+profiler, the output is a list of applications each with two types of costs:
+the \totalkw{} time spent during the call including its
+dependencies, and the \selfkw{} time spent in the call not including dependencies.
 Because both costs are potentially useful, the rational programmers choose
-between them.  Having ordered the function, these rational programmers
-must then identify a boundary.  They start with the top-ranked function
-and seek a boundary between the function's component and a component with
+between them.  Having ordered the applications, these rational programmers
+must then identify a boundary.  They start with the top-ranked application 
+and seek a boundary between the enclosing component and a component with
 \emph{stricter} types because the types at those boundaries incur run-time checks.
 Here, deep is stricter than shallow and shallow is stricter than untyped.
 If the strategy cannot identify such a boundary, it moves to the
-next-ranked function (again in terms of either \selfkw{} or \totalkw{}
-time).  If there are no functions remaining, the strategy fails.
+next-ranked application (again in terms of either \selfkw{} or \totalkw{}
+time).  If there are no applications remaining, the strategy fails.
 
 \input{experiment-basics}
 
