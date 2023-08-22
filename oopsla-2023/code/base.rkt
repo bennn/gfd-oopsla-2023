@@ -61,7 +61,10 @@
 (struct trail [success configs mstep mfail] #:prefab)
 
 (define all-benchmark-name*
-  (let ((*cache (box #f)))
+  (lambda ()
+    '(sieve morsecode forth fsm fsmoo mbta zombie dungeon jpeg lnm suffixtree
+      kcfa snake take5 acquire tetris synth))
+  #;(let ((*cache (box #f)))
     (lambda ()
       (or (unbox *cache)
           (let ((vv (map car (sort (file->value "data/good-cfgs.rktd") < #:key third))))

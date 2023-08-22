@@ -32,12 +32,12 @@ Why do so few scenarios succeed?
      [ ] TODO any more insights?
   (notes/why-stuck.txt)
 
-- [ ] t-test, significant differences
-  - [ ] cite Amherst etc for insignificant differences (<20ms)
+- [X] t-test, significant differences
+  - [X] cite Amherst etc for insignificant differences (<20ms)
     ... acquire same? forth same for sure
-  - [ ] use Andy Georges formulas for t-test,,, chapter 4.3?
-  - [ ] configs within the noise if either one holds ... stop using stddev windows!
-  - [ ] re-run ... results same right?
+  - [X] use Andy Georges formulas for t-test,,, chapter 4.3?
+  - [X] configs within the noise if either one holds ... stop using stddev windows!
+  - [X] re-run ... results same right?
 
 - [ ] does shallow ever help?
   - [X] for critical pairs on 1st level, rarely (few such pairs anyway), ~13 cases
