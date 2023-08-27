@@ -46,7 +46,23 @@ for each configuration of the \numgtp{} benchmarks:
 
 \item Install the statistical profiler and run it once, collecting output.
 
-\end{enumerate}
+\end{enumerate}%
+%
+With rare exceptions, our running times are stable in the sense that a \pct{95}
+confidence interval based on a two-sided $t$ test~(formula from~\cite{gbe-oopsla-2007})
+is within \pct{10} of the sample mean.
+A total of 420 configurations (\pct{0.4}) did not converge, but are
+within \pct{35} of the sample mean.
+Most of these came from \bmname{tetris}: 388 configs, or
+\pct{2} of the \bmname{tetris} lattice.
+% un-con-verged:
+%  1 / 81 forth
+%  1 / 729 suffixtree
+%  22 / 6561 snake
+%  388 / 19683 tetris
+%  8 / 594049 synth
+% === 420 / 116163 = 0%
+
 
 \begin{table}[t]
   \caption{Datasets, their origin, and server details}

@@ -127,7 +127,11 @@
   (define mm (mean t*))
   (define m10 (* 0.10 mm))
   (define ci ((t-test) mm t*))
-  (<= ci m10))
+  (define rr (<= ci m10))
+  (define upper (* 0.35 mm))
+  (or (<= ci m10)
+      (begin
+        (unless (<= ci upper) (printf "CI ~s~n MM ~s~n" ci upper)) #f)))
 
 (module+ main
   (define bm*
@@ -136,8 +140,8 @@
     (all-benchmark-name*))
   #;(go bm*)
   #;(low-hi bm*)
-  (ms-gap bm* 100)
-  (newline)
+  ;; (ms-gap bm* 100)
+  ;; (newline)
   (unconverged bm*)
   )
 
