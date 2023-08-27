@@ -180,15 +180,29 @@ rather than by module.
 Grouping by module may lead to better recommendations.
 %% TODO if by-module, how to group total time??
 
-A third internal thread is that the large scale of the experiment imposes
+A third threat is that the rational programmers reject some configurations that
+a human developer might accept.
+If the average overhead of a configuration is within one standard deviation
+of 1x overhead, the rational programmer accepts it.
+A handful of configurations lie just outside this cutoff yet within the realm
+of machine noise~\cite{mdhs:wrong-data,cb-asplos-2013}; for example,
+\pct{3.5} of all configurations are rejected but have an absolute slowdown
+of at most 100 milliseconds.
+Accepting these borderline configurations could reduce the number of hopeless
+scenarios in, say, \bmname{acquire}.
+However, the 3x ``antennas'' include these borderline configurations and
+nevertheless support our overall
+conclusions~(\ifappendix{\cref{s:bm-sky}}{supplementary material}).
+
+Fourth, the large scale of the experiment imposes
 feasibility constraints on the collected data. Specifically, the experiment 
 collects (and averages) only eight performance measurements per scenario
 and only one for each profiler.
 
 The design of the experiment attempts to mitigate the
 method-internal threats. For example, we collected data on
-single-user machines and checked the output for evidence of major
-instabilities.
+single-user machines and confirmed that \pct{99} of the running
+times are quite stable~(\cref{sec:data}).
 Still, the reader must keep these threats in mind when drawing conclusions.
 
 As for the method-external threats, the most important one is that the experiment
