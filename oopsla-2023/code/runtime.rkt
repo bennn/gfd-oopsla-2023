@@ -2,6 +2,7 @@
 
 (provide
   benchmark->perf#
+  benchmark->raw#
   ;; stddev
   benchmark->perf#/stddev
   benchmark->perf#/2stddev
@@ -10,6 +11,8 @@
   benchmark->perf#/t95
   benchmark->perf#/t90
   benchmark->perf#/t80
+  t-test
+  shortnum
   )
 
 (require
@@ -57,6 +60,13 @@
     (define ss (fx mm o*))
     #; (printf "   val ~s~n" (shortnum ss))
     (values (car row) (map shortnum (list mm ss)))))
+
+(define (benchmark->raw# bm)
+  (define in-file (build-path runtime-data-dir (format "~a.rktd" bm)))
+  (define vv (file->value in-file))
+  (define ut* (cadr (car vv)))
+  (for/hash ((row (in-list vv)))
+    (values (car row) (cadr row))))
 
 (define ((t-test #:alpha [alpha 0.05] #:two-sided? [two-sided? #true]) mm n*)
   ;; gbe-oopsla-2007 sec 3,2,2

@@ -9,7 +9,7 @@ the artifact (../artifact) has similar code for auditing
 - base.rkt: define benchmarks, configurations, overhead, %, ....
 - success.rkt: analyze trails for success / failure
 - tex.rkt: render output
-- georges.rkt: play with statistics, can we do better than 
+- georges.rkt: play with statistics, audit runtimes
 
 - shallow-help.rkt: quick info about shallow configs / profiles ... what good is shallow?!
 

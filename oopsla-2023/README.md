@@ -38,6 +38,8 @@ Why do so few scenarios succeed?
   - [X] use Andy Georges formulas for t-test,,, chapter 4.3?
   - [X] configs within the noise if either one holds ... stop using stddev windows!
   - [X] re-run ... results same right?
+  - [ ] code for 3x hopeful, count configs in every benchmark ... write NEW code
+  - [ ] writeup paper, threat: stddev loosee, 
 
 - [ ] does shallow ever help?
   - [X] for critical pairs on 1st level, rarely (few such pairs anyway), ~13 cases
