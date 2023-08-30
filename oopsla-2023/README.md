@@ -1,11 +1,11 @@
 OOPSLA 2023
 ===
 
+<https://2023.splashcon.org/track/splash-2023-oopsla>
+
 - Submissions due 2023-04-14
 - 23 pages excluding bib
 - 10pt font
-
-<https://2023.splashcon.org/track/splash-2023-oopsla>
 
 Revision deadline: 2023-08-13
 
@@ -13,6 +13,7 @@ Revision deadline: 2023-08-13
 • should not be anonymous
 • submit a detailed changelog
 
+camera-ready deadline: 2023-09-08 ?
 
 
 Followup RQs (04/23 and beyond)
