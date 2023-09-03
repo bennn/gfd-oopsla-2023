@@ -121,20 +121,22 @@ degradations along the way, a profiling strategy is as likely to produce
 a migration path that finds an overhead-free configuration as it is to
 produce a configuration with some reasonably bounded ($3$x) overhead.
 
-Language designers can extract a single lesson from the data.  The
-addition of shallow types to the implementation of Typed
-Racket~\cite{g-deep-shallow} does not seem to help with the navigation of
-the migration lattice. All conservative profiling strategies, which
-prioritize shallow over deep, are inferior to the optimistic profiling
-strategies---which prefer deep enforcement. Possibly this is because
-existing profiling technology is not sufficiently sensitive to detect the
-aggregate cost of shallow's assertions.  Hence, language designers that
-want to apply lessons from Typed Racket to another linguistic environment
-are better off investing on deep types and a boundary profiler.
-Although toggling from deep to shallow improves performance to some degree in
-\pct{65} of configurations, further research on compiling and profiling
-gradually typed languages is necessary to find 1x-fast configurations through
-shallow types~(see \cref{sec:conclusion}).
+Language designers can extract a single lesson from the data.  The addition of
+shallow types to the implementation of Typed Racket~\cite{g-deep-shallow} does
+not seem to help with the navigation of the migration lattice. All conservative
+profiling strategies---those that prioritize shallow over deep---yield inferior
+results compared to optimistic strategies---which prefer deep
+enforcement. Possibly this is due to the state of profiling technology; no
+existing profiler may be sufficiently sensitive to detect the aggregate cost of
+shallow's assertions and point to cost reduction.  For now then, language
+designers are better off investing in deep types and a boundary profiler.
+
+
+%% MF: I don't know how to interpret the rest and how to connect it to the above:
+% Although toggling from deep to shallow improves performance to some degree in
+% \pct{65} of configurations, further research on compiling and profiling
+% gradually typed languages is necessary to find 1x-fast configurations through
+% shallow types~(see \cref{sec:conclusion}).
 
 
 \subsection{Specific Lessons}
