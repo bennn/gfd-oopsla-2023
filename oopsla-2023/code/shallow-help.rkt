@@ -69,6 +69,39 @@
   (pretty-write (sort (hash->list slow#) < #:key car))
   (void))
 
+(define (where-fast? bm*)
+  (for/list ((bm (in-list bm*)))
+    (define perf# (benchmark->perf# bm))
+    (define h# (make-hash))
+    (for (((k v) (in-hash perf#))
+          #:when (good-overhead? v))
+      (hash-add1! h# (config->num-types k)))
+    (cons bm (sort (hash->list h#) < #:key car))))
+
+(define (where-fast/tex bm*)
+  (printf "\\begin{figure}[t]~n")
+  (printf "  \\begin{tabular}{ll}~n")
+  (for ((bm (in-list bm*)))
+    (define perf# (benchmark->perf# bm))
+    (define h# (make-hash))
+    (for (((k v) (in-hash perf#))
+          #:when (good-overhead? v))
+      (hash-add1! h# (config->num-types k)))
+    (define nlevel (+ 1 (log3 (hash-count perf#))))
+    (printf "    \\bmname{~a} & \\begin{tabular}{l~a}~n" bm (make-string nlevel #\r))
+    (for ((level (in-range nlevel)))
+      (define vv (hash-ref h# level #f))
+      (if vv
+        (printf " & \\gcell{~a}" vv)
+        (printf " & \\rcell{0}")))
+    (printf " \\\\~n")
+    (printf "    \\end{tabular}~n")
+    (printf "    \\\\~n")
+    (void))
+  (printf "  \\end{tabular}~n")
+  (printf "\\end{figure}~n")
+  (void))
+
 (define (low-levels bm-name)
   ;; how often does toggling help on low lattice levels?
   (define perf# (benchmark->perf# bm-name))
@@ -92,6 +125,23 @@
         ln-good (if (real? ln-good) (pctstr2 ln-good ln-total) "")
         ))
 
+(define (all-levels bm-name* #:win? [win? #true])
+  (define *all-helped 0)
+  (define *all-cfg 0)
+  (define rr
+    (for/list ((bm-name (in-list bm-name*)))
+      ;; how often does toggling help on all lattice levels
+      (define perf# (benchmark->perf# bm-name))
+      (define nmod (log3 (hash-count perf#)))
+      (cons bm-name
+      (for/list ((level (in-range nmod)))
+        (define-values [ngood ntotal] (try-toggle (has-typed level) perf# #:win? win?))
+        (set! *all-helped (+ *all-helped ngood))
+        (set! *all-cfg (+ *all-cfg ntotal))
+        (list level ngood ntotal (pctstr2 ngood ntotal))))))
+  (printf "helped ~a / ~a = ~a~n" *all-helped *all-cfg (pctstr2  *all-helped *all-cfg))
+  rr)
+
 (define ((has-typed n) cfg)
   (= n (num-typed-modules cfg)))
 
@@ -106,14 +156,16 @@
             #:unless (eq? #\0 cc))
     1))
 
-(define (try-toggle p? perf#)
+(define (try-toggle p? perf# #:win? [win? #true])
   (for/fold ((num-fast 0)
              (num-total 0))
             (((k v) (in-hash perf#))
              #:when (p? k))
     (values (+ (if (and
                      (not (good-overhead? v))
-                     (good-overhead? (hash-ref perf# (config->shallow k))))
+                     (if win?
+                       (good-overhead? (hash-ref perf# (config->shallow k)))
+                       (overhead>? v (hash-ref perf# (config->shallow k)))))
                    1 0) num-fast)
             (+ 1 num-total))))
 
@@ -128,12 +180,20 @@
   #;(for ((bm (in-list '(forth fsm fsmoo kcfa jpeg suffixtree snake take5 zombie
                        tetris dungeon acquire synth))))
    (go bm))
-  (print-simple-table
+
+  #;(pretty-write (all-levels (all-benchmark-name*) #:win? #f))
+
+
+  #;(print-simple-table
     #:align '(left right)
     (cons
       (list "benchmark" "N" "L1-S" "%" "L2-S" "%" "L3-S" "%" "L4-S" "%" "L(n-2)-S" "%" "L(n-1)-S" "%")
       (for/list ((bm (in-list (all-benchmark-name*))))
         (cons bm (go bm)))))
+
+  #;(pretty-write (where-fast? (all-benchmark-name*)))
+  (void (where-fast/tex (all-benchmark-name*)))
+
   (void))
 
 

@@ -27,55 +27,31 @@ Why do so few scenarios succeed?
      127180 are hopeless anyway
      264075 can progress with prf (total OR self)
      3761 not hopeless, but no prf progress
-     usually above the 50% mark (382551)
-  - prf stuck at no-actionable
-     usually above 50% typed (727262)
-     [ ] TODO any more insights?
+     usually above the 50% mark (382551) => obvious, typed to untyped
+  - prf stuck at no-actionable 745673 times
+     overall usually above 50% typed (727262 out of 745753)
   (notes/why-stuck.txt)
 
-- [X] t-test, significant differences
-  - [X] cite Amherst etc for insignificant differences (<20ms)
-    ... acquire same? forth same for sure
-  - [X] use Andy Georges formulas for t-test,,, chapter 4.3?
-  - [X] configs within the noise if either one holds ... stop using stddev windows!
-  - [X] re-run ... results same right?
-  - [ ] code for 3x hopeful, count configs in every benchmark ... write NEW code
-  - [ ] writeup paper, threat: stddev loosee, 
-
-- [ ] does shallow ever help?
+- [X] does shallow ever help?
   - [X] for critical pairs on 1st level, rarely (few such pairs anyway), ~13 cases
     (notes/shallow-help.txt)
   - [X] 1st level, how often toggling helps?
   - [X] 2nd level, ditto
-    (notes/sh
-  - [ ] TODO filter scenarios
-  - [ ] more levels ... show all
-  - [ ] add to paper
+  - win for 679 / 113183 = 0.60% overall by toggling all deep to all shallow
+    - low better 297 / 679 = 43.74
+      ... not great! perhaps <= would be better?  ... oh, no, less-equal gives 44.92, not much better!
+  - improve for 73985 / 113183 = 65.37% by ditto ^^^
+  (notes/shallow-help.txt)
 
-- [ ] where in the lattice are the slow points? evenly distributed?
-  - for deep only, typically low but pretty even split
-    (notes/sparse-slow.txt)
-
-- [ ] how do the results look with 1.1x as success?
-      what about 2x or 3x?
-  (TODO)
-
-- [ ] what to do about adaptors? how big of a threat are they?
-  - [ ] why is forth config 0200 so slow? any deep? any adaptor? any base library?
-  - [ ] count num failures due to adaptors, report like #hopeless
-  - [ ] 
-
-- [ ] why black holes?!
-  - [ ] take5 typed is slower, why? fix it.
+- [ ] can we find a 100% success strategy? if not why???
+- [ ] does the starting point matter for result? stratify by 2x, 10x, 50x scenario
+- [ ] what config stuck at? (hash config count) ... get size + distribution
+- [ ] quadT, database experiment
+- [ ] lnm, can we find a bug in the handwritten plot library types? would be a nice story, but I think, unlikely!!!
 
 - vague quesions:
   - [ ] can wrappers make garbage un-claimable in a big way?
   - [ ] is shallow blocking chez optimizations? any way to check?!
-
-Scripts:
-
-- code/stuck.rkt
-- code/shallow-help.rkt
 
 
 latexdiff

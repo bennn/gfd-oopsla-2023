@@ -150,3 +150,9 @@
 \newcommand{\takikawa}{\ensuremath{T}}
 
 \newcommand{\pct}[1]{\SI{#1}{\percent}}
+
+\newcommand{\embox}[1]{\parbox[b][1ex]{0.4em}{\makebox[0.4em][l]{#1}}}
+\newcommand{\rbox}[1]{\colorbox{red!30}{\embox{{#1}}}}
+\newcommand{\gbox}[1]{\colorbox{green!20}{\embox{{#1}}}}
+\newcommand{\rboxtiny}{{\scalebox{0.6}{\rbox{}}}}
+\newcommand{\gboxtiny}{{\scalebox{0.6}{\gbox{}}}}

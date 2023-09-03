@@ -12,6 +12,6 @@ the artifact (../artifact) has similar code for auditing
 - georges.rkt: play with statistics, audit runtimes
 
 - shallow-help.rkt: quick info about shallow configs / profiles ... what good is shallow?!
-
+- stuck.rkt: where in the lattice do configs get stuck?
 
 

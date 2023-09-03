@@ -1,8 +1,11 @@
 The results of the rational-programmer experiment suggest a few concrete lessons
 for the developers and also for language designers. Before diving into
 the details, it is necessary to look at the data for some individual benchmarks
-(section~\ref{subsec:data}). The data is illustrative of the general lessons
-(section~\ref{subsec:lessons}). Finally, readers should be aware some specific
+(section~\ref{subsec:data}). The data is illustrative of general lessons
+(section~\ref{subsec:lessons}).
+A closer look at the scenarios yields additional lessons for language
+designers~(\cref{s:specific-lessons}).
+Finally, readers should be aware some specific
 and some general threats to the validity of the data and the conclusions
 (section~\ref{subsec:threats}).
 
@@ -69,7 +72,7 @@ must not depend on the full lattice either.
 \end{figure}
 
 %% -----------------------------------------------------------------------------
-\subsection{Lessons} \label{subsec:lessons}
+\subsection{General Lessons} \label{subsec:lessons}
 
 Given the general results from the preceding section and the data from the
 individual benchmarks~(see preceding subsection and
@@ -127,10 +130,144 @@ strategies---which prefer deep enforcement. Possibly this is because
 existing profiling technology is not sufficiently sensitive to detect the
 aggregate cost of shallow's assertions.  Hence, language designers that
 want to apply lessons from Typed Racket to another linguistic environment
-are better off investing on deep types and a boundary profiler.  Further
-research on techniques for compiling and profiling
-gradually typed languages seems necessary to unlock the potential, if any,
-of shallow types (see \Cref{sec:conclusion}).
+are better off investing on deep types and a boundary profiler.
+Although toggling from deep to shallow improves performance to some degree in
+\pct{65} of configurations, further research on compiling and profiling
+gradually typed languages is necessary to find 1x-fast configurations through
+shallow types~(see \cref{sec:conclusion}).
+
+
+\subsection{Specific Lessons}
+\label{s:specific-lessons}
+
+Given that none of the rational programmer strategies
+succeed on all hopeful scenarios, a first step toward
+future work is to understand why they fail and whether
+a modified strategy might succeed.
+The scenario data provide insights on failures,
+and the migration lattices show where the opportunities are.
+
+With the boundary profiler, the most common reason
+that strategies get stuck in that there are no
+\emph{internal} boundaries in the output.
+Either there are no boundaries whatsoever, or they all have at least one
+component that lives outside the benchmark in library code.
+This issue affects 395 thousand scenarios (395K).
+Roughly one fourth of the scenarios are hopeless at any rate (127K).
+The rest might be able to reach a fast configuration with a better strategy.
+Fortunately, most of these hopeful scenarios (264K) can make progress
+using statistical profiler data.
+Adding statistical data as a fallback when no boundary data is available
+may significantly increase the success rate.
+
+With statistical profiler data, a huge number of scenarios (745K) get stuck
+because there are no actionable boundaries in the data.
+Unfortunately, there are several possible explanations:
+the boundaries might point to library code, the main costs might point toward
+essential computations rather than gradual typing checks, or the strategy
+might fail to upgrade a candidate boundary.
+
+Turning to the migration lattices, \cref{t:where-fast} shows where the fast
+configurations are.
+For a benchmark with $N$ components, it presents a vector with $N+1$ cells
+that correspond to the levels in the migration lattice.
+The leftmost cell represents the untyped configuration,
+the second-to-left cell represents all $N * 2$ configurations with exactly one
+typed component, and so on until the rightmost cell, which
+represents all $2^N$ fully-typed configurations,
+Each cell reports the number of fast configurations at its level.
+If this number is zero the cell is red (\rboxtiny{}), otherwise
+the cell is green (\gboxtiny{}).
+All but a few cells are green, which means that fast configurations
+are spread throughout the lattices.
+Four benchmarks are exceptional:
+\bmname{dungeon} and \bmname{take5} are entirely hopeless, while
+\bmname{snake} and \bmname{synth} have fast configurations only
+at the endpoints.
+In the remaining benchmarks, improved strategies have fast points to
+reach for---though, a configuration on level $i$ may need to discard
+some of its types to reach a fast neighbor at the same level.
+
+\begin{table}[t]
+  \caption{Which levels of the migration lattice have any fast configurations?}
+  \label{t:where-fast}
+  \newcommand{\lblrhs}{1x configs per level}
+  \begin{tabular}[t]{ll}
+    \begin{tabular}{ll}
+      Benchmark & \lblrhs \\\midrule
+%%    \bmname{sieve} & \begin{tabular}{lrrr} & \gcell{1} & \rcell{0} & \gcell{1} \\ \end{tabular} \\
+    \bmname{morsecode} & \begin{tabular}{lrrrrr}
+ & \gcell{1} & \gcell{2} & \gcell{4} & \gcell{4} & \gcell{3} \\
+    \end{tabular}
+    \\
+    \bmname{forth} & \begin{tabular}{lrrrrr}
+ & \gcell{1} & \gcell{2} & \gcell{1} & \gcell{1} & \rcell{0} \\
+    \end{tabular}
+    \\
+    \bmname{fsm} & \begin{tabular}{lrrrrr}
+ & \gcell{1} & \gcell{3} & \gcell{4} & \gcell{7} & \gcell{4} \\
+    \end{tabular}
+    \\
+    \bmname{fsmoo} & \begin{tabular}{lrrrrr}
+ & \gcell{1} & \gcell{2} & \gcell{4} & \gcell{2} & \gcell{4} \\
+    \end{tabular}
+    \\
+    \bmname{mbta} & \begin{tabular}{lrrrrr}
+ & \gcell{1} & \gcell{4} & \gcell{4} & \rcell{0} & \rcell{0} \\
+    \end{tabular}
+    \\
+    \bmname{zombie} & \begin{tabular}{lrrrrr}
+ & \gcell{1} & \gcell{2} & \gcell{3} & \gcell{1} & \rcell{0} \\
+    \end{tabular}
+    \\
+    \bmname{dungeon} & \begin{tabular}{lrrrrrr}
+ & \gcell{1} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} \\
+    \end{tabular}
+    \\
+    \bmname{jpeg} & \begin{tabular}{lrrrrrr}
+ & \gcell{1} & \gcell{2} & \gcell{1} & \gcell{1} & \gcell{4} & \gcell{4} \\
+    \end{tabular}
+  \end{tabular}
+    &
+    \begin{tabular}{ll}
+      Benchmark & \lblrhs \\\midrule
+    \bmname{lnm} & \begin{tabular}{lrrrrrrr}
+ & \gcell{1} & \gcell{9} & \gcell{38} & \gcell{93} & \gcell{138} & \gcell{116} & \gcell{39} \\
+    \end{tabular}
+    \\
+    \bmname{suffixtree} & \begin{tabular}{lrrrrrrr}
+ & \gcell{1} & \gcell{1} & \rcell{0} & \rcell{0} & \gcell{1} & \gcell{4} & \gcell{4} \\
+    \end{tabular}
+    \\
+    \bmname{kcfa} & \begin{tabular}{lrrrrrrrr}
+ & \gcell{1} & \gcell{8} & \gcell{22} & \gcell{33} & \gcell{24} & \gcell{24} & \gcell{29} & \gcell{15} \\
+    \end{tabular}
+    \\
+    \bmname{snake} & \begin{tabular}{lrrrrrrrrr}
+ & \gcell{1} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} & \gcell{1} \\
+    \end{tabular}
+    \\
+    \bmname{take5} & \begin{tabular}{lrrrrrrrrr}
+ & \gcell{1} & \gcell{2} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} \\
+    \end{tabular}
+    \\
+    \bmname{acquire} & \begin{tabular}{lrrrrrrrrrr}
+ & \gcell{1} & \gcell{8} & \gcell{28} & \gcell{51} & \gcell{45} & \gcell{16} & \gcell{2} & \rcell{0} & \rcell{0} & \rcell{0} \\
+    \end{tabular}
+    \\
+    \bmname{tetris} & \begin{tabular}{lrrrrrrrrrr}
+ & \gcell{1} & \gcell{12} & \gcell{56} & \gcell{121} & \gcell{169} & \gcell{128} & \gcell{118} & \gcell{133} & \gcell{112} & \gcell{42} \\
+    \end{tabular}
+    \\
+    \bmname{synth} & \begin{tabular}{lrrrrrrrrrrr}
+ & \gcell{1} & \gcell{1} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} & \gcell{1} \\
+    \end{tabular}
+    \\
+  \end{tabular}
+  \end{tabular}
+\end{table}
+
+
 
 %% -----------------------------------------------------------------------------
 \subsection{Threats to Validity} \label{subsec:threats}
