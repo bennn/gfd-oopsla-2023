@@ -149,18 +149,16 @@ a modified strategy might succeed.
 The scenario data provide insights on failures,
 and the migration lattices show where the opportunities are.
 
-With the boundary profiler, the most common reason
-that strategies get stuck in that there are no
-\emph{internal} boundaries in the output.
-Either there are no boundaries whatsoever, or they all have at least one
-component that lives outside the benchmark in library code.
-This issue affects 395,000 scenarios.
-Roughly one fourth of the scenarios are hopeless at any rate (127K).
-The rest might be able to reach a fast configuration with a better strategy.
-Fortunately, most of these hopeful scenarios (264K) can make progress
-using statistical profiler data.
-Adding statistical data as a fallback when no boundary data is available
-may significantly increase the success rate.
+With the boundary profiler, the most common reason that strategies get stuck in
+that there are no \emph{internal} boundaries in the output.  Either there are no
+boundaries whatsoever, or they all have at least one component that lives
+outside the benchmark in library code.  This issue affects 395,000 scenarios.
+Roughly one fourth of the scenarios are hopeless at any rate (127K).  The rest
+might be able to reach a fast configuration with a better strategy.
+Fortunately, for most of these hopeful scenarios (264K), the rational programmer
+can make progress using statistical profiler data.  Adding statistical data as a
+fallback when no boundary data is available may significantly increase the
+success rate.
 
 With statistical profiler data, a huge number of scenarios (745K) get stuck
 because there are no actionable boundaries in the data.
