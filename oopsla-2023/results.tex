@@ -156,7 +156,7 @@ Going by configurations rather than benchmarks, over \pct{80} of all
 configurations are interesting starting points for the experiment.
 
 %% -----------------------------------------------------------------------------
-\begin{figure}[ht]
+\begin{figure}[t]
   \includegraphics[width=\columnwidth]{data/strategy-overall-feasible.pdf}
   \Description{How many of the 114,428 scenarios does each strategy succeed in, for six notions of success.}
   \caption{How many of the 114,428 scenarios does each strategy succeed in, for six notions of success.}
@@ -233,8 +233,7 @@ This second possibility is likely due to the current implementation of shallow
 types~\cite{g-deep-shallow}, which rarely achieves a speedup relative to untyped
 code.
 
-To distinguish between these two possibilities,
-figure~\ref{f:strategy-overall} includes the antennas that
+To distinguish between these two possibilities,~\cref{f:strategy-overall} includes the antennas that
 reports strict successes when $T = 3$ is acceptable.  The
 number 3x is the classic, arbitrary Takikawa constant for ``acceptable'' gradual typing
 overhead~\cite{vss-popl-2017,bbst-oopsla-2017}.  Changing to 2x or 4x does not
@@ -263,7 +262,7 @@ programmer.  For several benchmarks, this is indeed the case.  Worst of all are
 scenarios.  Three others are only marginally better: \bmname{forth},
 \bmname{zombie}, and \bmname{acquire}.
 
-\begin{table}[ht]
+\begin{table}[t]
   \caption{How many scenarios can possibly reach 1x without removing types?}
   \label{t:blackhole}
   \begin{tabular}[t]{l@{\qquad}l}
@@ -293,7 +292,7 @@ scenarios.  Three others are only marginally better: \bmname{forth},
   \end{tabular}
 \end{table}
 
-\begin{figure}[ht]
+\begin{figure}[t]
   \includegraphics[width=\columnwidth]{data/strategy-overall-hopeful.pdf}
   \caption{How many of the 88,992 hopeful scenarios does each strategy succeed in, for six notions of success.}
   \Description{How many of the 88,992 hopeful scenarios does each strategy succeed in, for six notions of success.}
@@ -309,12 +308,12 @@ higher than before ($<\pct{0.12}$).
 
 For the optimistic strategies, the results are much better.
 With boundary profiling, they succeed in an additional \pct{10} of
-scenarios under either strict or $N$-loose success.  
+scenarios under either strict or $N$-loose success.
 With statistical profiling, the optimistic strategies
 improve slightly.
 
-Unfortunately, the conservative strategies perform no better than for all
-scenarios.
+Unfortunately, the conservative strategies perform no better when restricted
+to hopeful scenarios.
 In fact, the antennae
 in~\cref{f:strategy-hope} are shorter than the antennae
 in~\cref{f:strategy-overall}.  This means that conservative strategies
@@ -322,7 +321,7 @@ succeeded in the strict 3x sense in a small number of hopeless scenarios that
 do not appear in~\cref{f:strategy-hope}.
 
 
-\begin{figure}[ht]
+\begin{figure}[t]
   \includegraphics[width=0.9\columnwidth]{data/head-to-head.pdf}
   \Description{Boundary optimistic vs. the rest, strict success: losses (red bars) and wins (green bars) on all scenarios.}
   \caption{Boundary optimistic vs. the rest, strict success: losses (red bars) and wins (green bars) on all scenarios.}

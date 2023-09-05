@@ -100,7 +100,7 @@ types to untyped components. Prioritizing in this order follows from the data
 for the cost-aware optimistic strategy which is on par with the (cost-unaware)
 \emph{optimistic} strategy.
 
-Finally, as a developer applies an optimistic strategy, configurations
+When a developer applies an optimistic strategy, configurations
 along the migration path may suffer from performance problems that are
 worse than the original ones. In this case, the question is whether the
 developer should continue with the performance-debugging effort. The data
@@ -111,7 +111,7 @@ unlikely to help.
 
 %%bg: unclear from the data ... we know N-loose 1x > strict 3x, but what about strict for each? also 1x might require longer paths
 %% cd: rewrote to address Ben's point
-Finally, a reader may wonder whether developers should relax the high
+A reader may also wonder whether developers should relax the high
 standards of eliminating the entire performance overhead.  That is, the
 question is whether a mixed-typed program should run as fast as its
 (possibly non-existent) untyped variant. But, the antenna data disagrees
@@ -132,13 +132,6 @@ shallow's assertions and point to cost reduction.  For now then, language
 designers are better off investing in deep types and a boundary profiler.
 
 
-%% MF: I don't know how to interpret the rest and how to connect it to the above:
-% Although toggling from deep to shallow improves performance to some degree in
-% \pct{65} of configurations, further research on compiling and profiling
-% gradually typed languages is necessary to find 1x-fast configurations through
-% shallow types~(see \cref{sec:conclusion}).
-
-
 \subsection{Specific Lessons}
 \label{s:specific-lessons}
 
@@ -150,15 +143,17 @@ The scenario data provide insights on failures,
 and the migration lattices show where the opportunities are.
 
 With the boundary profiler, the most common reason that strategies get stuck in
-that there are no \emph{internal} boundaries in the output.  Either there are no
-boundaries whatsoever, or they all have at least one component that lives
-outside the benchmark in library code.  This issue affects 395,000 scenarios.
+that there are no {internal} boundaries in the output.  Either there are no
+expensive deep type boundaries~(the costs may come from shallow types),
+or the boundaries involve at least one component that lives
+outside the benchmark in library code.  This no-internal issue affects 395,000 scenarios.
 Roughly one fourth of the scenarios are hopeless at any rate (127K).  The rest
-might be able to reach a fast configuration with a better strategy.
-Fortunately, for most of these hopeful scenarios (264K), the rational programmer
-can make progress using statistical profiler data.  Adding statistical data as a
-fallback when no boundary data is available may significantly increase the
+are hopeful scenarios, and for the vast majority of these
+(264K) the rational programmer can make one step of progress using statistical profiler data.
+Adding statistical data as a
+fallback when no boundary data is available may increase the
 success rate.
+This mixed strategy can serve as a starting point for future research.
 
 With statistical profiler data, a huge number of scenarios (745K) get stuck
 because there are no actionable boundaries in the data.
@@ -167,7 +162,7 @@ the boundaries might point to library code, the main costs might point toward
 essential computations rather than gradual typing checks, or the strategy
 might fail to upgrade a candidate boundary.
 
-Turning to the migration lattices, \cref{t:where-fast} shows where the fast
+Turning to the migration lattices, \cref{t:where-fast} shows where the acceptable
 configurations are.
 For a benchmark with $N$ components, it presents a vector with $N+1$ cells
 that correspond to the levels in the migration lattice.
@@ -175,93 +170,78 @@ The leftmost cell represents the untyped configuration,
 the second-to-left cell represents all $N * 2$ configurations with exactly one
 typed component, and so on until the rightmost cell, which
 represents all $2^N$ fully-typed configurations,
-Each cell reports the number of fast configurations at its level.
+Each cell reports the number of acceptable configurations at its level.
 If this number is zero the cell is red (\rboxtiny{}), otherwise
 the cell is green (\gboxtiny{}).
-All but a few cells are green, which means that fast configurations
+All but a few cells are green, which means that acceptable configurations
 are spread throughout the lattices.
 Four benchmarks are exceptional:
 \bmname{dungeon} and \bmname{take5} are entirely hopeless, while
-\bmname{snake} and \bmname{synth} have fast configurations only
+\bmname{snake} and \bmname{synth} have acceptable configurations only
 at the endpoints.
-In the remaining benchmarks, improved strategies have fast points to
+In the remaining benchmarks, improved strategies have acceptable points to
 reach for---though, a configuration on level $i$ may need to discard
-some of its types to reach a fast neighbor at the same level.
+some of its types to reach an acceptable neighbor at the same level.
 
 \begin{table}[t]
-  \caption{Which levels of the migration lattice have any fast configurations?}
+  \caption{Which levels of the migration lattice have any acceptable configurations?}
   \label{t:where-fast}
-  \newcommand{\lblrhs}{1x configs per level}
-  \begin{tabular}[t]{ll}
-    \begin{tabular}{ll}
+  \newcommand{\lblrhs}{\hbox{}~\#acceptable}
+  \begin{tabular}[t]{l@{~}l}
+    \begin{tabular}{l@{~~}l}
       Benchmark & \lblrhs \\\midrule
-%%    \bmname{sieve} & \begin{tabular}{lrrr} & \gcell{1} & \rcell{0} & \gcell{1} \\ \end{tabular} \\
-    \bmname{morsecode} & \begin{tabular}{lrrrrr}
- & \gcell{1} & \gcell{2} & \gcell{4} & \gcell{4} & \gcell{3} \\
-    \end{tabular}
+%%    \bmname{sieve} & \begin{tabular}{lrrr} & \gboxlo{1} & \rboxlo{0} & \gboxlo{1} \\ \end{tabular} \\
+    \bmname{morsecode} &
+  \gboxlo{1}~ \gboxlo{2}~ \gboxlo{4}~ \gboxlo{4}~ \gboxlo{3}
     \\
-    \bmname{forth} & \begin{tabular}{lrrrrr}
- & \gcell{1} & \gcell{2} & \gcell{1} & \gcell{1} & \rcell{0} \\
-    \end{tabular}
+    \bmname{forth} &
+ \gboxlo{1}~ \gboxlo{2}~ \gboxlo{1}~\gboxlo{1}~\rboxlo{0}
     \\
-    \bmname{fsm} & \begin{tabular}{lrrrrr}
- & \gcell{1} & \gcell{3} & \gcell{4} & \gcell{7} & \gcell{4} \\
-    \end{tabular}
+    \bmname{fsm} &
+   \gboxlo{1} ~ \gboxlo{3} ~ \gboxlo{4} ~ \gboxlo{7} ~ \gboxlo{4}
     \\
-    \bmname{fsmoo} & \begin{tabular}{lrrrrr}
- & \gcell{1} & \gcell{2} & \gcell{4} & \gcell{2} & \gcell{4} \\
-    \end{tabular}
+    \bmname{fsmoo} &
+   \gboxlo{1} ~ \gboxlo{2} ~ \gboxlo{4} ~ \gboxlo{2} ~ \gboxlo{4}
     \\
-    \bmname{mbta} & \begin{tabular}{lrrrrr}
- & \gcell{1} & \gcell{4} & \gcell{4} & \rcell{0} & \rcell{0} \\
-    \end{tabular}
+    \bmname{mbta} &
+   \gboxlo{1} ~ \gboxlo{4} ~ \gboxlo{4} ~ \rboxlo{0} ~ \rboxlo{0}
     \\
-    \bmname{zombie} & \begin{tabular}{lrrrrr}
- & \gcell{1} & \gcell{2} & \gcell{3} & \gcell{1} & \rcell{0} \\
-    \end{tabular}
+    \bmname{zombie} &
+   \gboxlo{1} ~ \gboxlo{2} ~ \gboxlo{3} ~ \gboxlo{1} ~ \rboxlo{0}
     \\
-    \bmname{dungeon} & \begin{tabular}{lrrrrrr}
- & \gcell{1} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} \\
-    \end{tabular}
+    \bmname{dungeon} &
+   \gboxlo{1} ~ \rboxlo{0} ~ \rboxlo{0} ~ \rboxlo{0} ~ \rboxlo{0} ~ \rboxlo{0}
     \\
-    \bmname{jpeg} & \begin{tabular}{lrrrrrr}
- & \gcell{1} & \gcell{2} & \gcell{1} & \gcell{1} & \gcell{4} & \gcell{4} \\
-    \end{tabular}
+    \bmname{jpeg} &
+   \gboxlo{1} ~ \gboxlo{2} ~ \gboxlo{1} ~ \gboxlo{1} ~ \gboxlo{4} ~ \gboxlo{4}
   \end{tabular}
     &
-    \begin{tabular}{ll}
-      Benchmark & \lblrhs \\\midrule
-    \bmname{lnm} & \begin{tabular}{lrrrrrrr}
- & \gcell{1} & \gcell{9} & \gcell{38} & \gcell{93} & \gcell{138} & \gcell{116} & \gcell{39} \\
-    \end{tabular}
+
+    \begin{tabular}{l@{~~}l}
+      Benchmark & \lblrhs{} by lattice level \\\midrule
+    \bmname{lnm} &
+  \gboxhi{1} ~ \gboxhi{9} ~ \gboxhi{38} ~ \gboxhi{93} ~ \gboxhi{138} ~ \gboxhi{116} ~ \gboxhi{39}
     \\
-    \bmname{suffixtree} & \begin{tabular}{lrrrrrrr}
- & \gcell{1} & \gcell{1} & \rcell{0} & \rcell{0} & \gcell{1} & \gcell{4} & \gcell{4} \\
-    \end{tabular}
+    \bmname{suffixtree} &
+  \gboxhi{1} ~ \gboxhi{1} ~ \rboxhi{0} ~ \rboxhi{0} ~ \gboxhi{1} ~ \gboxhi{4} ~ \gboxhi{4}
     \\
-    \bmname{kcfa} & \begin{tabular}{lrrrrrrrr}
- & \gcell{1} & \gcell{8} & \gcell{22} & \gcell{33} & \gcell{24} & \gcell{24} & \gcell{29} & \gcell{15} \\
-    \end{tabular}
+    \bmname{kcfa} &
+  \gboxhi{1} ~ \gboxhi{8} ~ \gboxhi{22} ~ \gboxhi{33} ~ \gboxhi{24} ~ \gboxhi{24} ~ \gboxhi{29} ~ \gboxhi{15}
     \\
-    \bmname{snake} & \begin{tabular}{lrrrrrrrrr}
- & \gcell{1} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} & \gcell{1} \\
-    \end{tabular}
+    \bmname{snake} &
+  \gboxhi{1} ~ \rboxhi{0} ~ \rboxhi{0} ~ \rboxhi{0} ~ \rboxhi{0} ~ \rboxhi{0} ~ \rboxhi{0} ~ \rboxhi{0} ~ \gboxhi{1}
     \\
-    \bmname{take5} & \begin{tabular}{lrrrrrrrrr}
- & \gcell{1} & \gcell{2} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} \\
-    \end{tabular}
+    \bmname{take5} &
+  \gboxhi{1} ~ \gboxhi{2} ~ \rboxhi{0} ~ \rboxhi{0} ~ \rboxhi{0} ~ \rboxhi{0} ~ \rboxhi{0} ~ \rboxhi{0} ~ \rboxhi{0}
     \\
-    \bmname{acquire} & \begin{tabular}{lrrrrrrrrrr}
- & \gcell{1} & \gcell{8} & \gcell{28} & \gcell{51} & \gcell{45} & \gcell{16} & \gcell{2} & \rcell{0} & \rcell{0} & \rcell{0} \\
-    \end{tabular}
+    \bmname{acquire} &
+  \gboxhi{1} ~ \gboxhi{8} ~ \gboxhi{28} ~ \gboxhi{51} ~ \gboxhi{45} ~ \gboxhi{16} ~ \gboxhi{2} ~ \rboxhi{0} ~ \rboxhi{0} ~ \rboxhi{0}
     \\
-    \bmname{tetris} & \begin{tabular}{lrrrrrrrrrr}
- & \gcell{1} & \gcell{12} & \gcell{56} & \gcell{121} & \gcell{169} & \gcell{128} & \gcell{118} & \gcell{133} & \gcell{112} & \gcell{42} \\
-    \end{tabular}
+    \bmname{tetris} &
+  \gboxhi{1} ~ \gboxhi{12} ~ \gboxhi{56} ~ \gboxhi{121} ~ \gboxhi{169} ~ \gboxhi{128} ~ \gboxhi{118} ~ \gboxhi{133} ~ \gboxhi{112} ~ \gboxhi{42}
     \\
-    \bmname{synth} & \begin{tabular}{lrrrrrrrrrrr}
- & \gcell{1} & \gcell{1} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} & \rcell{0} & \gcell{1} \\
-    \end{tabular}
+    \bmname{synth} &
+  \gboxhi{1} ~ \gboxhi{1} ~ \rboxhi{0} ~ \rboxhi{0} ~ \rboxhi{0} ~ \rboxhi{0} ~ \rboxhi{0} ~ \rboxhi{0} ~ \rboxhi{0} ~ \rboxhi{0} ~ \gboxhi{1}
     \\
   \end{tabular}
   \end{tabular}

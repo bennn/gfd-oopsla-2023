@@ -151,8 +151,12 @@
 
 \newcommand{\pct}[1]{\SI{#1}{\percent}}
 
-\newcommand{\embox}[1]{\parbox[b][1ex]{0.4em}{\makebox[0.4em][l]{#1}}}
-\newcommand{\rbox}[1]{\colorbox{red!30}{\embox{{#1}}}}
-\newcommand{\gbox}[1]{\colorbox{green!20}{\embox{{#1}}}}
-\newcommand{\rboxtiny}{{\scalebox{0.6}{\rbox{}}}}
-\newcommand{\gboxtiny}{{\scalebox{0.6}{\gbox{}}}}
+\newcommand{\emboxlo}[1]{\parbox[b][1ex]{0.2em}{\makebox[0.2em][c]{#1}}}
+\newcommand{\emboxhi}[1]{\parbox[b][1ex]{1.0em}{\makebox[1.0em][c]{#1}}}
+\newcommand{\rboxlo}[1]{\colorbox{red!30}{\emboxlo{{#1}}}}
+\newcommand{\gboxlo}[1]{\colorbox{green!20}{\emboxlo{{#1}}}}
+\newcommand{\rboxhi}[1]{\colorbox{red!30}{\emboxhi{{#1}}}}
+\newcommand{\gboxhi}[1]{\colorbox{green!20}{\emboxhi{{#1}}}}
+\newcommand{\tinybox}[1]{\raisebox{0.3ex}{\scalebox{0.6}{#1}}}
+\newcommand{\rboxtiny}{\tinybox{\rboxlo{}}}
+\newcommand{\gboxtiny}{\tinybox{\gboxlo{}}}
