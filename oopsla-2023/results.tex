@@ -116,7 +116,7 @@ per se, but makes the outcome more relevant to current versions of Racket.
 
 %% https://github.com/racket/typed-racket/pull/1316
 
-\begin{table}[t]
+\begin{table}[th]
   \caption{How many of the $3^N$ configurations have any overhead to begin with?}
   \label{t:baseline-trouble}
   \begin{tabular}[t]{l@{\qquad}l}
@@ -262,7 +262,7 @@ programmer.  For several benchmarks, this is indeed the case.  Worst of all are
 scenarios.  Three others are only marginally better: \bmname{forth},
 \bmname{zombie}, and \bmname{acquire}.
 
-\begin{table}[t]
+\begin{table}[th]
   \caption{How many scenarios can possibly reach 1x without removing types?}
   \label{t:blackhole}
   \begin{tabular}[t]{l@{\qquad}l}
@@ -321,13 +321,6 @@ succeeded in the strict 3x sense in a small number of hopeless scenarios that
 do not appear in~\cref{f:strategy-hope}.
 
 
-\begin{figure}[t]
-  \includegraphics[width=0.9\columnwidth]{data/head-to-head.pdf}
-  \Description{Boundary optimistic vs. the rest, strict success: losses (red bars) and wins (green bars) on all scenarios.}
-  \caption{Boundary optimistic vs. the rest, strict success: losses (red bars) and wins (green bars) on all scenarios.}
-  \label{f:head-to-head}
-\end{figure}
-
 %% -----------------------------------------------------------------------------
 \subsection{Answering $Q_{X/Y}$} \label{subsec:hh} \label{s:hh}
 
@@ -354,4 +347,11 @@ The tiny red bars and tall green bars give a negative answer to
 the question of whether optimistic boundary performs worse in
 certain cases.
 Other strategies rarely succeed where optimistic-boundary fails.
+
+\begin{figure}[t]
+  \includegraphics[width=0.9\columnwidth]{data/head-to-head.pdf}
+  \Description{Boundary optimistic vs. the rest, strict success: losses (red bars) and wins (green bars) on all scenarios.}
+  \caption{Boundary optimistic vs. the rest, strict success: losses (red bars) and wins (green bars) on all scenarios.}
+  \label{f:head-to-head}
+\end{figure}
 
