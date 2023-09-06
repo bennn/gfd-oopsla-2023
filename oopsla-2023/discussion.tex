@@ -162,7 +162,8 @@ the boundaries might point to library code, the main costs might point toward
 essential computations rather than gradual typing checks, or the strategy
 might fail to upgrade a candidate boundary.
 
-Turning to the migration lattices, \cref{t:where-fast} shows where the acceptable
+Turning to the migration lattices, \cref{t:where-fast} shows where the
+acceptable ($T  = 1$)
 configurations are.
 For a benchmark with $N$ components, it presents a vector with $N+1$ cells
 that correspond to the levels in the migration lattice.
@@ -180,7 +181,7 @@ Four benchmarks are exceptional:
 \bmname{snake} and \bmname{synth} have acceptable configurations only
 at the endpoints.
 In the remaining benchmarks, improved strategies have acceptable points to
-reach for---though, a configuration on level $i$ may need to discard
+reach for---though, a configuration at some level may need to discard 
 some of its types to reach an acceptable neighbor at the same level.
 
 \begin{table}[t]
