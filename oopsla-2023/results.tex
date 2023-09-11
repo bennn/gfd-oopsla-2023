@@ -84,9 +84,9 @@ Most of these came from \bmname{tetris}: 388 configs, or
   \begin{tabular}{llrrr}
     %% multi-cpu, multi-core machines .. but we didn't use that, right?
     Server & Site & CPU Speed & RAM & Disk \\\midrule
-    \machinename{c220g1} & Wisconsin & 2.4GHz & 128GB & 480GB SSD \\
-    \machinename{c220g2} & Wisconsin & 2.6GHz & 160GB & 480GB SSD \\
-    \machinename{m510}   & Utah      & 2.0GHz &  64GB & 256GB SSD
+    \machinename{c220g1} & Wisconsin & \SI{2.4}{GHz} & \SI{128}{GB} & \SI{480}{GB} SSD \\
+    \machinename{c220g2} & Wisconsin & \SI{2.6}{GHz} & \SI{160}{GB} & \SI{480}{GB} SSD \\
+    \machinename{m510}   & Utah      & \SI{2.0}{GHz} &  \SI{64}{GB} & \SI{256}{GB} SSD
   \end{tabular}
 
 \end{table}
@@ -103,7 +103,7 @@ Each server ran a sequence of measurement tasks and nothing else;
 no other users ran jobs during the experiment's reservation time.
 \Cref{t:data-collection} (bottom) lists the specifications of
 the machines used.
-In total, the results take up 5GB of disk space.
+In total, the results take up \SI{5}{GB} of disk space.
 Measurements began in July 2022 and finished in April 2023.
 
 For all but two benchmarks, the measurements used a recent version
@@ -116,7 +116,7 @@ per se, but makes the outcome more relevant to current versions of Racket.
 
 %% https://github.com/racket/typed-racket/pull/1316
 
-\begin{table}[th]
+\begin{table}[t]
   \caption{How many of the $3^N$ configurations have any overhead to begin with?}
   \label{t:baseline-trouble}
   \begin{tabular}[t]{l@{\qquad}l}
@@ -262,7 +262,7 @@ programmer.  For several benchmarks, this is indeed the case.  Worst of all are
 scenarios.  Three others are only marginally better: \bmname{forth},
 \bmname{zombie}, and \bmname{acquire}.
 
-\begin{table}[th]
+\begin{table}[t]
   \caption{How many scenarios can possibly reach 1x without removing types?}
   \label{t:blackhole}
   \begin{tabular}[t]{l@{\qquad}l}
