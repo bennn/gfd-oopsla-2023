@@ -2,7 +2,7 @@
 
 ;; ?? min slot
 ;; ??:?? October ?? 2023
-;; 
+;; https://docs.google.com/presentation/d/1vBZkcBu-4AHWRd1AMt6b8OuokaHR91juc6ahOCvOgMU/edit#slide=id.g28099dacf64_0_64
 
 (require
   racket/class
