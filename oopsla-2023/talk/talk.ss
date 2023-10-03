@@ -1,7 +1,7 @@
 #lang at-exp slideshow
 
-;; ?? min slot
-;; ??:?? October ?? 2023
+;; 18 min slot
+;; 14:18 ? Thurs October 26 2023
 ;; https://docs.google.com/presentation/d/1vBZkcBu-4AHWRd1AMt6b8OuokaHR91juc6ahOCvOgMU/edit#slide=id.g28099dacf64_0_64
 
 (require
@@ -30,6 +30,8 @@
 (define smol-x-sep small-x-sep)
 (define med-x-sep (w%->pixels 10/100))
 (define big-x-sep (w%->pixels 15/100))
+(define medd-x-sep med-x-sep)
+(define bigg-x-sep big-x-sep)
 
 (define pico-y-sep (h%->pixels 1/100))
 (define tiny-y-sep (h%->pixels 2/100))
@@ -37,6 +39,8 @@
 (define smol-y-sep small-y-sep)
 (define med-y-sep (h%->pixels 10/100))
 (define big-y-sep (h%->pixels 15/100))
+(define medd-y-sep med-y-sep)
+(define bigg-y-sep big-y-sep)
 
 (define slide-top 4/100)
 (define slide-left 2/100)
@@ -181,7 +185,15 @@
 (define deep-bg-color  (color%-update-alpha deep-pen-color 0.2))
 (define typed-bg-color deep-bg-color)
 (define untyped-bg-color (color%-update-alpha untyped-pen-color 0.2))
-(define bg-color utah-darkgrey)
+
+(define emph-color (hex-triplet->color% #x304E59))
+(define bg-color utah-granite)
+
+(define bbox-frame-color (make-parameter utah-crimson))
+(define bbox-radius (make-parameter 1))
+(define bbox-x-margin (make-parameter small-x-sep))
+(define bbox-y-margin (make-parameter tiny-y-sep))
+(define bbox-frame-width (make-parameter 2))
 
 (define (color-off c)
   (color%-update-alpha c 0.2))
@@ -217,8 +229,8 @@
 (define titlerm (make-string->text #:font utah-web-headline-font #:size title-size #:color black))
 (define titlerm2 (make-string->text #:font utah-web-headline-font #:size (- title-size 8) #:color black))
 (define subtitlerm (make-string->text #:font title-font #;body-font-md #:size subtitle-size #:color black))
-(define subtitlermem (make-string->text #:font (bold-style title-font) #:size subtitle-size #:color dark-orange))
-(define subtitlermemlo (make-string->text #:font title-font #:size subtitle-size #:color dark-orange))
+(define subtitlermem (make-string->text #:font (bold-style title-font) #:size subtitle-size #:color emph-color))
+(define subtitlermemlo (make-string->text #:font title-font #:size subtitle-size #:color emph-color))
 (define subtitlermlo
   (let ((ff (make-string->text #:font title-font #:size subtitle-size #:color black)))
     (lambda str*
@@ -227,7 +239,7 @@
 (define coderm (make-string->text #:font code-font #:size code-size #:color black))
 (define codebf (make-string->text #:font (bold-style code-font) #:size code-size #:color black))
 (define codeemrm (make-string->text #:font (bold-style code-font) #:size code-size #:color green2-3k1))
-(define codeemrm2 (make-string->text #:font (bold-style code-font) #:size code-size #:color dark-orange))
+(define codeemrm2 (make-string->text #:font (bold-style code-font) #:size code-size #:color emph-color))
 (define codeembf (make-string->text #:font (bold-style code-font) #:size code-size #:color apple-red))
 (define tcoderm (make-string->text #:font code-font #:size tcode-size #:color black))
 (define tcodebf (make-string->text #:font (bold-style code-font) #:size tcode-size #:color black))
@@ -237,7 +249,7 @@
 (define hugerm (make-string->text #:font body-font-md #:size (+ 20 body-size) #:color black))
 (define bodyrmlo (make-string->text #:font body-font-lo #:size body-size #:color black))
 (define rm bodyrmlo)
-(define rmem (make-string->text #:font body-font-lo #:size body-size #:color dark-orange))
+(define rmem (make-string->text #:font body-font-lo #:size body-size #:color emph-color))
 (define bodyrmlobb (make-string->text #:font body-font-lo #:size body-size #:color deep-pen-color))
 (define bodyrmloyy (make-string->text #:font body-font-lo #:size body-size #:color shallow-pen-color))
 (define bodyrmhi (make-string->text #:font body-font-hi #:size body-size #:color black))
@@ -246,10 +258,10 @@
 (define bodyit (make-string->text #:font body-font-it #:size body-size #:color black))
 (define bodyitbf (make-string->text #:font body-font-itbf #:size body-size #:color black))
 (define bodybf (make-string->text #:font (bold-style body-font) #:size body-size #:color black))
-(define bodyemit (make-string->text #:font body-font-it #:size body-size #:color dark-orange))
-(define bodyemrm (make-string->text #:font body-font-md #:size body-size #:color dark-orange))
+(define bodyemit (make-string->text #:font body-font-it #:size body-size #:color emph-color))
+(define bodyemrm (make-string->text #:font body-font-md #:size body-size #:color emph-color))
 (define bodyrmem bodyemrm)
-(define bodyembf (make-string->text #:font (bold-style body-font) #:size body-size #:color dark-orange))
+(define bodyembf (make-string->text #:font (bold-style body-font) #:size body-size #:color emph-color))
 (define bodyemrm2 (make-string->text #:font body-font-md #:size body-size #:color green2-3k1))
 (define bodyembf2 (make-string->text #:font (bold-style body-font-md) #:size body-size #:color green2-3k1))
 (define bodyembf3 (make-string->text #:font (bold-style body-font-md) #:size body-size #:color apple-red))
@@ -278,7 +290,7 @@
   (arrowhead-pict (* 3/4 turn) #:color black))
 
 (define (author-append . pp*)
-  (apply hc-append (pict-width @rm{xx}) pp*))
+  (apply vl-append pico-y-sep pp*))
 
 (define (affiliation-pict)
   (bbox
@@ -301,6 +313,20 @@
 (define (scale-to-square pp dim)
   (scale-to-fit pp dim dim))
 
+(define checker-w 40)
+
+(define (make-checker c)
+  (filled-rectangle checker-w checker-w #:draw-border? #f #:color c))
+
+(define (make-checkerboard w h c0 c1)
+  (let* ((b0 (make-checker c0))
+         (b1 (make-checker c1))
+         (b01 (ht-append b0 b1))
+         (b10 (ht-append b1 b0))
+         (make-row (lambda (pp) (apply ht-append (make-list (+ 1 (quotient (exact-ceiling w) (pict-width pp))) pp))))
+         (row (vl-append (make-row b01) (make-row b10))))
+    (apply vl-append (make-list (+ 1 (quotient (exact-ceiling h) (pict-height row))) row))))
+
 (define ((slide-assembler/background2 base-assembler make-rect) slide-title slide-vspace slide-pict)
   (define foreground-pict (base-assembler slide-title slide-vspace slide-pict))
   (define background-pict
@@ -318,12 +344,6 @@
 
 (define bg-orig (current-slide-assembler))
 (define bg-bg (slide-assembler/background2 bg-orig make-bg))
-
-(define bbox-radius (make-parameter 1))
-(define bbox-x-margin (make-parameter small-x-sep))
-(define bbox-y-margin (make-parameter tiny-y-sep))
-(define bbox-frame-width (make-parameter 2))
-(define bbox-frame-color (make-parameter utah-granite))
 
 (define (bbox pp
               #:color [color white]
@@ -752,19 +772,19 @@
              #:y-margin small-y-sep
              (titlerm the-title-str))]
          [ben-pict
-               (author-append
-                          @subtitlermem{Ben Greenman}
-                          @subtitlermemlo{Matthias Felleisen}
-                          @subtitlermemlo{Christos Dimoulas})]
+          ;; affiliations? [uu brown] nwu neu
+          (author-append
+                     @subtitlermem{Ben Greenman}
+                     @subtitlermemlo{Matthias Felleisen}
+                     @subtitlermemlo{Christos Dimoulas})]
          [author-pict
-           (vc-append
-             tiny-y-sep
+           (ht-append
+             smol-x-sep
              (bbox ben-pict)
-             (hc-append
-               med-x-sep
-               (affiliation-pict)
-               (bbox @subtitlerm{OOPSLA 2023})))]
-         [fg (vc-append smol-y-sep title-pict author-pict)])
+             (bbox @subtitlerm{OOPSLA 2023}))]
+         [mini-checker
+           (make-checkerboard (w%->pixels 8/10) (h%->pixels 2/10) utah-white utah-black)]
+         [fg (vc-append medd-y-sep title-pict author-pict mini-checker)])
     (ppict-do
       (pblank fg)
       #:go center-coord fg)))
@@ -804,7 +824,6 @@
          (define raco-pict
   (ppict-do
     (make-bg client-w client-h)
-    #;(make-titlebg client-w client-h)
 
 
 
