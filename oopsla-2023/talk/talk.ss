@@ -1,6 +1,7 @@
 #lang at-exp slideshow
 
 ;; 18 min slot
+;; 15 min talk 3 min q/a
 ;; 14:18 ? Thurs October 26 2023
 ;; https://docs.google.com/presentation/d/1vBZkcBu-4AHWRd1AMt6b8OuokaHR91juc6ahOCvOgMU/edit#slide=id.g28099dacf64_0_64
 
@@ -310,9 +311,6 @@
 (define (main-logo str [ww main-logo-w] [hh main-logo-h])
   (freeze (scale-to-fit (bitmap str) ww ww)))
 
-(define (scale-to-square pp dim)
-  (scale-to-fit pp dim dim))
-
 (define checker-w 40)
 
 (define (make-checker c)
@@ -367,6 +365,9 @@
     #:background-color (if backup? white color)
     #:frame-width (bbox-frame-width)
     #:frame-color (or frame-color (bbox-frame-color))))
+
+(define (bboxrm . arg*)
+  (bbox (apply bodyrm arg*)))
 
 (struct code-arrow (src-tag src-find tgt-tag tgt-find start-angle end-angle start-pull end-pull style) #:transparent)
 
@@ -762,6 +763,12 @@
 (define (python-pict)
   (symbol->lang-pict 'python))
 
+(define (mkchess n)
+  (format "img/chess~a.png" n))
+
+(define ((scale-square n) pp)
+  (scale-to-square pp n))
+
 ;; -----------------------------------------------------------------------------
 
 (define the-title-str "How Profilers Can Help Navigate Type Migration")
@@ -795,8 +802,195 @@
     (title-pict))
   (void))
 
-;; -----------------------------------------------------------------------------
+(define (sec:vision)
+  (pslide
+    #:go heading-coord-m
+    @bboxrm{Sound GT: Vision vs Reality}
+    (yblank smol-y-sep)
+    (ht-append
+      med-x-sep
+      @bboxrm{Vision: any combo}
+      @bboxrm{Reality: some are too slow})
+    (yblank med-y-sep)
+    (bbox
+      (ll-append
+        @bodyrm{N years since dead paper, still wondering!}
+        @bodyrm{- corpse reviver}
+        @bodyrm{- pycket}
+        @bodyrm{- nom}
+        @bodyrm{huge improvements, but still have dead spots.}))
+    )
+  (pslide
+    #:go center-coord
+    (bbox
+      (ll-append
+        @bodyrm{PLDI'22, a solution?}
+        @bodyrm{3d lattice, quick solution to the perf problem, huge improvements}
+        @bodyrm{navigation _should_ be much more feasible}
+        @bodyrm{Today, the reality. Consensus of ben + mf is bogus.}
+        @bodyrm{MUST question science all the time, including our own!}))
+    )
+  (pslide
+    #:go heading-coord-m
+    @bboxrm{Example: FSM}
+    (yblank med-y-sep)
+    (ht-append
+      med-x-sep
+      @bboxrm{2d lattice, dead spots}
+      @bboxrm{3d lattice, less dead?})
+    )
+  (pslide
+    #:go heading-coord-m
+    @bboxrm{RQ. How to avoid dead spots?}
+    (yblank med-y-sep)
+    (bbox
+      (ll-append
+        @bodyrm{- maze, lost at sea, chessboard}
+        (ptable
+          #:row-sep 4 #:col-sep 4
+          (map (compose1 (scale-square 140) bitmap mkchess) (build-list 4 values)))))
+    )
+  (pslide
+    #:go heading-coord-m
+    @bboxrm{RQ. How to avoid dead spots?}
+    (yblank med-y-sep)
+    (bbox
+      (ll-append
+        @bodyrm{- maze, lost at sea, chessboard}
+        (ptable
+          #:row-sep 4 #:col-sep 4
+          (map (compose1 (scale-square 220) bitmap mkchess) (build-list 4 values)))
+        @bodyrm{- don't forget, adding types is work!}))
+    )
+  (pslide
+    #:go center-coord
+    (bbox
+      (ll-append
+        @bodyrm{Prior work (maybe skip)}
+        @bodyrm{not much, unclear how to proceed}
+        @bodyrm{dead horse, k=2 angel steps}
+        @bodyrm{Herder: variational --> best (does H need types to run?)}
+        @bodyrm{??? any more from paper}))
+    )
+  (void))
 
+(define (sec:rational)
+  (pslide
+    #:go center-coord
+    @bboxrm{Idea: rational programmer}
+    (yblank tiny-y-sep)
+    (bbox
+      (ll-append
+        @bodyrm{what is}
+        @bodyrm{Lazarek, all about errors. This paper, beyond.}
+        @bodyrm{diagram / recipe for rp, allows null hypothesis}))
+    )
+  (pslide
+    #:go center-coord
+    @bboxrm{Key Tool: Off-the-Shelf Profilers}
+    (bbox
+      (ll-append
+        @bodyrm{have 2 handy in TR}
+        @bodyrm{- statistical, sample stack, cpu time %}
+        @bodyrm{- boundary, instance of FSP (st-amour), refines statistical for spread-out costs}
+        @bodyrm{}
+        @bodyrm{draw stack}
+        @bodyrm{  draw: 5-6 modules, thin boundaries different colors, dots in modules}
+        @bodyrm{  ++ cost of boundary spread across modules, collect these}))
+    )
+  (void))
+
+(define (sec:how)
+  (pslide
+    #:go center-coord
+    (bbox
+      (ll-append
+        @bodyrm{Solution Outline, Challenges}
+        @bodyrm{(rough instantiation of diagram recipe from above)}
+        @bodyrm{- perf-debugging scenario}
+        @bodyrm{- many profiler outputs}
+        @bodyrm{- next scenario}
+        @bodyrm{- success = 1x config}
+        @bodyrm{}
+        @bodyrm{challenges: <== expert insight}
+        @bodyrm{- what outputs}
+        @bodyrm{- how to choose next}))
+    )
+  (pslide
+    #:go heading-coord-m
+    (bbox
+      (ll-append
+        @bodyrm{Strategies}
+        @bodyrm{- opt}
+        @bodyrm{- con}
+        @bodyrm{- cost-aware}
+        @bodyrm{- config-aware}
+        @bodyrm{- baselines}
+        @bodyrm{.... draw lattice / chessboard again, draw outputs cartoon}))
+    )
+  (pslide
+    #:go heading-coord-m
+    (bbox
+      (ll-append
+        @bodyrm{Profilers, and why no clear winner}
+        @bodyrm{- boundary}
+        @bodyrm{- stat total, stat self}
+        @bodyrm{- FSM example ,,, or avg example (isn't this late in talk?)}
+        @bodyrm{}
+        @bodyrm{- deep : boundary :: shallow : stat}
+        @bodyrm{.... unclear who wins in a large mixed program}))
+    )
+  (pslide
+    #:go heading-coord-m
+    (bbox
+      (ll-append
+        @bodyrm{Instantiate, RP recipe}
+        @bodyrm{- strategies + profilers + baselines}))
+    )
+  (void))
+
+(define (sec:results)
+  (pslide
+    #:go heading-coord-m
+    (bbox
+      (ll-append
+        @bodyrm{Experiment}
+        @bodyrm{- GTP benchmarks, cloudlab}
+        @bodyrm{- 11 runs per config}
+        @bodyrm{- N total ... see zenodo}
+        @bodyrm{months heating planet because brown is cold}))
+    )
+  (pslide
+    #:go heading-coord-m
+    (bbox
+      (ll-append
+        @bodyrm{Results}
+        @bodyrm{- x-axis = strategies}
+        @bodyrm{- show minimap, how to read data}
+        @bodyrm{-  strict towers, then loosen}))
+    )
+  (pslide
+    #:go heading-coord-m
+    (bbox
+      (ll-append
+        @bodyrm{Overall pretty bad}
+        @bodyrm{per-benchmark results vary, see paper}))
+    )
+  (pslide
+    #:go heading-coord-m
+    (bbox
+      (ll-append
+        @bodyrm{Takeaways}
+        @bodyrm{- [object*] best so far = opt boundary}
+        @bodyrm{- shallow is not a useful stepping stone to 1x}
+        @bodyrm{- maybe a shallow-profiler will help}
+        @bodyrm{- maybe a hybrid b/s strategy will help}
+        @bodyrm{}
+        @bodyrm{- [meta] RP lets us proceed systematically and yet again challenges 'obvious conclusions' based on pure theory}))
+    )
+  (void))
+
+;; -----------------------------------------------------------------------------
 
 (define (do-show)
   ;; (set-page-numbers-visible! #true)
@@ -806,9 +1000,10 @@
   ;; --
   (parameterize ((current-slide-assembler bg-bg))
     (sec:title)
-    ;(sec:what)
-    ;(sec:how)
-    ;(sec:lesson)
+    (sec:vision)
+    (sec:rational)
+    (sec:how)
+    (sec:results)
     (pslide)
     (void))
   (void))
@@ -824,6 +1019,18 @@
          (define raco-pict
   (ppict-do
     (make-bg client-w client-h)
+
+    #:go heading-coord-m
+    (bbox
+      (ll-append
+        @bodyrm{Takeaways}
+        @bodyrm{- [object*] best so far = opt boundary}
+        @bodyrm{- shallow is not a useful stepping stone to 1x}
+        @bodyrm{- maybe a shallow-profiler will help}
+        @bodyrm{- maybe a hybrid b/s strategy will help}
+        @bodyrm{}
+        @bodyrm{- [meta] RP lets us proceed systematically,}
+        @bodyrm{   and yet again challenges 'obvious conclusions' based on pure theory}))
 
 
 
