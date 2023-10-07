@@ -63,5 +63,11 @@ Run command below, then delete the "acks" from the diff file.
 latexdiff -c ldiff.cfg --exclude-text="section,subsection,subsubsection" submission/paper.tex revision/paper.tex > diff/diff.tex
 ```
 
+collect sources
+---
+
+```
+zip -R src.zip Makefile abstract.tex ackn.tex appendix.tex ccsxml.tex conclusion.tex def.tex discussion.tex experiment-basics.tex experiment-composite.tex experiment-lattice.tex experiment-questions.tex experiment-strategies.tex experiment.tex ideas.tex intro.tex paper.tex related.tex results.tex seascape.tex  bib.bib acmart.cls ACM-Reference-Format.bst data/*pdf data/h2h/*pdf data/sky/*pdf
+```
 
 
