@@ -67,7 +67,7 @@ collect sources
 ---
 
 ```
-zip -R src.zip Makefile abstract.tex ackn.tex appendix.tex ccsxml.tex conclusion.tex def.tex discussion.tex experiment-basics.tex experiment-composite.tex experiment-lattice.tex experiment-questions.tex experiment-strategies.tex experiment.tex ideas.tex intro.tex paper.tex related.tex results.tex seascape.tex  bib.bib acmart.cls ACM-Reference-Format.bst data/*pdf data/h2h/*pdf data/sky/*pdf
+zip src.zip Makefile abstract.tex ackn.tex appendix.tex ccsxml.tex conclusion.tex def.tex discussion.tex experiment-basics.tex experiment-composite.tex experiment-lattice.tex experiment-questions.tex experiment-strategies.tex experiment.tex ideas.tex intro.tex paper.tex related.tex results.tex seascape.tex  bib.bib acmart.cls ACM-Reference-Format.bst paper.bbl data/*pdf data/h2h/*pdf data/sky/*pdf
 ```
 
 
