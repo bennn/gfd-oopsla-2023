@@ -35,6 +35,8 @@
           #xec99c7 ;pink
           )))
 
+(define *current-font-size* (make-parameter 9))
+
 (define-runtime-path data-dir "../data")
 (define *out-kind* (make-parameter 'pdf))
 
@@ -171,7 +173,8 @@
 (define (cd-sort row**)
   (sort row** < #:key (compose1 cd-strategy-index caar)))
 
-(define (f:strategy-overall #:hope? [hope? #f] #:split-bm? [split-bm? #false])
+(define (f:strategy-overall #:hope? [hope? #f] #:split-bm? [split-bm? #false] #:ss [ss? #f])
+  (*current-font-size* (if ss? 18 (*current-font-size*)))
   (define my-scene (if hope? 'hopeful 'feasible))
   (define stbl (success-tbl my-scene))
   (define all-tbl (cadr stbl))
@@ -215,6 +218,7 @@
     (define pp
       (parameterize ((plot-y-ticks (pct-ticks))
                      (plot-x-far-ticks no-ticks)
+                     (plot-font-size (if ss? (*current-font-size*) (plot-font-size)))
                      (plot-x-ticks (label-ticks
                                      ;; TODO magic numbers
                                      (append
@@ -255,8 +259,8 @@
           #:x-max (+ (* 4 num-other) num-ag 1 1/2)
           #:y-min 0
           #:y-max ymax
-          #:width (* (if split-bm? 8/10 1) (if hope? 500 600))
-          #:height (* (if split-bm? 56/100 1) 300))))
+          #:width (+ (if ss? 100 0) (* (if split-bm? 8/10 1) (if hope? 500 600)))
+          #:height (+ (if ss? 40 0) (* (if split-bm? 56/100 1) 300)))))
     (define out-name
       (if split-bm?
         (format "~a-~a.~a" tgt-bm my-scene (*out-kind*))
@@ -267,7 +271,7 @@
       (build-path out-dir out-name)
       (if split-bm?
         pp
-        (hc-append 2 pp (legend-pict num-mode))))
+        (hc-append 2 pp (legend-pict num-mode #:ss ss?))))
     (void))
   (void))
 
@@ -480,7 +484,8 @@
 
 (define swatch-w 12/100)
 
-(define (legend-pict num-mode)
+(define (legend-pict num-mode #:ss [ss? #false])
+  (*current-font-size* (+ (if ss? -2 0) (*current-font-size*)))
   (define ymax 6)
   (define x-txt (- 1 2/10))
   (define rrect-y* (map add1 (range ymax)))
@@ -515,7 +520,7 @@
       #:x-label #f
       #:y-label #f
       #:title #f
-      #:width 140
+      #:width (if ss? 240 140)
       #:height 200)))
 
 (define (rswatch x y #:color cc)
@@ -593,7 +598,7 @@
       (cons (list x) acc))))
 
 (define (lbltxt str #:size+ [size+ 0])
-  (text str 'roman (+ size+ 9)))
+  (text str 'roman (+ size+ (*current-font-size*))))
 
 (define (lbltxt2 str)
   (lbltxt str #:size+ 2))
@@ -700,12 +705,12 @@
   (lblpoint xy pp #:anchor anchor))
 
 (define (go)
-  (parameterize ( #;(*out-kind* 'png))
+  (parameterize ( (*out-kind* 'png))
     #;(t:baseline-trouble)
     #;(t:blackhole)
-    (f:strategy-overall)
-    (f:strategy-overall #:hope? #true)
-    (app:strategy-overall)
+    (f:strategy-overall #:ss #true)
+    #;(f:strategy-overall #:hope? #true)
+    #;(app:strategy-overall)
     #;(f:head2head)
     #;(app:head2head)
     #;(f:deathplot)

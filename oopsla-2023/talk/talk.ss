@@ -1023,14 +1023,13 @@
     #:go heading-coord-m
     (bbox
       (ll-append
-        @bodyrm{Takeaways}
-        @bodyrm{- [object*] best so far = opt boundary}
-        @bodyrm{- shallow is not a useful stepping stone to 1x}
-        @bodyrm{- maybe a shallow-profiler will help}
-        @bodyrm{- maybe a hybrid b/s strategy will help}
-        @bodyrm{}
-        @bodyrm{- [meta] RP lets us proceed systematically,}
-        @bodyrm{   and yet again challenges 'obvious conclusions' based on pure theory}))
+        @bodyrm{Results}
+        @bodyrm{- x-axis = strategies}
+        @bodyrm{- show minimap, how to read data}
+        @bodyrm{-  strict towers, then loosen}))
+    (yblank tiny-y-sep)
+    (bbox
+      (bitmap "img/strategy-overall-feasible.png"))
 
 
 
