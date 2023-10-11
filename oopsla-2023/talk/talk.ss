@@ -961,6 +961,26 @@
         @bodyrm{months heating planet because brown is cold}))
     )
   (pslide
+    #:go center-coord
+    (bbox (bitmap "img/mini-legend.png"))
+    )
+  (pslide
+    #:go heading-coord-m
+    (bbox
+      (ll-append
+        @bodyrm{Results}
+        @bodyrm{- x-axis = strategies}
+        @bodyrm{- show minimap, how to read data}
+        @bodyrm{-  strict towers, then loosen}))
+    (yblank tiny-y-sep)
+    #:alt ( (skylines 0) )
+    #:alt ( (skylines 1) )
+    #:alt ( (skylines 2) )
+    #:alt ( (skylines 3) )
+    #:alt ( (skylines 'N) )
+    (skylines #f)
+  )
+  (pslide
     #:go heading-coord-m
     (bbox
       (ll-append
@@ -990,6 +1010,55 @@
     )
   (void))
 
+(define (skylines m-loose)
+  (define lbl (loose-label* m-loose))
+  (define pp
+    (bbox (bitmap (format "img/strategy-overall-~afeasible.png" (or m-loose "")))))
+  (vc-append
+    pico-y-sep
+    lbl pp))
+
+(define max-loose-N 5)
+
+(define (loose->int x)
+  (cond
+    [(exact-nonnegative-integer? x) x]
+    [(eq? 'N x) 4]
+    [else max-loose-N]))
+
+(define (loose->string x)
+  (case x
+    ((0) "strict success")
+    ((1) "1 loose")
+    ((2) "2 loose")
+    ((3) "3 loose")
+    ((N) "N loose")
+    (else "3x success")))
+
+(define (int->loose n)
+  (case n
+    ((0) 0)
+    ((1) 1)
+    ((2) 2)
+    ((3) 3)
+    ((4) 'N)
+    (else #f)))
+
+(define (loose-label* m-loose)
+  (define N-loose (loose->int m-loose))
+  (parameterize ((bbox-x-margin pico-y-sep)
+                 (bbox-y-margin pico-y-sep))
+    (apply
+      hc-append
+      pico-x-sep
+      (for/list ((ii (in-range (+ 1 max-loose-N))))
+        (define ff
+          (cond
+            [(< ii N-loose) bblur]
+            [(= ii N-loose) values]
+            [else pblank]))
+        (ff (bboxrm (loose->string (int->loose ii))))))))
+
 ;; -----------------------------------------------------------------------------
 
 (define (do-show)
@@ -999,10 +1068,10 @@
   ;; [current-page-number-color white]
   ;; --
   (parameterize ((current-slide-assembler bg-bg))
-    (sec:title)
-    (sec:vision)
-    (sec:rational)
-    (sec:how)
+;    (sec:title)
+;    (sec:vision)
+;    (sec:rational)
+;    (sec:how)
     (sec:results)
     (pslide)
     (void))
@@ -1020,17 +1089,8 @@
   (ppict-do
     (make-bg client-w client-h)
 
-    #:go heading-coord-m
-    (bbox
-      (ll-append
-        @bodyrm{Results}
-        @bodyrm{- x-axis = strategies}
-        @bodyrm{- show minimap, how to read data}
-        @bodyrm{-  strict towers, then loosen}))
-    (yblank tiny-y-sep)
-    (bbox
-      (bitmap "img/strategy-overall-feasible.png"))
-
+    #:go center-coord
+    (blank)
 
 
   )))

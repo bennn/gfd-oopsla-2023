@@ -173,7 +173,18 @@
 (define (cd-sort row**)
   (sort row** < #:key (compose1 cd-strategy-index caar)))
 
-(define (f:strategy-overall #:hope? [hope? #f] #:split-bm? [split-bm? #false] #:ss [ss? #f])
+(define (m-looseness? x)
+  (case x
+    ((#f N 3 2 1 0) #true)
+    (else (raise-argument-error 'm-looseness? "looseness" x))))
+
+(define (loose->int x)
+  (cond
+    [(exact-nonnegative-integer? x) x]
+    [(eq? 'N x) 4]
+    [else 5]))
+
+(define (f:strategy-overall #:hope? [hope? #f] #:split-bm? [split-bm? #false] #:ss [ss? #f] #:loose [m-loose #f] #:legend-off? [legend-off? #false])
   (*current-font-size* (if ss? 18 (*current-font-size*)))
   (define my-scene (if hope? 'hopeful 'feasible))
   (define stbl (success-tbl my-scene))
@@ -242,14 +253,16 @@
             (for/list ((mode-num (in-range num-mode)))
               (for/list ((rect* (in-list other-rect**))
                          (strat-num (in-naturals)))
-                (rrect (+ mode-num
+                (rrect #:loose m-loose
+                       (+ mode-num
                           (* (+ num-mode 1) strat-num))
                        (cddr (list-ref rect* mode-num))
                        #:color (+ 1 mode-num)
                        #:x0 x-offset)))
             (for/list ((rect* (in-list rect-agnostic**))
                        (ii (in-naturals)))
-              (rrect (+ ii (* 1/2 ii))
+              (rrect #:loose m-loose
+                     (+ ii (* 1/2 ii))
                      (cddr (aggregate rect*))
                      #:color (+ num-mode 1)
                      #:x0 (+ x-offset (* 4 (length other-rect**))))))
@@ -264,12 +277,12 @@
     (define out-name
       (if split-bm?
         (format "~a-~a.~a" tgt-bm my-scene (*out-kind*))
-        (format "strategy-overall-~a.~a" my-scene (*out-kind*))))
+        (format "strategy-overall-~a~a.~a" m-loose my-scene (*out-kind*))))
     (define out-dir (if split-bm? (let ((dd (build-path data-dir "sky"))) (ensure-dir dd) dd) data-dir))
     (printf "save-pict ~a~n" out-name)
     (save-pict
       (build-path out-dir out-name)
-      (if split-bm?
+      (if (or split-bm? legend-off?)
         pp
         (hc-append 2 pp (legend-pict num-mode #:ss ss?))))
     (void))
@@ -603,15 +616,17 @@
 (define (lbltxt2 str)
   (lbltxt str #:size+ 2))
 
-(define (rrect x y* #:color c #:x0 [x0 0] #:w [w% 1])
+(define (rrect x y* #:color c #:x0 [x0 0] #:w [w% 1] #:loose [m-loose #f])
   (define x-mid (+ x0 x 1/2))
   (define old-y 0)
   (define L-1 (sub1 (length y*)))
   (define L-2 (sub1 L-1))
+  (define N-loose (loose->int m-loose))
   (filter values
     (for/list ((y (in-list y*))
                (ii (in-naturals))
-               #:when (>= y old-y))
+               #:when (and (>= y old-y)
+                           (<= ii N-loose)))
       (define y0 old-y)
       (set! old-y y)
       (define alpha
@@ -708,7 +723,9 @@
   (parameterize ( (*out-kind* 'png))
     #;(t:baseline-trouble)
     #;(t:blackhole)
-    (f:strategy-overall #:ss #true)
+    #;(f:strategy-overall #:ss #true)
+    (for ((kk (in-list '(0 1 2 3 N #f))))
+      (f:strategy-overall #:ss #true #:loose kk #:legend-off? #true))
     #;(f:strategy-overall #:hope? #true)
     #;(app:strategy-overall)
     #;(f:head2head)
