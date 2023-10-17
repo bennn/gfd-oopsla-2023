@@ -3,7 +3,11 @@
 ;; 18 min slot
 ;; 15 min talk 3 min q/a
 ;; 14:18 ? Thurs October 26 2023
-;; https://docs.google.com/presentation/d/1vBZkcBu-4AHWRd1AMt6b8OuokaHR91juc6ahOCvOgMU/edit#slide=id.g28099dacf64_0_64
+
+;; [X] https://docs.google.com/presentation/d/1vBZkcBu-4AHWRd1AMt6b8OuokaHR91juc6ahOCvOgMU/edit#slide=id.g28099dacf64_0_64
+;; [ ] simple draft
+;; [ ] practice talk thursday? christos will confirm
+;; [ ] nice draft
 
 (require
   racket/class
@@ -811,24 +815,38 @@
       med-x-sep
       @bboxrm{Vision: any combo}
       @bboxrm{Reality: some are too slow})
+    ;; you are here, in dead zone ... slums
+    #:next
     (yblank med-y-sep)
     (bbox
       (ll-append
-        @bodyrm{N years since dead paper, still wondering!}
+        ;; @bodyrm{7 years since dead paper, still wondering!}
+        @bodyrm{Big improvements in recent years:}
         @bodyrm{- corpse reviver}
         @bodyrm{- pycket}
         @bodyrm{- nom}
-        @bodyrm{huge improvements, but still have dead spots.}))
+        @bodyrm{But, dead spots remain.}))
     )
   (pslide
     #:go center-coord
+    @bboxrm{Q. How to avoid dead spots?}
+    (yblank tiny-y-sep)
+    @bboxrm{Method: large experiment}
+    ;; dead = bad typed/untyped configurations ... mabye too much detail for now
+    (yblank med-y-sep)
+    @bboxrm{Starting point: deep + shallow types:}
+    (yblank tiny-y-sep)
     (bbox
       (ll-append
-        @bodyrm{PLDI'22, a solution?}
-        @bodyrm{3d lattice, quick solution to the perf problem, huge improvements}
-        @bodyrm{navigation _should_ be much more feasible}
-        @bodyrm{Today, the reality. Consensus of ben + mf is bogus.}
-        @bodyrm{MUST question science all the time, including our own!}))
+        @bodyrm{- 3D navigation }
+        @bodyrm{- gives order-of-magnitude speedups (pldi'22)}
+        @bodyrm{- BUT it does not help}
+        ;; @bodyrm{3d lattice, quick solution to the perf problem, huge improvements}
+        ;; @bodyrm{navigation _should_ be much more feasible}
+        ;; @bodyrm{Today, the reality. Consensus of ben + mf is bogus.}
+        ))
+    (yblank tiny-y-sep)
+    @bboxrm{MUST question science all the time, including our own!}
     )
   (pslide
     #:go heading-coord-m
@@ -973,6 +991,8 @@
         @bodyrm{- show minimap, how to read data}
         @bodyrm{-  strict towers, then loosen}))
     (yblank tiny-y-sep)
+    #:alt ( (pre-skylines -2) )
+    #:alt ( (pre-skylines -1) )
     #:alt ( (skylines 0) )
     #:alt ( (skylines 1) )
     #:alt ( (skylines 2) )
@@ -1010,8 +1030,15 @@
     )
   (void))
 
+(define (pre-skylines m-loose)
+  (define lbl (loose-label m-loose))
+  (X-skylines lbl m-loose))
+
 (define (skylines m-loose)
   (define lbl (loose-label* m-loose))
+  (X-skylines lbl m-loose))
+
+(define (X-skylines lbl m-loose)
   (define pp
     (bbox (bitmap (format "img/strategy-overall-~afeasible.png" (or m-loose "")))))
   (vc-append
@@ -1022,12 +1049,14 @@
 
 (define (loose->int x)
   (cond
-    [(exact-nonnegative-integer? x) x]
+    [(exact-integer? x) x]
     [(eq? 'N x) 4]
     [else max-loose-N]))
 
 (define (loose->string x)
   (case x
+    ((-2) "how often do the strategies succeed?")
+    ((-1) "example data")
     ((0) "strict success")
     ((1) "1 loose")
     ((2) "2 loose")
@@ -1037,6 +1066,8 @@
 
 (define (int->loose n)
   (case n
+    ((-2) -2)
+    ((-1) -1)
     ((0) 0)
     ((1) 1)
     ((2) 2)
@@ -1059,6 +1090,13 @@
             [else pblank]))
         (ff (bboxrm (loose->string (int->loose ii))))))))
 
+(define (loose-label m-loose)
+  (define N-loose (loose->int m-loose))
+  (parameterize ((bbox-x-margin pico-y-sep)
+                 (bbox-y-margin pico-y-sep))
+    (define inner (loose->string m-loose))
+    (if inner (bboxrm inner) (blank))))
+
 ;; -----------------------------------------------------------------------------
 
 (define (do-show)
@@ -1068,11 +1106,11 @@
   ;; [current-page-number-color white]
   ;; --
   (parameterize ((current-slide-assembler bg-bg))
-;    (sec:title)
-;    (sec:vision)
+    (sec:title)
+    (sec:vision)
 ;    (sec:rational)
 ;    (sec:how)
-    (sec:results)
+;    (sec:results)
     (pslide)
     (void))
   (void))
@@ -1089,8 +1127,6 @@
   (ppict-do
     (make-bg client-w client-h)
 
-    #:go center-coord
-    (blank)
 
 
   )))

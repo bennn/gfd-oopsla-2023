@@ -42,6 +42,8 @@
 
 (define mode-name-for-plot* '("boundary" "statistical (total)" "statistical (self)" "agnostic"))
 
+(define num-rrect 6)
+
 (define (mode->idx str)
   (case str
     (("boundary") 0)
@@ -175,12 +177,12 @@
 
 (define (m-looseness? x)
   (case x
-    ((#f N 3 2 1 0) #true)
+    ((#f N 3 2 1 0 -1 -2) #true)
     (else (raise-argument-error 'm-looseness? "looseness" x))))
 
 (define (loose->int x)
   (cond
-    [(exact-nonnegative-integer? x) x]
+    [(exact-integer? x) x]
     [(eq? 'N x) 4]
     [else 5]))
 
@@ -253,19 +255,32 @@
             (for/list ((mode-num (in-range num-mode)))
               (for/list ((rect* (in-list other-rect**))
                          (strat-num (in-naturals)))
-                (rrect #:loose m-loose
-                       (+ mode-num
-                          (* (+ num-mode 1) strat-num))
-                       (cddr (list-ref rect* mode-num))
-                       #:color (+ 1 mode-num)
-                       #:x0 x-offset)))
+                (if (and (= -1 m-loose) (= 2 strat-num))
+                  (rrect #:loose 0
+                         (+ mode-num
+                            (* (+ num-mode 1) strat-num))
+                         (make-list num-rrect 70)
+                         #:color (+ 1 mode-num)
+                         #:x0 x-offset)
+                  (rrect #:loose m-loose
+                         (+ mode-num
+                            (* (+ num-mode 1) strat-num))
+                         (cddr (list-ref rect* mode-num))
+                         #:color (+ 1 mode-num)
+                         #:x0 x-offset))))
             (for/list ((rect* (in-list rect-agnostic**))
                        (ii (in-naturals)))
-              (rrect #:loose m-loose
-                     (+ ii (* 1/2 ii))
-                     (cddr (aggregate rect*))
-                     #:color (+ num-mode 1)
-                     #:x0 (+ x-offset (* 4 (length other-rect**))))))
+              (if (and (= -1 m-loose) (= 0 ii))
+                (rrect #:loose 0
+                       (+ ii (* 1/2 ii))
+                       (make-list num-rrect 40)
+                       #:color (+ num-mode 1)
+                       #:x0 (+ x-offset (* 4 (length other-rect**))))
+                (rrect #:loose m-loose
+                       (+ ii (* 1/2 ii))
+                       (cddr (aggregate rect*))
+                       #:color (+ num-mode 1)
+                       #:x0 (+ x-offset (* 4 (length other-rect**)))))))
           #:x-label #f
           #:y-label #f
           #:x-min 0
@@ -499,7 +514,7 @@
 
 (define (legend-pict num-mode #:ss [ss? #false])
   (*current-font-size* (+ (if ss? -2 0) (*current-font-size*)))
-  (define ymax 6)
+  (define ymax num-rrect)
   (define x-txt (- 1 2/10))
   (define rrect-y* (map add1 (range ymax)))
   ;; colors = 1 ... num-mode+1
@@ -724,7 +739,7 @@
     #;(t:baseline-trouble)
     #;(t:blackhole)
     #;(f:strategy-overall #:ss #true)
-    (for ((kk (in-list '(0 1 2 3 N #f))))
+    (for ((kk (in-list '(-2 -1 0 1 2 3 N #f))))
       (f:strategy-overall #:ss #true #:loose kk #:legend-off? #true))
     #;(f:strategy-overall #:hope? #true)
     #;(app:strategy-overall)
