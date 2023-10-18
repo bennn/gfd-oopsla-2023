@@ -3,10 +3,11 @@
 ;; 18 min slot
 ;; 15 min talk 3 min q/a
 ;; 14:18 ? Thurs October 26 2023
+;; ... convert to 4:3 format
 
 ;; [X] https://docs.google.com/presentation/d/1vBZkcBu-4AHWRd1AMt6b8OuokaHR91juc6ahOCvOgMU/edit#slide=id.g28099dacf64_0_64
 ;; [ ] simple draft
-;; [ ] practice talk thursday? christos will confirm
+;; [ ] practice talk thursday 11am
 ;; [ ] nice draft
 
 (require
@@ -19,6 +20,7 @@
   pict
   ppict/2
   pict-abbrevs
+  gtp-pict
   ppict/pict ppict/tag
   pict-abbrevs/slideshow
   plot/no-gui (except-in plot/utils min* max*))
@@ -153,7 +155,7 @@
 
 (define typed-color utah-sunrise)
 (define untyped-color utah-granite)
-(define shallow-color utah-sunrise)
+(define shallow-color utah-lake)
 (define concrete-color utah-crimson)
 (define primitive-color utah-lake)
 (define deep-color typed-color)
@@ -661,7 +663,19 @@
 (define (bghost pp)
   (blank (pict-width pp) (pict-height pp)))
 
-(define big-swatch-blank (blank (w%->pixels 6/100) small-y-sep))
+(define big-swatch-blank (blank small-y-sep small-y-sep))
+
+(define (untyped-icon-tiny)
+  (parameterize ((bbox-x-margin 2) (bbox-y-margin 2))
+    (untyped-codeblock* (list (blank 40 40)))))
+
+(define (deep-icon-tiny)
+  (parameterize ((bbox-x-margin 2) (bbox-y-margin 2))
+    (deep-codeblock* (list (blank 40 40)))))
+
+(define (shallow-icon-tiny)
+  (parameterize ((bbox-x-margin 2) (bbox-y-margin 2))
+    (shallow-codeblock* (list (blank 40 40)))))
 
 (define (untyped-icon #:lbl [lbl "U"])
   (center-label
@@ -773,6 +787,48 @@
 (define ((scale-square n) pp)
   (scale-to-square pp n))
 
+;; ---
+
+(define (two-lattice-pict [n 0] #:num-module [num-mod 4])
+  (define (bscale pp) (scale pp 1/2))
+  (define uu (bscale (untyped-icon-tiny)))
+  (define dd (bscale (deep-icon-tiny)))
+  (define ss (bscale (shallow-icon-tiny)))
+  (define (node-append pp*)
+    (apply ht-append 2 pp*))
+  (define (mk2 b*)
+    (node-append
+      (for/list ((b (in-list b*)))
+        (if b dd uu))))
+  (define (mk3 b*)
+    (define num-typed (for/sum ((b (in-list b*)) #:when b) 1))
+    (values ;;scale-to-fit
+      (make-lattice
+        #:x-margin 2 #:y-margin 2
+        num-typed
+        (lambda (bb*)
+          (node-append
+            (for/list ((b (in-list b*)))
+              (if b
+                (begin0
+                  (if (car bb*) dd ss)
+                  (set! bb* (cdr bb*)))
+                uu)))))))
+  (define (lhs)
+    (bbox (label-above
+      (make-lattice num-mod mk2 #:x-margin 4 #:y-margin 4)
+      @bodyrm{@~a[(expt 2 num-mod)] typed/untyped configs.})))
+  (define (rhs)
+    (bbox (label-above
+      (make-lattice num-mod mk3 #:x-margin 6 #:y-margin 4)
+      @bodyrm{@~a[(expt 3 num-mod)] deep/shallow/untyped configs.})))
+  (case n
+    ((0) (lhs))
+    (else (ppict-do
+            (lhs)
+            #:go (coord 1/2 35/100 'ct)
+            (rhs)))))
+
 ;; -----------------------------------------------------------------------------
 
 (define the-title-str "How Profilers Can Help Navigate Type Migration")
@@ -825,49 +881,62 @@
         @bodyrm{- corpse reviver}
         @bodyrm{- pycket}
         @bodyrm{- nom}
-        @bodyrm{But, dead spots remain.}))
+        (yblank pico-y-sep)
+        @bodyrm{But!  Dead spots remain.}))
     )
   (pslide
     #:go center-coord
     @bboxrm{Q. How to avoid dead spots?}
     (yblank tiny-y-sep)
     @bboxrm{Method: large experiment}
+    #:next
     ;; dead = bad typed/untyped configurations ... mabye too much detail for now
     (yblank med-y-sep)
-    @bboxrm{Starting point: deep + shallow types:}
-    (yblank tiny-y-sep)
     (bbox
       (ll-append
-        @bodyrm{- 3D navigation }
-        @bodyrm{- gives order-of-magnitude speedups (pldi'22)}
-        @bodyrm{- BUT it does not help}
-        ;; @bodyrm{3d lattice, quick solution to the perf problem, huge improvements}
-        ;; @bodyrm{navigation _should_ be much more feasible}
-        ;; @bodyrm{Today, the reality. Consensus of ben + mf is bogus.}
-        ))
-    (yblank tiny-y-sep)
-    @bboxrm{MUST question science all the time, including our own!}
+        @bodyrm{Starting point (pldi'22) deep + shallow types:}
+        (ll-append
+          @bodyrm{- order-of-magnitude speedups}
+          @bodyrm{- NOT helpful in our experiment}
+          ;; @bodyrm{3d lattice, quick solution to the perf problem, huge improvements}
+          ;; @bodyrm{navigation _should_ be much more feasible}
+          ;; @bodyrm{Today, the reality. Consensus of ben + mf is bogus.}
+          )))
+      (yblank tiny-y-sep)
+      @bboxrm{MUST question science --- including our own!}
     )
   (pslide
     #:go heading-coord-m
-    @bboxrm{Example: FSM}
-    (yblank med-y-sep)
-    (ht-append
-      med-x-sep
-      @bboxrm{2d lattice, dead spots}
-      @bboxrm{3d lattice, less dead?})
+    @bboxrm{Example: dead spots}
+    (yblank smol-y-sep)
+    (bbox
+      (let ((num-mod 4))
+        (ht-append
+          0
+          @bodyrm{FSM program, @~a[num-mod] modules =   }
+          (apply ht-append pico-x-sep (make-list num-mod (untyped-icon-tiny))))))
+    #:next
+    (yblank tiny-y-sep)
+    #:alt ( (two-lattice-pict 0) )
+    #:alt ( (two-lattice-pict 1) )
+    (yblank tiny-y-sep)
+    (bbox
+      (lc-append
+        @bodyrm{@~a[(expt 3 4)] configs,}
+        @bodyrm{60 over 1x,}
+        @bodyrm{30 over 3x}))
     )
   (pslide
     #:go heading-coord-m
     @bboxrm{RQ. How to avoid dead spots?}
     (yblank med-y-sep)
     (bbox
-      (ll-append
+      (lc-append
         @bodyrm{- maze, lost at sea, chessboard}
         (ptable
           #:row-sep 4 #:col-sep 4
           (map (compose1 (scale-square 140) bitmap mkchess) (build-list 4 values)))))
-    )
+  )
   (pslide
     #:go heading-coord-m
     @bboxrm{RQ. How to avoid dead spots?}
@@ -880,7 +949,7 @@
           (map (compose1 (scale-square 220) bitmap mkchess) (build-list 4 values)))
         @bodyrm{- don't forget, adding types is work!}))
     )
-  (pslide
+  #;(pslide
     #:go center-coord
     (bbox
       (ll-append
@@ -1106,9 +1175,9 @@
   ;; [current-page-number-color white]
   ;; --
   (parameterize ((current-slide-assembler bg-bg))
-    (sec:title)
-    (sec:vision)
-;    (sec:rational)
+;    (sec:title)
+;    (sec:vision)
+    (sec:rational)
 ;    (sec:how)
 ;    (sec:results)
     (pslide)
@@ -1127,6 +1196,15 @@
   (ppict-do
     (make-bg client-w client-h)
 
+    #:go heading-coord-m
+    @bboxrm{RQ. How to avoid dead spots?}
+    (yblank med-y-sep)
+    (bbox
+      (lc-append
+        @bodyrm{- maze, lost at sea, chessboard}
+        (ptable
+          #:row-sep 4 #:col-sep 4
+          (map (compose1 (scale-square 140) bitmap mkchess) (build-list 4 values)))))
 
 
   )))
