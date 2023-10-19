@@ -7,18 +7,13 @@
 
 ;; [X] https://docs.google.com/presentation/d/1vBZkcBu-4AHWRd1AMt6b8OuokaHR91juc6ahOCvOgMU/edit#slide=id.g28099dacf64_0_64
 ;; [ ] simple draft
-;;  - vision / related show typed/untyped 
-;;  - fsm, example code before the lattice, show typed/untyped, show deep/shallow with avg?!
-;;    - some costs from deep, some shallow
 ;;  - rational programmer idea top-left = simulate, test pragmatics; bot-left = prior work errors, this work, beyond; design recipe
 ;;  - off-the-shelf, S B colors
 ;;    - no clear winner
 ;;    - modulegraph, stack picts
 ;;  - solution inst
-;;  - strategies table
 ;;  - conclusions
-;;  - appendix: per-benchmark, head to head, per head-to-head
-;; [ ] practice talk thursday 11am
+;; [ ] practice talk thursday 11am GOLLY
 ;; [ ] nice draft
 
 (require
@@ -800,6 +795,33 @@
 
 ;; ---
 
+(define (strategies-pict [n 0])
+  ;; TODO table
+  (define mkrow (lambda (a b) (hc-append 8 a b)))
+  (define row*
+    (list
+        (mkrow @bodyrm{opt}
+               @bodyrmlo{optimistically add deep types})
+        (mkrow @bodyrm{con}
+               @bodyrmlo{conservatively add shallow types})
+        (mkrow @bodyrm{cost-aware}
+               @bodyrmlo{conservatively add shallow types})
+        (mkrow @bodyrm{config-aware}
+               @bodyrmlo{if <50% typed, add shallow, otherwise add deep})
+        (yblank smol-y-sep)
+        (mkrow @bodyrm{null}
+               @bodyrmlo{add types randomly})
+        (mkrow @bodyrm{toggle}
+               @bodyrmlo{[pldi'22] change deep types <--> shallow})))
+  (define pp*
+    (for/list ((rr (in-list row*))
+               (ii (in-naturals)))
+      ((if (and n (> ii n)) pblank values) rr)))
+  (bbox (apply ll-append pp*)))
+
+(define (fsm-append pp*)
+  (apply ht-append pico-x-sep pp*))
+
 (define (pre-skylines m-loose)
   (define lbl (loose-label m-loose))
   (X-skylines lbl m-loose))
@@ -954,6 +976,14 @@
     #:go heading-coord-m
     @bboxrm{Sound Gradual Typing}
     (yblank smol-y-sep)
+    (bbox
+      (ht-append
+        0
+        (deep-codeblock* (list @bodyrm{typed}))
+        @bodyrm{  +  }
+        (untyped-codeblock* (list @bodyrm{untyped}))))
+    #:next
+    (yblank smol-y-sep)
     (ht-append
       med-x-sep
       @bboxrm{Vision: any combo}
@@ -1002,9 +1032,31 @@
         (ht-append
           0
           @bodyrm{FSM program, @~a[num-mod] modules =   }
-          (apply ht-append pico-x-sep (make-list num-mod (untyped-icon-tiny))))))
-    #:next
+          (fsm-append (make-list num-mod (untyped-icon-tiny))))))
     (yblank tiny-y-sep)
+    #:next
+    #:alt (
+      (bbox
+        (ptable
+          #:row-sep med-y-sep
+          #:col-sep tiny-y-sep
+          (list
+            (fsm-append
+              (list
+                (untyped-icon-tiny)
+                (deep-icon-tiny)
+                (untyped-icon-tiny)
+                (untyped-icon-tiny)))
+            @bodyrm{deep = slow at boundaries}
+            (fsm-append
+              (list
+                (untyped-icon-tiny)
+                (shallow-icon-tiny)
+                (untyped-icon-tiny)
+                (untyped-icon-tiny)))
+            @bodyrm{shallow = slow at boundaries}
+          ))))
+    #:next
     #:alt ( (two-lattice-pict 0) )
     #:alt ( (two-lattice-pict 1) )
     (yblank tiny-y-sep)
@@ -1091,16 +1143,9 @@
         @bodyrm{- how to choose next}))
     )
   (pslide
+    ;; TODO staging
     #:go heading-coord-m
-    (bbox
-      (ll-append
-        @bodyrm{Strategies}
-        @bodyrm{- opt}
-        @bodyrm{- con}
-        @bodyrm{- cost-aware}
-        @bodyrm{- config-aware}
-        @bodyrm{- baselines}
-        @bodyrm{.... draw lattice / chessboard again, draw outputs cartoon}))
+    (strategies-pict #f)
     )
   (pslide
     #:go heading-coord-m
@@ -1240,12 +1285,11 @@
   (ppict-do
     (make-bg client-w client-h)
 
-    #:go center-coord
-    @bboxrm{Where are the Fast Configs?}
-    (yblank pico-x-sep)
-    (bbox
-      (let ((bbmap (lambda (x) (freeze (scale-to-fit (bitmap x) (w%->pixels 80/100) (h%->pixels 75/100))))))
-        (bbmap "img/pyramid.png")))
+    #:go heading-coord-m
+    @bboxrm{Strategies}
+    (yblank smol-y-sep)
+    (strategies-pict #f)
+
 
 
   )))
