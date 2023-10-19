@@ -7,6 +7,17 @@
 
 ;; [X] https://docs.google.com/presentation/d/1vBZkcBu-4AHWRd1AMt6b8OuokaHR91juc6ahOCvOgMU/edit#slide=id.g28099dacf64_0_64
 ;; [ ] simple draft
+;;  - vision / related show typed/untyped 
+;;  - fsm, example code before the lattice, show typed/untyped, show deep/shallow with avg?!
+;;    - some costs from deep, some shallow
+;;  - rational programmer idea top-left = simulate, test pragmatics; bot-left = prior work errors, this work, beyond; design recipe
+;;  - off-the-shelf, S B colors
+;;    - no clear winner
+;;    - modulegraph, stack picts
+;;  - solution inst
+;;  - strategies table
+;;  - conclusions
+;;  - appendix: per-benchmark, head to head, per head-to-head
 ;; [ ] practice talk thursday 11am
 ;; [ ] nice draft
 
@@ -789,6 +800,82 @@
 
 ;; ---
 
+(define (pre-skylines m-loose)
+  (define lbl (loose-label m-loose))
+  (X-skylines lbl m-loose))
+
+(define (skylines m-loose)
+  (define lbl (loose-label* m-loose))
+  (X-skylines lbl m-loose))
+
+(define (X-skylines lbl m-loose)
+  (define pp
+    (bbox (bitmap (format "img/strategy-overall-~afeasible.png" (or m-loose "")))))
+  (vc-append
+    pico-y-sep
+    lbl pp))
+
+(define max-loose-N 5)
+
+(define (loose->int x)
+  (cond
+    [(exact-integer? x) x]
+    [(eq? 'N x) 4]
+    [else max-loose-N]))
+
+(define (loose->string x)
+  (case x
+    ((-2) "how often do the strategies succeed?")
+    ((-1) "example data")
+    ((0) "strict success")
+    ((1) "1 loose")
+    ((2) "2 loose")
+    ((3) "3 loose")
+    ((N) "N loose")
+    (else "3x success")))
+
+(define (int->loose n)
+  (case n
+    ((-2) -2)
+    ((-1) -1)
+    ((0) 0)
+    ((1) 1)
+    ((2) 2)
+    ((3) 3)
+    ((4) 'N)
+    (else #f)))
+
+(define (loose-label* m-loose)
+  (define N-loose (loose->int m-loose))
+  (parameterize ((bbox-x-margin pico-y-sep)
+                 (bbox-y-margin pico-y-sep))
+    (apply
+      hc-append
+      pico-x-sep
+      (for/list ((ii (in-range (+ 1 max-loose-N))))
+        (define ff
+          (cond
+            [(< ii N-loose) bblur]
+            [(= ii N-loose) values]
+            [else pblank]))
+        (ff (bboxrm (loose->string (int->loose ii))))))))
+
+(define (loose-label m-loose)
+  (define N-loose (loose->int m-loose))
+  (parameterize ((bbox-x-margin pico-y-sep)
+                 (bbox-y-margin pico-y-sep))
+    (define inner (loose->string m-loose))
+    (if inner (bboxrm inner) (blank))))
+
+(define (rational-programmer-idea [n 0])
+  ;; 
+    (bbox
+      (ll-append
+        @bodyrm{what is}
+        @bodyrm{Lazarek, all about errors. This paper, beyond.}
+        @bodyrm{diagram / recipe for rp, allows null hypothesis}))
+    )
+
 (define (two-lattice-pict [n 0] #:num-module [num-mod 4])
   (define (bscale pp) (scale pp 1/2))
   (define uu (bscale (untyped-icon-tiny)))
@@ -865,7 +952,7 @@
 (define (sec:vision)
   (pslide
     #:go heading-coord-m
-    @bboxrm{Sound GT: Vision vs Reality}
+    @bboxrm{Sound Gradual Typing}
     (yblank smol-y-sep)
     (ht-append
       med-x-sep
@@ -897,6 +984,7 @@
         @bodyrm{Starting point (pldi'22) deep + shallow types:}
         (ll-append
           @bodyrm{- order-of-magnitude speedups}
+          @bodyrm{- conjecture: helpful for navigation}
           @bodyrm{- NOT helpful in our experiment}
           ;; @bodyrm{3d lattice, quick solution to the perf problem, huge improvements}
           ;; @bodyrm{navigation _should_ be much more feasible}
@@ -920,6 +1008,7 @@
     #:alt ( (two-lattice-pict 0) )
     #:alt ( (two-lattice-pict 1) )
     (yblank tiny-y-sep)
+    #:next
     (bbox
       (lc-append
         @bodyrm{@~a[(expt 3 4)] configs,}
@@ -931,24 +1020,14 @@
     @bboxrm{RQ. How to avoid dead spots?}
     (yblank med-y-sep)
     (bbox
-      (lc-append
-        @bodyrm{- maze, lost at sea, chessboard}
-        (ptable
-          #:row-sep 4 #:col-sep 4
-          (map (compose1 (scale-square 140) bitmap mkchess) (build-list 4 values)))))
-  )
-  (pslide
-    #:go heading-coord-m
-    @bboxrm{RQ. How to avoid dead spots?}
-    (yblank med-y-sep)
-    (bbox
       (ll-append
         @bodyrm{- maze, lost at sea, chessboard}
         (ptable
           #:row-sep 4 #:col-sep 4
-          (map (compose1 (scale-square 220) bitmap mkchess) (build-list 4 values)))
-        @bodyrm{- don't forget, adding types is work!}))
-    )
+          (map (compose1 (scale-square 220) bitmap mkchess) (build-list 4 values)))))
+    (yblank tiny-y-sep)
+    @bboxrm{don't forget, adding types is work!}
+  )
   #;(pslide
     #:go center-coord
     (bbox
@@ -964,17 +1043,20 @@
 (define (sec:rational)
   (pslide
     #:go center-coord
-    @bboxrm{Idea: rational programmer}
+    @bboxrm{Key Idea:}
     (yblank tiny-y-sep)
-    (bbox
-      (ll-append
-        @bodyrm{what is}
-        @bodyrm{Lazarek, all about errors. This paper, beyond.}
-        @bodyrm{diagram / recipe for rp, allows null hypothesis}))
+    @bboxrm{rational programmer}
+    (yblank smol-y-sep)
+    #:alt ( (rational-programmer-idea 0) )
+    (rational-programmer-idea 1)
     )
   (pslide
     #:go center-coord
-    @bboxrm{Key Tool: Off-the-Shelf Profilers}
+    @bboxrm{Key Tool:}
+    (yblank tiny-y-sep)
+    @bboxrm{off-the-shelf profilers}
+    (yblank smol-y-sep)
+    ;; TODO
     (bbox
       (ll-append
         @bodyrm{have 2 handy in TR}
@@ -985,6 +1067,11 @@
         @bodyrm{  draw: 5-6 modules, thin boundaries different colors, dots in modules}
         @bodyrm{  ++ cost of boundary spread across modules, collect these}))
     )
+  (pslide
+    #:go center-coord
+    @bodyrm{draw modulegraph}
+    @bodyrm{draw stack}
+  )
   (void))
 
 (define (sec:how)
@@ -1018,14 +1105,8 @@
   (pslide
     #:go heading-coord-m
     (bbox
-      (ll-append
-        @bodyrm{Profilers, and why no clear winner}
-        @bodyrm{- boundary}
-        @bodyrm{- stat total, stat self}
-        @bodyrm{- FSM example ,,, or avg example (isn't this late in talk?)}
-        @bodyrm{}
-        @bodyrm{- deep : boundary :: shallow : stat}
-        @bodyrm{.... unclear who wins in a large mixed program}))
+      @bodyrm{quick reminder: 2 profilers no clear winner}
+      )
     )
   (pslide
     #:go heading-coord-m
@@ -1073,17 +1154,8 @@
     #:go heading-coord-m
     (bbox
       (ll-append
-        @bodyrm{Results}
-        @bodyrm{- x-axis = strategies}
-        @bodyrm{- show minimap, how to read data}
-        @bodyrm{-  strict towers, then loosen}))
-    )
-  (pslide
-    #:go heading-coord-m
-    (bbox
-      (ll-append
-        @bodyrm{Overall pretty bad}
-        @bodyrm{per-benchmark results vary, see paper}))
+        @bodyrm{pretty bad!}
+        @bodyrm{(per-benchmark results vary, see paper)}))
     )
   (pslide
     #:go heading-coord-m
@@ -1099,72 +1171,43 @@
     )
   (void))
 
-(define (pre-skylines m-loose)
-  (define lbl (loose-label m-loose))
-  (X-skylines lbl m-loose))
-
-(define (skylines m-loose)
-  (define lbl (loose-label* m-loose))
-  (X-skylines lbl m-loose))
-
-(define (X-skylines lbl m-loose)
-  (define pp
-    (bbox (bitmap (format "img/strategy-overall-~afeasible.png" (or m-loose "")))))
-  (vc-append
-    pico-y-sep
-    lbl pp))
-
-(define max-loose-N 5)
-
-(define (loose->int x)
-  (cond
-    [(exact-integer? x) x]
-    [(eq? 'N x) 4]
-    [else max-loose-N]))
-
-(define (loose->string x)
-  (case x
-    ((-2) "how often do the strategies succeed?")
-    ((-1) "example data")
-    ((0) "strict success")
-    ((1) "1 loose")
-    ((2) "2 loose")
-    ((3) "3 loose")
-    ((N) "N loose")
-    (else "3x success")))
-
-(define (int->loose n)
-  (case n
-    ((-2) -2)
-    ((-1) -1)
-    ((0) 0)
-    ((1) 1)
-    ((2) 2)
-    ((3) 3)
-    ((4) 'N)
-    (else #f)))
-
-(define (loose-label* m-loose)
-  (define N-loose (loose->int m-loose))
-  (parameterize ((bbox-x-margin pico-y-sep)
-                 (bbox-y-margin pico-y-sep))
-    (apply
-      hc-append
-      pico-x-sep
-      (for/list ((ii (in-range (+ 1 max-loose-N))))
-        (define ff
-          (cond
-            [(< ii N-loose) bblur]
-            [(= ii N-loose) values]
-            [else pblank]))
-        (ff (bboxrm (loose->string (int->loose ii))))))))
-
-(define (loose-label m-loose)
-  (define N-loose (loose->int m-loose))
-  (parameterize ((bbox-x-margin pico-y-sep)
-                 (bbox-y-margin pico-y-sep))
-    (define inner (loose->string m-loose))
-    (if inner (bboxrm inner) (blank))))
+(define (sec:extra)
+  (pslide
+    #:go center-coord
+    @bboxrm{Skylines per Benchmark}
+    (yblank pico-x-sep)
+    (bbox
+      (let ((bbmap (lambda (x) (freeze (scale-to-fit (bitmap x) (w%->pixels 43/100) (h%->pixels 75/100))))))
+        (ht-append
+          tiny-x-sep
+          (bbmap "img/skybench-0.png")
+          (bbmap "img/skybench-1.png"))))
+    )
+  (pslide
+    #:go center-coord
+    @bboxrm{Hopeful Scenarios}
+    (yblank pico-x-sep)
+    (bbox
+      (let ((bbmap (lambda (x) (freeze (scale-to-fit (bitmap x) (w%->pixels 80/100) (h%->pixels 75/100))))))
+        (bbmap "img/hopeful.png")))
+    )
+  (pslide
+    #:go center-coord
+    @bboxrm{Opt-Boundary vs. the others}
+    (yblank pico-x-sep)
+    (bbox
+      (let ((bbmap (lambda (x) (freeze (scale-to-fit (bitmap x) (w%->pixels 80/100) (h%->pixels 75/100))))))
+        (bbmap "img/h2h.png")))
+    )
+  (pslide
+    #:go center-coord
+    @bboxrm{Where are the Fast Configs?}
+    (yblank pico-x-sep)
+    (bbox
+      (let ((bbmap (lambda (x) (freeze (scale-to-fit (bitmap x) (w%->pixels 80/100) (h%->pixels 75/100))))))
+        (bbmap "img/pyramid.png")))
+    )
+  (void))
 
 ;; -----------------------------------------------------------------------------
 
@@ -1175,12 +1218,13 @@
   ;; [current-page-number-color white]
   ;; --
   (parameterize ((current-slide-assembler bg-bg))
-;    (sec:title)
-;    (sec:vision)
+    (sec:title)
+    (sec:vision)
     (sec:rational)
-;    (sec:how)
-;    (sec:results)
+    (sec:how)
+    (sec:results)
     (pslide)
+    (sec:extra)
     (void))
   (void))
 
@@ -1196,15 +1240,12 @@
   (ppict-do
     (make-bg client-w client-h)
 
-    #:go heading-coord-m
-    @bboxrm{RQ. How to avoid dead spots?}
-    (yblank med-y-sep)
+    #:go center-coord
+    @bboxrm{Where are the Fast Configs?}
+    (yblank pico-x-sep)
     (bbox
-      (lc-append
-        @bodyrm{- maze, lost at sea, chessboard}
-        (ptable
-          #:row-sep 4 #:col-sep 4
-          (map (compose1 (scale-square 140) bitmap mkchess) (build-list 4 values)))))
+      (let ((bbmap (lambda (x) (freeze (scale-to-fit (bitmap x) (w%->pixels 80/100) (h%->pixels 75/100))))))
+        (bbmap "img/pyramid.png")))
 
 
   )))
