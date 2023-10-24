@@ -375,6 +375,14 @@
     #:frame-width (bbox-frame-width)
     #:frame-color (or frame-color (bbox-frame-color))))
 
+(define (sbox pp)
+  (bbox pp
+        #:x-margin pico-y-sep
+        #:y-margin pico-y-sep))
+
+(define (sboxrm . arg*)
+  (sbox (apply bodyrm arg*)))
+
 (define (bboxrm . arg*)
   (bbox (apply bodyrm arg*)))
 
@@ -850,10 +858,11 @@
 
 (define (X-skylines lbl m-loose)
   (define pp
-    (bbox (bitmap (format "img/strategy-overall-~afeasible.png" (or m-loose "")))))
+    (sbox (freeze (scale-to-fit (bitmap (format "img/strategy-overall-~afeasible.png" (or m-loose ""))) 880 700))))
+  (define ll (sbox (freeze (scale (bitmap "img/legend.png") 13/10))))
   (vc-append
     pico-y-sep
-    lbl pp))
+    lbl pp ll))
 
 (define max-loose-N 5)
 
@@ -872,7 +881,7 @@
     ((2) "2 loose")
     ((3) "3 loose")
     ((N) "N loose")
-    (else "3x success")))
+    (else "strict 3x")))
 
 (define (int->loose n)
   (case n
@@ -887,18 +896,16 @@
 
 (define (loose-label* m-loose)
   (define N-loose (loose->int m-loose))
-  (parameterize ((bbox-x-margin pico-y-sep)
-                 (bbox-y-margin pico-y-sep))
-    (apply
-      hc-append
-      pico-x-sep
-      (for/list ((ii (in-range (+ 1 max-loose-N))))
-        (define ff
-          (cond
-            [(< ii N-loose) bblur]
-            [(= ii N-loose) values]
-            [else pblank]))
-        (ff (bboxrm (loose->string (int->loose ii))))))))
+  (apply
+    hc-append
+    pico-x-sep
+    (for/list ((ii (in-range (+ 1 max-loose-N))))
+      (define ff
+        (cond
+          [(< ii N-loose) bblur]
+          [(= ii N-loose) values]
+          [else pblank]))
+      (ff (sboxrm (loose->string (int->loose ii)))))))
 
 (define (loose-label m-loose)
   (define N-loose (loose->int m-loose))
@@ -1218,6 +1225,76 @@
     )
   (void))
 
+(define (sec:take2)
+  (pslide
+    ;; title - authors, subtitle how to avoid runtime costs with off-the-shelf tools
+    ;; gradual types, statistical profilers (blocks)
+    )
+  (pslide
+    ;; excited b/c dead paper since 2015,
+    ;;  problem: 10x slowdown common but fast points exist!
+    ;;  !!: nudge toward good points
+    ;;  ??: no way to address systematically
+    )
+  (pslide
+    ;; gradual types, runtime costs
+    ;; avg : Gradebook -> Real
+    ;; 1. untyped code, some good some error calls
+    ;; 2. types on avg, no static error, check at runtime
+    ;; 3. slow. how slow depends on semantics = guarded (on nat) semantics vs transient semantics
+    ;;    guarded = deep checks at boundaries
+    ;;     => table mutable, even more expensive get wrapper check reads and writes
+    ;;    transient = shallow checks at boundaries, and throughout typed code
+    ;;     => mutable don't matter
+    ;; uu -> 20x // -> 4x -> 0.9x // 5x -> 0.9x
+    ;;  fortunately can mix and match!
+    ;; path, untyped to typed uu -> su -> dd
+    )
+  (pslide
+    ;; gradual types, runtime costs
+    ;; 3d space, 3^2
+    ;; some fast some slow **fast = at least as good as untyped**
+  )
+  (pslide
+    ;; need off-shelf b/c huge search space ... example lattices
+    ;; programmer could wind up anywhere!
+    ;;  unrealistic to push workload on programmers
+    ;; can:
+    ;; - run profiler
+    ;; - add types
+    ;; - swap semantics (guarded <-> transient)
+    ;; cannot:
+    ;; - remove types (trivial)
+    ;; [[ add t questionable! really need auto migration ]]
+    ;; context = typed racket
+    )
+  (pslide
+    ;; Profilers, Outputs
+    ;; 2 (right = stat; left = ctc)
+    ;; --> 3 outputs (colorize)
+    ;; --> N questions: top suggestion? top untyped? // add types? swap semantics? 
+    ;;     // better than random chance?
+    )
+  (pslide
+    ;; mountain of Q's -> 2015 problem, unclear how to proceed systematically
+    ;; rational programmer, turn into _useful_ experiment
+    ;; from Q's, derive strategies + baselines
+    )
+  (pslide
+    ;; Instantiation ( How to Compare Strategies )
+    ;; 1. consider EVERY configuration as a starting point ... show lattice!
+    ;; 2. apply every combination of profile output (show again!) and strategy
+    ;;    plus baselines = 15 + 2 = 17 total
+    ;; 3. compare: how many successes?
+    ;; ** many success:
+    ;;     - strict example
+    ;;     - 1 loose example
+    ;;     - ... 2 loose, ditto
+    ;;     - N loose generalize
+    )
+  ;; next up: experiment + results
+  (void))
+
 (define (sec:results)
   (pslide
     #:go center-coord
@@ -1236,21 +1313,16 @@
     )
   (pslide
     #:go heading-coord-m
-    (bbox
-      (ll-append
-        @bodyrm{Results}
-        @bodyrm{ How often do the strategies succeed?}))
+    @bboxrm{How often do the strategies succeed?}
     #:next
+    ;; TODO explain skyscraper = looseness
     (yblank tiny-y-sep)
     (parameterize ((bbox-x-margin (bbox-y-margin)))
       (bbox (freeze (scale-to-fit (bitmap "img/nyc.png") (w%->pixels 6/10) (h%->pixels 6/10)))))
   )
   (pslide
     #:go heading-coord-m
-    (bbox
-      (ll-append
-        @bodyrm{Results}
-        @bodyrm{ How often do the strategies succeed?}))
+    @bboxrm{How often do the strategies succeed?}
     (yblank tiny-y-sep)
     #:alt ( (pre-skylines -2) )
     #:alt ( (pre-skylines -1) )
@@ -1261,13 +1333,16 @@
     #:alt ( (skylines 'N) )
     (skylines #f)
   )
-  (pslide
+  #;(pslide
     #:go center-coord
     (bbox
       (lc-append
         @bodyrmhi{pretty bad!}
         @bodyrm{(per-benchmark results vary, see paper)}))
     )
+  (void))
+
+(define (sec:takeaways)
   (pslide
     #:go heading-coord-m
     (bbox
@@ -1342,13 +1417,17 @@
   ;; [current-page-number-color white]
   ;; --
   (parameterize ((current-slide-assembler bg-bg))
+    (pslide)
     (sec:title)
-    (sec:vision)
-    (sec:rational)
-    (sec:how)
+      ;(sec:vision)
+      ;(sec:rational)
+      ;(sec:how)
+;    (sec:take2)
     (sec:results)
+    (sec:takeaways)
     (pslide)
     (sec:extra)
+    (sec:takeaways)
     (void))
   (void))
 
@@ -1358,8 +1437,8 @@
 ;; =============================================================================
 
 (module+ raco-pict (provide raco-pict)
-         ;;(define client-w 984) (define client-h 728) ;; 4:3
-         (define client-w 1320) (define client-h 726) ;; 16:9 sort of, too thin
+         (define client-w 984) (define client-h 728) ;; 4:3
+         ;; (define client-w 1320) (define client-h 726) ;; 16:9 sort of, too thin
          (define raco-pict
   (ppict-do
     (make-bg client-w client-h)

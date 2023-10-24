@@ -186,6 +186,40 @@
     [(eq? 'N x) 4]
     [else 5]))
 
+(define (f:legend-so)
+  (define num-mode 4)
+  (define pp
+    (parameterize ((*current-font-size* (+ -2 18)))
+      (apply
+        hc-append
+        16
+        (for/list ((txt (in-list '("contract profile" "stat. total" "stat. self" "no profile")))
+                   (color (in-naturals 1)))
+          (hc-append
+            4
+            (lswatch color) (lbltxt2 txt))))))
+  (define out-name (format "legend-so.~a" (*out-kind*)))
+  (printf "save-pict ~a~n" out-name)
+  (save-pict
+    (build-path data-dir out-name)
+    pp)
+  (void))
+
+(define (lswatch cc)
+  (define line-color (my->pen-color cc))
+  (define brush-color (my->brush-color cc))
+  (define alpha 0.9)
+  (define ww 14)
+  (cellophane
+    (filled-rounded-rectangle ww
+                              ww
+                              2
+                              #:draw-border? #true
+                              #:color brush-color
+                              #:border-color brush-color
+                              #:border-width 1)
+    alpha))
+
 (define (f:strategy-overall #:hope? [hope? #f] #:split-bm? [split-bm? #false] #:ss [ss? #f] #:loose [m-loose #f] #:legend-off? [legend-off? #false])
   (*current-font-size* (if ss? 18 (*current-font-size*)))
   (define my-scene (if hope? 'hopeful 'feasible))
@@ -739,7 +773,8 @@
     #;(t:baseline-trouble)
     #;(t:blackhole)
     #;(f:strategy-overall #:ss #true)
-    (for ((kk (in-list '(-2 -1 0 1 2 3 N #f))))
+    (f:legend-so)
+    #;(for ((kk (in-list '(-2 -1 0 1 2 3 N #f))))
       (f:strategy-overall #:ss #true #:loose kk #:legend-off? #true))
     #;(f:strategy-overall #:hope? #true)
     #;(app:strategy-overall)
