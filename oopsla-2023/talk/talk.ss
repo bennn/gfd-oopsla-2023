@@ -13,6 +13,7 @@
 ;;  [ ] alice in wonderland
 
 (require
+  "../code/color.rkt"
   racket/class
   racket/draw
   racket/format
@@ -105,11 +106,11 @@
 (define lo-text-coord-left (coord slide-text-left lo-text 'lt))
 (define lo-text-coord-mid (coord 1/2 lo-text 'ct))
 (define lo-text-coord-right (coord slide-text-right lo-text 'rt))
-(define title-coord-m (coord 1/2 26/100 'ct))
 (define all-lang-coord (coord 99/100 1/2 'rc))
 (define lesson-coord-h (coord lesson-x hi-text  'lt))
 (define lesson-coord-m (coord lesson-x (+ 15/100 hi-text) 'lt))
 (define lesson-coord-l (coord lesson-x (+ 30/100 hi-text) 'lt))
+(define title-coord-m (coord 1/2 23/100 'ct))
 
 (define default-line-width 4)
 (define default-arrow-size 14)
@@ -214,8 +215,8 @@
 (define title-size 42)
 (define subtitle-size 32)
 (define head-size 38)
-(define body-size 30)
-(define code-size 28)
+(define body-size 40)
+(define code-size 32)
 (define tcode-size (- code-size 4))
 
 (define ((make-string->text #:font font #:size size #:color color) . str*)
@@ -259,6 +260,8 @@
 (define bodyrmlo (make-string->text #:font body-font-lo #:size body-size #:color black))
 (define bodyrm bodyrmlo)
 (define rm bodyrmlo)
+(define rmlo rm)
+(define rmhi bodyrmhi)
 (define rmem (make-string->text #:font body-font-lo #:size body-size #:color emph-color))
 (define bodyrmlobb (make-string->text #:font body-font-lo #:size body-size #:color deep-pen-color))
 (define bodyrmloyy (make-string->text #:font body-font-lo #:size body-size #:color shallow-pen-color))
@@ -284,7 +287,7 @@
 
 (define (arrowhead-pict rad #:color [color black] #:size [size 20])
   (colorize
-    (arrowhead 20 rad)
+    (arrowhead size rad)
     color))
 
 (define up-arrow-pict
@@ -298,6 +301,13 @@
 
 (define down-arrow-pict
   (arrowhead-pict (* 3/4 turn) #:color black))
+
+(define (sky-arrow)
+  (define rr (* 1/2 turn))
+  (define ss 20)
+  (cc-superimpose
+    (arrowhead-pict rr #:color (bbox-frame-color) #:size ss)
+    (arrowhead-pict rr #:color white #:size (- ss 3))))
 
 (define (author-append . pp*)
   (apply vl-append pico-y-sep pp*))
@@ -382,6 +392,14 @@
 
 (define (sboxrm . arg*)
   (sbox (apply bodyrm arg*)))
+
+(define (wbox pp)
+  (bbox pp
+        #:x-margin pico-x-sep
+        #:y-margin pico-y-sep))
+
+(define (wboxrm . arg*)
+  (wbox (apply bodyrm arg*)))
 
 (define (bboxrm . arg*)
   (bbox (apply bodyrm arg*)))
@@ -800,6 +818,68 @@
 
 ;; ---
 
+(define (bstripe pp)
+  ;; (define color (or -color utah-darkgrey))
+  (define +margin (* 2 margin))
+  (define fg (cc-superimpose (xblank (+ client-w +margin)) pp))
+  (bbox fg))
+
+(define (make-takeaways n)
+  (define t1
+    (lc-append
+      (add-star (word-append @rmhi{contract} @rmlo{ profiling + } @rmhi{deep} @rmlo{ types}))
+      (word-append @rmlo{=  } @rmhi{best} @rmlo{ for type migration})))
+  (define t2
+    (add-star (word-append @rmlo{shallow types do not help})))
+  (define t3
+    (lc-append
+      (add-star (word-append @rmlo{the } @rmhi{rational programmer} @rmlo{ method}))
+      (word-append @rmlo{enables systematic } @rmhi{experiments})))
+  (define txt-width (apply max (map pict-width (list t1 t2 t3))))
+  (define txt-height (apply max (map pict-height (list t1 t2 t3))))
+  (define xshim (blank txt-width tiny-y-sep))
+  (vc-append
+    smol-y-sep
+    (bstripe (tag-pict ((if (< n 2) pblank values) (tlogo #:p (hl-pict txt-height) t3)) 'rational))
+    (bstripe (tlogo #:p (ll-pict txt-height)
+                    (vl-append t1 xshim (tag-pict ((if (< n 1) pblank values) t2) 'nohelp))))))
+
+(define (future-scale pp)
+  (scale pp 8/10))
+
+(define (tlogo pp #:p img)
+  (ppict-do
+    pp
+    #:go (coord 0 0 'rt #:abs-x (- smol-x-sep))
+    img))
+
+(define (ll-pict hh)
+  ;; TODO wrench
+  (frame (blank hh hh)))
+
+(define (hl-pict hh)
+  ;; TODO lightbulb
+  (frame (blank hh hh)))
+
+(define (casts-and-costs n)
+  (define ll
+    (bbox
+      (ll-append
+        (word-append @rmlo{How to avoid } (tag-pict @rmhi{runtime costs} 'costs))
+        (yblank pico-y-sep)
+        (word-append @rmlo{using } (tag-pict @rmhi{off-the-shelf tools} 'tools) @rmlo{?}))))
+  (define rr
+    (bbox
+      (ptable
+        #:ncols 3
+        #:row-sep pico-y-sep
+        #:col-sep 0
+        (list
+          @rmhi{costs} @rmlo{ ~ } @rmlo{gradual types}
+          (yblank pico-y-sep) (blank) (blank)
+          @rmhi{tools} @rmlo{ ~ } @rmlo{statistical profilers}))))
+  (hc-append smol-x-sep ll ((if (< n 1) pblank values) rr)))
+
 (define (fsm-profile-table)
         (ptable
           #:row-sep med-y-sep
@@ -858,7 +938,7 @@
 
 (define (X-skylines lbl m-loose)
   (define pp
-    (sbox (freeze (scale-to-fit (bitmap (format "img/strategy-overall-~afeasible.png" (or m-loose ""))) 880 700))))
+    (sbox (freeze (scale-to-fit (bitmap (format "img/strategy-overall-~afeasible.png" (or m-loose ""))) 1000 1000))))
   (define ll (sbox (freeze (scale (bitmap "img/legend.png") 13/10))))
   (vc-append
     pico-y-sep
@@ -874,7 +954,7 @@
 
 (define (loose->string x)
   (case x
-    ((-2) "x-axis = strategies, y-axis = % scenarios")
+    ((-2) " X = strategies, Y = % scenarios")
     ((-1) "example data")
     ((0) "strict success")
     ((1) "1 loose")
@@ -905,14 +985,15 @@
           [(< ii N-loose) bblur]
           [(= ii N-loose) values]
           [else pblank]))
-      (ff (sboxrm (loose->string (int->loose ii)))))))
+      (ff (wbox (label-scale (rmlo (loose->string (int->loose ii)))))))))
 
 (define (loose-label m-loose)
   (define N-loose (loose->int m-loose))
-  (parameterize ((bbox-x-margin pico-y-sep)
-                 (bbox-y-margin pico-y-sep))
-    (define inner (loose->string m-loose))
-    (if inner (bboxrm inner) (blank))))
+  (define inner (loose->string m-loose))
+  (if inner (wbox (label-scale (rmlo inner))) (blank)))
+
+(define (label-scale pp)
+  (scale pp 9/10))
 
 (define (rational-programmer-idea [n 0])
   (vc-append
@@ -969,266 +1050,44 @@
             #:go (coord 1/2 35/100 'ct)
             (rhs)))))
 
+(define (add-star txt)
+   (ppict-do txt #:go (coord 0 65/100 'cc #:abs-x (- pico-x-sep)) @rmlo{*}))
+
 ;; -----------------------------------------------------------------------------
 
 (define the-title-str "How Profilers Can Help Navigate Type Migration")
 
-(define (title-pict)
-  (let* ([title-pict
-           (bbox
-             #:y-margin small-y-sep
-             (titlerm the-title-str))]
-         [ben-pict
-          ;; affiliations? [uu brown] nwu neu
-          (author-append
-                     @subtitlermem{Ben Greenman}
-                     @subtitlermemlo{Matthias Felleisen}
-                     @subtitlermemlo{Christos Dimoulas})]
-         [author-pict
-           (ht-append
-             smol-x-sep
-             (bbox ben-pict)
-             (bbox @subtitlerm{OOPSLA 2023}))]
-         [mini-checker
-           (make-checkerboard (w%->pixels 8/10) (h%->pixels 2/10) utah-white utah-black)]
-         [fg (vc-append medd-y-sep title-pict author-pict mini-checker)])
-    (ppict-do
-      (pblank fg)
-      #:go center-coord fg)))
+(define (title-pict) (bbox (rmhi the-title-str)))
 
 (define (sec:title)
   (pslide
+    #:go center-coord
+    (bitmap "img/chess2.png")
+    #:next
     #:go title-coord-m
-    (title-pict))
-  (void))
-
-(define (sec:vision)
-  (pslide
-    #:go heading-coord-m
-    @bboxrm{Sound Gradual Typing}
-    (yblank smol-y-sep)
-    (bbox
-      (ht-append
-        0
-        (deep-codeblock* (list @bodyrm{typed}))
-        @bodyrm{  +  }
-        (untyped-codeblock* (list @bodyrm{untyped}))))
-    #:next
-    (yblank smol-y-sep)
-    (ht-append
-      med-x-sep
-      @bboxrm{Vision: any combo}
-      @bboxrm{Reality: some are too slow})
-    ;; you are here, in dead zone ... slums
-    #:next
-    (yblank med-y-sep)
-    (bbox
-      (ll-append
-        ;; @bodyrm{7 years since dead paper, still wondering!}
-        @bodyrm{Big improvements in recent years:}
-        @bodyrm{- corpse reviver}
-        @bodyrm{- pycket}
-        @bodyrm{- nom}
-        (yblank pico-y-sep)
-        @bodyrm{But!  Dead spots remain.}))
-    )
-  (pslide
-    #:go center-coord
-    @bboxrm{Q. How to avoid dead spots?}
-    (yblank tiny-y-sep)
-    @bboxrm{Method: large experiment}
-    #:next
-    ;; dead = bad typed/untyped configurations ... mabye too much detail for now
-    (yblank med-y-sep)
-    (bbox
-      (ll-append
-        @bodyrm{Starting point (pldi'22) deep + shallow types:}
-        (ll-append
-          @bodyrm{- order-of-magnitude speedups}
-          @bodyrm{- conjecture: helpful for navigation})))
-    #:next
-    (yblank tiny-y-sep)
-          ;; @bodyrm{3d lattice, quick solution to the perf problem, huge improvements}
-          ;; @bodyrm{navigation _should_ be much more feasible}
-          ;; @bodyrm{Today, the reality. Consensus of ben + mf is bogus.}
-    (bbox
-      (ll-append
-        @bodyrm{NOT helpful in our experiment}
-        @bodyrm{MUST question science --- including our own!}))
-    )
-  (pslide
-    #:go heading-coord-m
-    @bboxrm{Example: dead spots}
-    (yblank smol-y-sep)
-    (bbox
-      (let ((num-mod 4))
-        (ht-append
-          0
-          @bodyrm{FSM program, @~a[num-mod] modules =   }
-          (fsm-append (make-list num-mod (untyped-icon-tiny))))))
-    (yblank tiny-y-sep)
-    #:next
-    #:alt (
-      (bbox
-        (fsm-profile-table)
-        ))
-    #:next
-    #:alt ( (two-lattice-pict 0) )
-    #:alt ( (two-lattice-pict 1) )
-    (yblank tiny-y-sep)
-    #:next
-    (bbox
-      (lc-append
-        @bodyrm{@~a[(expt 3 4)] configs,}
-        @bodyrm{60 over 1x,}
-        @bodyrm{30 over 3x}))
-    )
-  (pslide
-    #:go heading-coord-m
-    @bboxrm{RQ. How to avoid dead spots?}
-    (yblank med-y-sep)
-    (bbox
-      (ll-append
-        @bodyrm{lost at sea ....}
-        (ptable
-          #:row-sep 4 #:col-sep 4
-          (map (compose1 (scale-square 220) bitmap mkchess) (build-list 4 values)))))
-    (yblank tiny-y-sep)
-    @bboxrm{don't forget, adding types is work!}
-  )
-  #;(pslide
-    #:go center-coord
-    (bbox
-      (ll-append
-        @bodyrm{Prior work (maybe skip)}
-        @bodyrm{not much, unclear how to proceed}
-        @bodyrm{dead horse, k=2 angel steps}
-        @bodyrm{Herder: variational --> best (does H need types to run?)}
-        @bodyrm{??? any more from paper}))
-    )
-  (void))
-
-(define (sec:rational)
-  (pslide
-    #:go center-coord
-    @bboxrm{Key Idea: rational programmer}
-    #:next
-    (yblank smol-y-sep)
-    ;; #:alt ( (rational-programmer-idea 0) )
-    (rational-programmer-idea 1)
-    )
-  (pslide
-    #:go center-coord
-    @bboxrm{Key Tool: off-the-shelf profilers}
-    (yblank smol-y-sep)
-    (ht-append
-      smol-x-sep
-      (bbox
-        @bodyrm{Boundary profiler})
-      (bbox
-        @bodyrm{Statistical profiler}))
-    (yblank smol-y-sep)
-    #:next
-    (hc-append
-      tiny-y-sep
-      (bbox (freeze (scale-to-square (bitmap "img/hiway.png") (w%->pixels 45/100))))
-      (bbox (freeze (scale-to-square (bitmap "img/stack.png") (w%->pixels 20/100)))))
-    )
-  #;(pslide
-    #:go center-coord
-    @bodyrm{draw modulegraph}
-    @bodyrm{draw stack}
-  )
-  (void))
-
-(define (sec:how)
-  (pslide
-    #:go center-coord
-    (bbox
-      (ll-append
-        @bodyrm{Toward a rational programmer:}
-        @bodyrm{- one scenario = one GT program}
-        (yblank smol-y-sep)
-        @bodyrm{- goal = <= 1x slowdown}
-        (yblank smol-y-sep)
-        @bodyrm{- but HOW to "apply a fix"?}
-        @bodyrm{  ==> what profiler output?}
-        @bodyrm{  ==> how to use the output?}))
-    )
-  (pslide
-    #:go heading-coord-m
-    @bboxrm{Boundary profiler output}
-    (yblank tiny-y-sep)
-    (bbox (freeze (scale-to-square (bitmap "img/bnd-example.png") (w%->pixels 4/10))))
-    )
-  (pslide
-    #:go heading-coord-m
-    @bboxrm{Statistical profiler output}
-    (yblank tiny-y-sep)
-    (bbox (freeze (scale-to-square (bitmap "img/stat-example.png") (w%->pixels 4/10))))
-    )
-  (pslide
-    #:go center-coord
-    @bboxrm{Profiler output}
-    (yblank smol-y-sep)
-    (ht-append
-      smol-x-sep
-      (vc-append
-        tiny-y-sep
-        (bbox
-          (ll-append
-            @bodyrm{Boundary profiler}
-            @bodyrm{- slowest contract boundaries})))
-      (vc-append
-        tiny-y-sep
-        (bbox
-          (ll-append
-            @bodyrm{Statistical profiler}
-            @bodyrm{- slowest modules}
-            @bodyrm{- dominating modules}))))
-    #:next
-    (yblank tiny-y-sep)
-    (bbox (fsm-profile-table))
-    )
-  (pslide
-    #:go center-coord
-    @bboxrm{How to use profiler output?}
-    (yblank tiny-y-sep)
-    #:next
-    (bbox
-      (ll-append
-        @bodyrm{untyped -> deep}
-        @bodyrm{untyped -> shallow}
-        @bodyrm{deep -> shallow}
-        @bodyrm{shallow -> deep}))
-    )
-  (pslide
-    ;; TODO staging
-    #:go heading-coord-m
-    @bboxrm{Strategies}
-    (yblank smol-y-sep)
-    (strategies-pict #f)
-    )
-  (pslide
-    #:go heading-coord-m
-    (bbox
-      (ll-append
-        @bodyrmhi{Instantiate rational programmer}
-        @bodyrm{- one scenario = one GT program}
-        (yblank smol-y-sep)
-        @bodyrm{- 18 ways to make progress, based on:}
-        @bodyrm{  ==> 3 kinds of profiler output (based on 2 profilers)}
-        @bodyrm{  ==> 4 debugging strategies + 2 baselines}
-        (yblank smol-y-sep)
-        @bodyrm{- goal = find fast types, <= 1x overhead}
-        ))
+    (let* ((top (title-pict))
+           (bot (bbox @rmlo{oopsla'23}))
+           (xgap (xblank smol-x-sep))
+           (mid (bbox
+                  (author-append
+                    (add-star @rmlo{Ben Greenman})
+                    @rmlo{Matthias Felleisen}
+                    @rmlo{Christos Dimoulas})))
+           )
+      (vr-append
+        pico-y-sep
+        (hc-append xgap top xgap)
+        (vc-append pico-y-sep mid bot)))
     )
   (void))
 
 (define (sec:take2)
   (pslide
-    ;; title - authors, subtitle how to avoid runtime costs with off-the-shelf tools
-    ;; gradual types, statistical profilers (blocks)
+    #:go title-coord-m
+    (title-pict)
+    (yblank smol-y-sep)
+    #:alt ( (casts-and-costs 0) )
+    (casts-and-costs 1)
     )
   (pslide
     ;; excited b/c dead paper since 2015,
@@ -1297,28 +1156,36 @@
 
 (define (sec:results)
   (pslide
-    #:go center-coord
-    (bbox
-      (ll-append
-        @bodyrmhi{Experiment}
-        @bodyrm{- GTP benchmarks, cloudlab}
-        @bodyrm{- single-user machines}
-        @bodyrm{- 11 runs per config}
-        @bodyrm{- 1.2 million total}
-        @bodyrm{- artifact on zenodo (275MB compressed)}))
-    )
-  #;(pslide
-    #:go center-coord
-    (bbox (bitmap "img/mini-legend.png"))
+    #:go heading-coord-m
+    (bbox @rmhi{Experiment})
+    (yblank med-y-sep)
+    (hb-append
+      pico-x-sep
+      (bbox
+        (ptable
+          #:ncols 2
+          #:col-sep tiny-x-sep
+          #:row-sep pico-y-sep
+          #:col-align (list rc-superimpose lc-superimpose)
+          (list @rmlo{16} @rmlo{GTP Benchmarks}
+                @rmlo{116 K} @rmlo{programs}
+                @rmhi{1.2 M} @rmlo{measurements}
+                @rmhi{5 GB} @rmlo{output}
+                @rmlo{10} @rmlo{months on CloudLab})))
+      (freeze (scale-to-square (bitmap "img/cloudlab.png") 111)))
     )
   (pslide
     #:go heading-coord-m
     @bboxrm{How often do the strategies succeed?}
     #:next
-    ;; TODO explain skyscraper = looseness
     (yblank tiny-y-sep)
     (parameterize ((bbox-x-margin (bbox-y-margin)))
-      (bbox (freeze (scale-to-fit (bitmap "img/nyc.png") (w%->pixels 6/10) (h%->pixels 6/10)))))
+      (bbox (tag-pict (freeze (scale-to-fit (bitmap "img/nyc.png") (w%->pixels 6/10) (h%->pixels 6/10))) 'empire)))
+    #:next
+    #:go (at-find-pict 'empire cc-find 'lc #:abs-x (+ -8 smol-x-sep) #:abs-y (- big-y-sep))
+    (hc-append 4 (sky-arrow) (wbox (label-scale (rmlo "loose"))))
+    #:go (at-find-pict 'empire cc-find 'lc #:abs-x (+ -8 smol-x-sep) #:abs-y (+ smol-y-sep))
+    (hc-append 4 (sky-arrow) (wbox (label-scale (rmlo "strict"))))
   )
   (pslide
     #:go heading-coord-m
@@ -1345,32 +1212,56 @@
 (define (sec:takeaways)
   (pslide
     #:go heading-coord-m
-    (bbox
-      (ll-append
-        @bodyrm{Takeaways}
-        @bodyrm{- opt/boundary is best so far,}
-        @bodyrm{  ==> add deep to the slowest boundary}
-        (yblank pico-y-sep)
-        @bodyrm{- the shallow and deep+shallow strategies are NOT successful}))
-    (yblank smol-y-sep)
+    (bbox @rmhi{Takeaways})
     #:next
-    (bbox
-      (ll-append
-        @bodyrm{Future Work}
-        @bodyrm{- is there a better deep+shallow strategy?}
-        (yblank pico-y-sep)
-        @bodyrm{- how to profile shallow costs?}))
-    (yblank smol-y-sep)
+    (yblank medd-y-sep)
+    #:alt ( (make-takeaways 0) )
+    #:alt ( (make-takeaways 1)
+            #:next
+            #:go (at-find-pict 'nohelp rc-find 'lc #:abs-x tiny-x-sep #:abs-y smol-y-sep)
+            (wbox (future-scale @rmlo{Q. better strategies, profilers?}))
+          )
+    (make-takeaways 2)
     #:next
-    (bbox
-      (ll-append
-        @bodyrm{The rational programmer method:}
-        @bodyrm{  ==> is a powerful way to test design questions}
-        @bodyrm{  ==> yet again challenges "obvious" conjectures}))
+    #:go (at-find-pict 'rational rc-find 'lc #:abs-x tiny-x-sep)
+    (wbox
+      (future-scale
+        (ptable
+          #:ncols 2
+          #:col-sep pico-x-sep
+          #:row-sep pico-y-sep
+          #:col-align cc-superimpose
+          (list @rmlo{errors} @rmlo{testing?} @rmlo{perf} @rmlo{debugging?}))))
     )
   (void))
 
 (define (sec:extra)
+  (pslide
+    #:go center-coord
+    (bbox @coderm{https://github.com/bennn/rational-deep-shallow})
+    )
+  (pslide
+    #:go heading-coord-m
+    @bboxrm{Translation: talk -> paper}
+    (yblank tiny-y-sep)
+    (skylines #f)
+    #:go center-coord
+    (let ((arr "=>")
+          (mktxt (lambda (str) (text str 'roman 30))))
+      (bbox (ptable
+        #:ncols 3
+        #:col-sep tiny-x-sep
+        #:row-sep pico-y-sep
+        (map mktxt
+          (list
+                "Deep"          "->" "optimistic"
+                "type-aware D." "->" "cost-aware optimistic"
+                "Shallow"       "->" "conservative"
+                "type-aware S." "->" "cost-aware conservative"
+                "lattice[S,D]"  "->" "config-aware"
+                "rand"          "->" "null"
+                "pldi22"        "->" "toggle")))))
+  )
   (pslide
     #:go center-coord
     @bboxrm{Skylines per Benchmark}
@@ -1417,17 +1308,16 @@
   ;; [current-page-number-color white]
   ;; --
   (parameterize ((current-slide-assembler bg-bg))
-    (pslide)
     (sec:title)
-      ;(sec:vision)
-      ;(sec:rational)
-      ;(sec:how)
-;    (sec:take2)
+    (sec:take2)
     (sec:results)
     (sec:takeaways)
-    (pslide)
     (sec:extra)
-    (sec:takeaways)
+    (pslide
+      #:go heading-coord-m
+      (bbox @rmhi{Takeaways})
+      (yblank medd-y-sep)
+      (make-takeaways 2))
     (void))
   (void))
 
@@ -1437,19 +1327,14 @@
 ;; =============================================================================
 
 (module+ raco-pict (provide raco-pict)
-         (define client-w 984) (define client-h 728) ;; 4:3
-         ;; (define client-w 1320) (define client-h 726) ;; 16:9 sort of, too thin
+         ;; (define client-w 984) (define client-h 728) ;; 4:3
+         (define client-w 1320) (define client-h 726) ;; 16:9 sort of, too thin
          (define raco-pict
   (ppict-do
     (make-bg client-w client-h)
 
-;    #:go heading-coord-m
-;    @bboxrm{Statistical profiler output}
-;    (yblank tiny-y-sep)
-;    (bbox (freeze (scale-to-square (bitmap "img/stat-example.png") (w%->pixels 4/10))))
+    ;; TODO from the top!!!
 
-    #:go center-coord
-    (skylines #f)
 
 
   )))

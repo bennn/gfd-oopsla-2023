@@ -3,37 +3,13 @@
 (require
   "base.rkt"
   "success.rkt"
+  "color.rkt"
   math/statistics
   racket/runtime-path
   text-table
   pict pict-abbrevs
   plot/no-gui
   (except-in plot/utils min* max*))
-
-;; Color picker: https://davidmathlogic.com/colorblind
-;; Wong: https://www.nature.com/articles/nmeth.1618
-
-(define wong*
-  (map hex-triplet->color%
-       '( #x000000
-          #xe69f00 ; orange
-        ;  #x56b4e9 ; lite blue
-        ;  #xf0e442 ; yellow
-          #x0072b2 ; red
-          #xd55e00 ; blu
-          #xcc79a7 ; pink
-          )))
-
-(define wong-lite*
-  (map hex-triplet->color%
-       '( #xffffff
-          #xffcf50 ; orange
-        ;  #x56b4e9 ; lite blue
-        ;  #xfff452 ;yellow
-          #x2092d2 ;red
-          #xf57e20 ;blu
-          #xec99c7 ;pink
-          )))
 
 (define *current-font-size* (make-parameter 9))
 
@@ -77,18 +53,28 @@
     ;;"random conservative"
     "toggling"))
 
-(define (shortname str)
-  (string-replace
+(define (shortname str #:ss [ss #f])
+  (if ss
+    (case str
+      (("optimistic") "Deep")
+      (("cost-aware optimistic") "type-aware D.")
+      (("conservative") "Shallow")
+      (("cost-aware conservative") "type-aware S.")
+      (("configuration-aware") "lattice[S,D]")
+      (("null") "rand")
+      (("toggling") "pldi22")
+      (else (raise-arguments-error 'shortname "unknown label" "str" str)))
     (string-replace
       (string-replace
         (string-replace
           (string-replace
-            str
-            "configuration" "config.")
-          "aware optimistic" "aware opt.")
-        "aware conservative" "aware con.")
-      "random boundary" "random")
-    "toggling" "tog."))
+            (string-replace
+              str
+              "configuration" "config.")
+            "aware optimistic" "aware opt.")
+          "aware conservative" "aware con.")
+        "random boundary" "random")
+      "toggling" "tog.")))
 
 (define (agnostic-strategy? str)
   (member str (take-right cd-strategy* 2)))
@@ -267,6 +253,7 @@
                      (plot-x-far-ticks no-ticks)
                      (plot-font-size (if ss? (*current-font-size*) (plot-font-size)))
                      (plot-x-ticks (label-ticks
+                                     #:ss ss?
                                      ;; TODO magic numbers
                                      (append
                                        (for/list ((rr (in-list other-rect**))
@@ -289,11 +276,11 @@
             (for/list ((mode-num (in-range num-mode)))
               (for/list ((rect* (in-list other-rect**))
                          (strat-num (in-naturals)))
-                (if (and (= -1 m-loose) (= 2 strat-num))
+                (if (and (equal? -1 m-loose) (= 2 strat-num))
                   (rrect #:loose 0
                          (+ mode-num
                             (* (+ num-mode 1) strat-num))
-                         (make-list num-rrect 70)
+                         (make-list num-rrect 100)
                          #:color (+ 1 mode-num)
                          #:x0 x-offset)
                   (rrect #:loose m-loose
@@ -304,10 +291,10 @@
                          #:x0 x-offset))))
             (for/list ((rect* (in-list rect-agnostic**))
                        (ii (in-naturals)))
-              (if (and (= -1 m-loose) (= 0 ii))
+              (if (and (equal? -1 m-loose) (= 0 ii))
                 (rrect #:loose 0
                        (+ ii (* 1/2 ii))
-                       (make-list num-rrect 40)
+                       (make-list num-rrect 50)
                        #:color (+ num-mode 1)
                        #:x0 (+ x-offset (* 4 (length other-rect**))))
                 (rrect #:loose m-loose
@@ -712,20 +699,13 @@
     #:alpha 0.4))
 
 
-(define (my->pen-color c)
-  (list-ref wong* c))
-
-(define (my->brush-color c)
-  #;(color%-update-alpha (my->pen-color c) 0.2)
-  (list-ref wong-lite* c))
-
-(define (label-ticks rl*)
+(define (label-ticks rl* #:ss [ss? #f])
   (define (my-layout ax-min ax-max)
     (for/list ((rl (in-list rl*)))
       (pre-tick (car rl) #true)))
   (define (my-format ax-min ax-max pt*)
     (for/list ((pt (in-list pt*)))
-      (shortname (cadr (assoc (pre-tick-value pt) rl*)))))
+      (shortname #:ss ss? (cadr (assoc (pre-tick-value pt) rl*)))))
   (ticks my-layout my-format))
 
 (define (pct-ticks)
@@ -773,8 +753,8 @@
     #;(t:baseline-trouble)
     #;(t:blackhole)
     #;(f:strategy-overall #:ss #true)
-    (f:legend-so)
-    #;(for ((kk (in-list '(-2 -1 0 1 2 3 N #f))))
+    #;(f:legend-so)
+    (for ((kk (in-list '(-2 -1 0 1 2 3 N #f))))
       (f:strategy-overall #:ss #true #:loose kk #:legend-off? #true))
     #;(f:strategy-overall #:hope? #true)
     #;(app:strategy-overall)

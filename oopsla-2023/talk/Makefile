@@ -8,8 +8,8 @@ compiletalk:
 	@${RACO} make -v ${TALK}
 
 show: compiletalk
-	@${RACO} slideshow --fullscreen ${TALK}
+	@${RACO} slideshow --widescreen ${TALK}
 
 pdf: compiletalk
-	@${RACO} slideshow --fullscreen --condense --pdf ${TALK}
+	@${RACO} slideshow --widescreen --condense --pdf ${TALK}
 
