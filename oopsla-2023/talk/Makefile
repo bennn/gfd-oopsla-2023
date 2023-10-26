@@ -11,5 +11,5 @@ show: compiletalk
 	@${RACO} slideshow --widescreen ${TALK}
 
 pdf: compiletalk
-	@${RACO} slideshow --widescreen --condense --pdf ${TALK}
+	@${RACO} slideshow --widescreen --condense -x ${TALK}
 

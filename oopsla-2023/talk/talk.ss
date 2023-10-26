@@ -8,25 +8,32 @@
 ;; [X] https://docs.google.com/presentation/d/1vBZkcBu-4AHWRd1AMt6b8OuokaHR91juc6ahOCvOgMU/edit#slide=id.g28099dacf64_0_64
 ;; [X] simple draft
 ;; [X] practice talk thursday 11am GOLLY
-;; [ ] nice draft
-;;  [ ] pict face
-;;  [ ] alice in wonderland
+;; [X] nice draft
 
 (require
   "../code/color.rkt"
+  (only-in "lightbulb.rkt" lightbulb)
   racket/class
   racket/draw
   racket/format
   racket/match
   racket/list
   racket/string
+  racket/runtime-path
   pict
   ppict/2
   pict-abbrevs
   gtp-pict
+  (only-in images/icons/misc close-icon magnifying-glass-icon)
+  (only-in images/icons/symbol check-icon)
+  (only-in images/icons/control stop-icon)
+  images/icons/style
   ppict/pict ppict/tag
   pict-abbrevs/slideshow
   plot/no-gui (except-in plot/utils min* max*))
+
+(define-runtime-path img-dir "./src")
+(define src-dir img-dir)
 
 (define turn revolution)
 
@@ -199,6 +206,8 @@
 (define emph-color (hex-triplet->color% #x304E59))
 (define bg-color utah-granite)
 
+(define *export* (make-parameter #false))
+
 (define bbox-frame-color (make-parameter utah-crimson))
 (define bbox-radius (make-parameter 1))
 (define bbox-x-margin (make-parameter small-x-sep))
@@ -249,8 +258,10 @@
 (define coderm (make-string->text #:font code-font #:size code-size #:color black))
 (define codebf (make-string->text #:font (bold-style code-font) #:size code-size #:color black))
 (define codeemrm (make-string->text #:font (bold-style code-font) #:size code-size #:color green2-3k1))
+(define greenrm codeemrm)
 (define codeemrm2 (make-string->text #:font (bold-style code-font) #:size code-size #:color emph-color))
 (define codeembf (make-string->text #:font (bold-style code-font) #:size code-size #:color apple-red))
+(define redrm codeembf)
 (define tcoderm (make-string->text #:font code-font #:size tcode-size #:color black))
 (define tcodebf (make-string->text #:font (bold-style code-font) #:size tcode-size #:color black))
 (define tt coderm)
@@ -327,8 +338,17 @@
 (define (meta-logo)
   (main-logo "img/meta-logo.png"))
 
+(define (-bitmap str)
+  (define ps
+    (if (and (string? str)
+             (or (string-prefix? str "img/")
+                 (string-prefix? str "src/")))
+      (build-path img-dir (substring str 4))
+      str))
+  (bitmap ps))
+
 (define (main-logo str [ww main-logo-w] [hh main-logo-h])
-  (freeze (scale-to-fit (bitmap str) ww ww)))
+  (freeze (scale-to-fit (-bitmap str) ww ww)))
 
 (define checker-w 40)
 
@@ -367,6 +387,7 @@
               #:x-margin [x-margin #f]
               #:y-margin [y-margin #f]
               #:frame-color [frame-color #f]
+              #:frame-width [frame-width #f]
               #:backup? [backup? #f])
   (define xm (or x-margin (bbox-x-margin)))
   (define ym (or y-margin (bbox-y-margin)))
@@ -382,8 +403,19 @@
     #:y-margin (if backup? 0 ym)
     #:radius rr
     #:background-color (if backup? white color)
-    #:frame-width (bbox-frame-width)
+    #:frame-width (or frame-width (bbox-frame-width))
     #:frame-color (or frame-color (bbox-frame-color))))
+
+(define profiler-frame-width 6)
+
+(define (bndbox pp)
+  (wbox pp #:frame-color (my->brush-color 1) #:frame-width profiler-frame-width))
+
+(define (totalbox pp)
+  (wbox pp #:frame-color (my->brush-color 2) #:frame-width profiler-frame-width))
+
+(define (selfbox pp)
+  (wbox pp #:frame-color (my->brush-color 3) #:frame-width profiler-frame-width))
 
 (define (sbox pp)
   (bbox pp
@@ -393,10 +425,12 @@
 (define (sboxrm . arg*)
   (sbox (apply bodyrm arg*)))
 
-(define (wbox pp)
+(define (wbox pp #:frame-color [frame-color #f] #:frame-width [frame-width #f])
   (bbox pp
         #:x-margin pico-x-sep
-        #:y-margin pico-y-sep))
+        #:y-margin pico-y-sep
+        #:frame-color frame-color
+        #:frame-width frame-width))
 
 (define (wboxrm . arg*)
   (wbox (apply bodyrm arg*)))
@@ -559,7 +593,7 @@
   (scale-to-fit pp 120 80))
 
 (define (lang-lo str)
-  (scale-lang-lo (bitmap str)))
+  (scale-lang-lo (-bitmap str)))
 
 (define (symbol->lang-pict sym #:ext [ext #f])
   (lang-lo (add-img (add-lang (format "~a.~a" sym (or ext 'png))))))
@@ -722,84 +756,8 @@
     #:go (coord 1/2 46/100 'cc)
     (if lbl (scale (headrm lbl) 0.9) (blank))))
 
-(define (tr-pict)
-  (racket-pict))
-
-(define (racket-pict)
-  (symbol->lang-pict 'racket))
-
-(define (ts-pict)
-  (symbol->lang-pict 'typescript))
-
-(define (flow-pict)
-  (symbol->lang-pict 'flow))
-
-(define (typed-clojure-pict)
-  (ppict-do
-    (symbol->lang-pict 'typed-clojure)
-    #:go (coord 65/100 1/2 'cc)
-    (clojure-pict)))
-
-(define (clojure-pict)
-  (symbol->lang-pict 'clojure))
-
-(define (php-pict)
-  (symbol->lang-pict 'php))
-
-;; NOTE room for research / improvement
-(define (pyre-pict)
-  (symbol->lang-pict 'pyre))
-
-(define (ruby-pict)
-  (symbol->lang-pict 'ruby))
-
-(define (strongtalk-pict)
-  (symbol->lang-pict 'strongtalk))
-
-(define (typescript-pict)
-  (symbol->lang-pict 'typescript))
-
-(define (typed-lua-pict)
-  (symbol->lang-pict 'lua)
-  #;(ppict-do
-    (symbol->lang-pict 'lua)
-    #:go center-coord
-    @coderm{T. Lua}))
-
-(define (pyret-pict)
-  (symbol->lang-pict 'pyret))
-
-(define (dart2-pict)
-  (symbol->lang-pict 'dart))
-
-(define (js-pict)
-  (symbol->lang-pict 'javascript))
-
-(define (safets-pict)
-  (ppict-do
-    (js-pict)
-    #:go (coord 1/2 0 'ct)
-    @coderm{SafeTS}))
-
-(define (strongscript-pict)
-  (ppict-do
-    (js-pict)
-    #:go (coord 1/2 0 'ct)
-    @coderm{StrS.}))
-
-(define (thorn-pict)
-  (symbol->lang-pict 'thorn))
-
-(define (nom-pict base)
-  (define logo
-    (freeze
-      (ppict-do
-        (scale-to-pict (bitmap "img/lang/nom.png") base)
-        #:go (coord 0 1 'rb)
-        (ben-rule 20 20 #:color white))))
-  (define text
-    (freeze (scale (bitmap "img/lang/nom-text.png") 9/10)))
-  (hc-append text logo))
+(define (racket-pict hh)
+  (freeze (scale-to-square (bitmap (build-path src-dir "racket.png")) hh)))
 
 (define (label-below base . pp*)
   (vc-append 0 base (apply vc-append 2 pp*)))
@@ -818,6 +776,205 @@
 
 ;; ---
 
+(define (pay-for-types n)
+  (define t-avg
+    (typed-codeblock*
+      (list
+        @tcoderm{avg : Gradebook -> Num}
+        @tcoderm{def avg(g):}
+        @tcoderm{  return mean(get_column(g, "score"))}
+        (blank))))
+  (define u-avg
+    (untyped-codeblock*
+      (list
+        @tcoderm{ }
+        @tcoderm{def avg(g):}
+        @tcoderm{  return mean(get_column(g, "score"))}
+        (blank))))
+  (define other-code
+    (vl-append
+      tiny-y-sep
+      (untyped-codeblock*
+        (list
+          @tcoderm{def mean(nums):}
+          @tcoderm{  ....}
+          (blank)))
+      (untyped-codeblock*
+        (list
+          @tcoderm{def get_column(table, col_name):}
+          @tcoderm{  ....}
+          (blank)))))
+  (define (mk-client ff)
+    (let* ((hh (box #f))
+           (heq (lambda (pp)
+                  (if (unbox hh)
+                    (lc-superimpose (xblank (unbox hh)) pp)
+                    (begin (set-box! hh (pict-width pp)) pp)))))
+      (ff
+        (list
+          (hc-append tiny-x-sep (heq @tcoderm{avg(quiz_1_grades)}) (check-mini))
+          (blank)
+          ((if (< n 3) values pblank) (hc-append tiny-x-sep (heq @tcoderm{avg(recipe_book)}) (stop-mini)))
+          (blank)
+          ((if (< n 3) values pblank) (hc-append tiny-x-sep (heq @tcoderm{avg(42)}) (stop-mini)))))))
+  (define u-client (mk-client untyped-codeblock*))
+  (define t-client (mk-client typed-codeblock*))
+  (ht-append
+    tiny-x-sep
+    (vl-append
+      tiny-y-sep
+      (if (< n 1) u-avg t-avg)
+      (if (< n 2) other-code (blank)))
+    (ppict-do
+      (if (< n 3) u-client t-client)
+      #:go (coord 1/2 1 'ct #:abs-y tiny-y-sep)
+      (if (= n 1) (bbox @rmlo{Add types, code still runs}) (blank)))))
+
+(define (ctc-bnd-pict)
+  @rmlo{Contract @|at-sign| boundary})
+
+(define (typed-assert-pict)
+  @rmlo{Asserts in typed code})
+
+(define (deep-mag) (mag-icon 80))
+(define (shallow-mag) (shuffle-grid (mag-icon 20)))
+
+(define (how-to sym)
+  (define-values [r1 r2 r3]
+    (case sym
+      ((deep) (values (check-mini2) (blank) (blank)))
+      ((shallow) (values (stop-mini) (check-mini2) (check-mini2)))
+      (else (values (blank) (blank) (blank)))))
+  (ptable
+    #:ncols 2
+    #:col-sep tiny-x-sep
+    #:row-sep tiny-y-sep
+    (list r1 (ctc-profile)
+          r2 (total-profile)
+          r3 (self-profile))))
+
+(define (enter-rp n)
+  (define p0 (where-to 2))
+  (define p1
+    (vc-append
+      tiny-y-sep
+      (wbox
+        (vc-append
+          pico-y-sep
+          (node-append (list uu dd uu ss))
+          (word-append @rmhi{Q} @rmlo{. how to find a boundary?})))
+      (ht-append tiny-x-sep (ctc-profile) (total-profile) (self-profile))))
+  (define p2
+    (vc-append
+      (bbox (word-append @rmhi{A} @rmlo{. Rational Programmer experiment}))
+      (yblank smol-y-sep)))
+  (hc-append
+    (- tiny-x-sep)
+    (vc-append
+      smol-y-sep
+      p0
+      ((if (< n 1) pblank values) p1))
+    ((if (< n 2) pblank values) p2)))
+
+(define (do-migrate pp0 pp1)
+  (let* ((pp (hc-append smol-x-sep (add-hubs pp0 'pp0) (add-hubs pp1 'pp1)))
+         (arr (code-arrow 'pp0-E rc-find 'pp1-W lc-find 0 0 0 0 'solid))
+         (pp (add-code-arrow pp arr)))
+    pp))
+
+(define (ctc-vs-profile n)
+  (define dd
+    (bbox
+      (hc-append
+        tiny-x-sep
+        (deep-mag)
+        (lc-append
+          (word-append @rmhi{Deep} @rmlo{ types})
+          (ctc-bnd-pict)))))
+  (define ss
+    (bbox
+      (hc-append
+        tiny-x-sep
+        (shallow-mag)
+        (lc-append
+          (word-append @rmhi{Shallow} @rmlo{ types})
+          (typed-assert-pict)))))
+  (define dd-prf (how-to 'deep))
+  (define ss-prf (how-to 'shallow))
+  (ht-append
+    med-x-sep
+    (vc-append smol-y-sep dd ((if (< n 1) pblank values) dd-prf))
+    (vc-append smol-y-sep ss ((if (< n 1) pblank values) ss-prf))))
+
+(define (ctc-profile) (bndbox @rmlo{Contract %}))
+(define (total-profile) (totalbox @rmlo{Total %}))
+(define (self-profile) (selfbox @rmlo{Self %}))
+
+(define (gt-costs n)
+  (define top (add-hubs @rmlo{Costs depend ...} 'top #:hub-length tiny-x-sep))
+  (define ll
+    (if (< n 1)
+      (lc-append
+        @rmlo{Guarded semantics}
+        (word-append @rmlo{(} @rmhi{deep} @rmlo{ types)})
+        (yblank pico-y-sep)
+        (ctc-bnd-pict))
+      (lc-append
+        @rmhi{deep}
+        @rmlo{check full gradebook}
+        (yblank pico-y-sep)
+        @redrm{9x})))
+  (define rr
+    (if (< n 1)
+      (lc-append
+        @rmlo{Transient semantics}
+        (word-append @rmlo{(} @rmhi{shallow} @rmlo{ types)})
+        (yblank pico-y-sep)
+        (typed-assert-pict))
+      (lc-append
+        @rmhi{shallow}
+        @rmlo{check book shape, numbers}
+        (yblank pico-y-sep)
+        @greenrm{~1x})))
+  (define ll-pict (deep-mag))
+  (define rr-pict (shallow-mag))
+  (define pp
+    (bbox
+      (vc-append
+        (h%->pixels 4/100)
+        top
+        (ht-append bigg-y-sep
+                   (hc-append tiny-x-sep ll-pict ll)
+                   (hc-append tiny-x-sep rr-pict rr)))))
+  (add-code-arrow*
+    #:color black
+    pp
+    (list
+      (code-arrow 'top-S lb-find ll ct-find (* 3/4 turn) (* 3/4 turn) 4/10  4/10 'solid)
+      (code-arrow 'top-S rb-find rr ct-find (* 3/4 turn) (* 3/4 turn) 3/10  2/10 'solid))))
+
+(define (typed-costs n)
+  (define ll
+    (lc-append
+      @rmhi{deep}
+      @rmlo{no boundaries!}
+      (yblank pico-y-sep)
+      @greenrm{1x}))
+  (define rr
+    (lc-append
+      @rmhi{shallow}
+      @rmlo{more types, more checks}
+      (yblank pico-y-sep)
+      @redrm{2x}))
+  (define ll-pict (mag-icon 80))
+  (define rr-pict (shuffle-grid (mag-icon 20)))
+  (define pp
+    (bbox
+      (ht-append bigg-y-sep
+                 (hc-append tiny-x-sep ll-pict ll)
+                 (hc-append tiny-x-sep rr-pict rr))))
+  pp)
+
 (define (bstripe pp)
   ;; (define color (or -color utah-darkgrey))
   (define +margin (* 2 margin))
@@ -834,7 +991,7 @@
   (define t3
     (lc-append
       (add-star (word-append @rmlo{the } @rmhi{rational programmer} @rmlo{ method}))
-      (word-append @rmlo{enables systematic } @rmhi{experiments})))
+      (word-append @rmlo{enables rigorous } @rmhi{experiments})))
   (define txt-width (apply max (map pict-width (list t1 t2 t3))))
   (define txt-height (apply max (map pict-height (list t1 t2 t3))))
   (define xshim (blank txt-width tiny-y-sep))
@@ -854,12 +1011,77 @@
     img))
 
 (define (ll-pict hh)
-  ;; TODO wrench
-  (frame (blank hh hh)))
+  (freeze (scale-to-square (bitmap (build-path src-dir "wrench.png")) hh)))
 
 (define (hl-pict hh)
-  ;; TODO lightbulb
-  (frame (blank hh hh)))
+  (scale-to-square
+    (lightbulb #:color utah-sunrise)
+    hh))
+
+(define (rational-logo)
+  (define txt
+    (lc-append
+      @rmhi{Rational Programmer}
+      @rmlo{method  (icfp'21)}))
+  (bbox (vc-append tiny-y-sep (hl-pict 111) txt)))
+
+(define (mag-icon [hh 60])
+  (bitmap (magnifying-glass-icon #:height hh)))
+
+(define (check-mini)
+  (check-pict 40))
+
+(define (check-mini2)
+  (check-pict2 40))
+
+(define (stop-mini)
+  (stop-pict 30))
+
+(define (stop-mini2)
+  (stop-pict2 30))
+
+(define (check-pict2 h)
+  (bitmap (check-icon #:height h #:material metal-icon-material)))
+
+(define (check-pict h)
+  (bitmap (check-icon #:color apple-green #:height h #:material rubber-icon-material)))
+
+(define (caution-pict h)
+  (bitmap (close-icon #:color utah-sunrise #:height h #:material plastic-icon-material)))
+
+(define (stop-pict h)
+  (bitmap (stop-icon #:color utah-crimson #:height h #:material plastic-icon-material)))
+
+(define (stop-pict2 h)
+  (bitmap (stop-icon #:color utah-crimson #:height h #:material metal-icon-material)))
+
+(define (shuffle-grid pp)
+  (define row* (make-list 3 pp))
+  (define sep 4)
+  (apply
+    vc-append
+    sep
+    (make-list 3 (apply hc-append sep row*))))
+
+(define (popl-problem n)
+  (define paper (sbox (freeze (scale-to-square (bitmap "src/deadhorse.png") (w%->pixels 4/10)))))
+  (define lbl
+    (ptable
+      #:ncols 2
+      #:row-sep 0
+      #:col-sep pico-y-sep
+      (list @rmlo{popl'16:  } @rmlo{10x slowdowns are common,}
+            (blank)           (word-append @rmhi{but} @rmlo{  fast points exist!}))))
+  (define low
+    ((if (< n 1) pblank values) (bbox (hc-append tiny-x-sep (mag-icon) @rmlo{How to find??}))))
+  (define rp (rational-logo))
+  (hc-append
+    smol-x-sep
+    (ppict-do
+      (vc-append tiny-y-sep (bbox lbl) paper)
+      #:go (coord 1/2 1 'ct #:abs-y (+ tiny-y-sep))
+      low)
+    ((if (< n 2) pblank values) rp)))
 
 (define (casts-and-costs n)
   (define ll
@@ -938,8 +1160,8 @@
 
 (define (X-skylines lbl m-loose)
   (define pp
-    (sbox (freeze (scale-to-fit (bitmap (format "img/strategy-overall-~afeasible.png" (or m-loose ""))) 1000 1000))))
-  (define ll (sbox (freeze (scale (bitmap "img/legend.png") 13/10))))
+    (sbox (freeze (scale-to-fit (-bitmap (format "img/strategy-overall-~afeasible.png" (or m-loose ""))) 1000 1000))))
+  (define ll (sbox (freeze (scale (-bitmap "img/legend.png") 13/10))))
   (vc-append
     pico-y-sep
     lbl pp ll))
@@ -995,6 +1217,9 @@
 (define (label-scale pp)
   (scale pp 9/10))
 
+(define (comment-scale pp)
+  (scale pp 8/10))
+
 (define (rational-programmer-idea [n 0])
   (vc-append
     smol-y-sep
@@ -1009,6 +1234,56 @@
         @bodyrm{- search for a goal}))
     (bbox
       (apply hc-append 4 (make-list 6 right-arrow-pict )))))
+
+(define (profile-pict sym)
+  (freeze (scale-to-fit (bitmap (build-path src-dir (format "~a-example.png" sym))) (w%->pixels 44/100) (h%->pixels 60/100))))
+
+(define (stat-profile-pict)
+  (define cc-total (my->brush-color 2))
+  (define cc-self (my->brush-color 2))
+  (ppict-do
+    (profile-pict 'stat)
+    #:go (coord 21/100 22/100 'cc)
+    (totalswatch)
+    #:go (coord 43/100 22/100 'cc)
+    (selfswatch)))
+
+(define (sample-profile n)
+  (define profile-bitmap (stat-profile-pict))
+  (define bnd-bitmap (profile-pict 'bnd))
+  (define xshim (xblank (max (pict-width profile-bitmap) (pict-width bnd-bitmap))))
+  (define stat-pp
+    (case n
+      ((0) (blank))
+      ((1) profile-bitmap)
+      (else (hc-append
+              smol-x-sep
+              (totalbox @rmlo{Total %})
+              (selfbox @rmlo{Self %})))))
+  (define bnd-pp
+    (case n
+      ((0 1 2) (blank))
+      ((3) bnd-bitmap)
+      (else (bndbox @rmlo{Contract %}))))
+  (ht-append
+    med-x-sep
+    (vc-append
+      pico-y-sep
+      (cc-superimpose xshim @bboxrm{Statistical Profiler})
+      stat-pp)
+    (vc-append
+      pico-y-sep
+      (cc-superimpose xshim @bboxrm{Contract Profiler})
+      bnd-pp)))
+
+(define (path-append . pp*)
+  (path-append* pp*))
+
+(define (path-append* pp*)
+  (apply
+    hc-append
+    tiny-x-sep
+    (add-between pp* right-arrow-pict)))
 
 (define (two-lattice-pict [n 0] #:num-module [num-mod 4])
   (define (bscale pp) (scale pp 1/2))
@@ -1050,6 +1325,178 @@
             #:go (coord 1/2 35/100 'ct)
             (rhs)))))
 
+(define (bscale pp) (scale pp 1/2))
+(define uu (bscale (untyped-icon-tiny)))
+(define dd (bscale (deep-icon-tiny)))
+(define ss (bscale (shallow-icon-tiny)))
+(define (node-append* . pp*)
+  (node-append pp*))
+(define (node-append pp*)
+  (apply ht-append 2 pp*))
+
+(define (where-to n)
+  (define base (add-hubs (node-append (list dd uu)) 'base))
+  (define o1   (add-hubs (node-append (list ss uu)) 'o1))
+  (define o2   (add-hubs (node-append (list dd ss)) 'o2))
+  (define o3   (add-hubs (node-append (list dd dd)) 'o3))
+  (define pp
+    (bbox
+      (vc-append
+        smol-y-sep
+        ((if (< n 1) pblank values) (hc-append tiny-x-sep o1 o2 o3))
+        (vc-append
+          (ppict-do base #:go (coord 0 1/2 'rc #:abs-y -2) (if (< n 2) @redrm{9x} (blank)))
+          (word-append @rmhi{Q} @rmlo{. where to?})))))
+  (define the-pull 1/8)
+  (define the-angle (* 1/4 turn))
+  (define the-style 'solid)
+  (if (< n 1)
+    pp
+    (add-code-arrow*
+      pp
+      (list
+        (code-arrow 'base-N lt-find 'o1-S cb-find the-angle the-angle the-pull the-pull the-style)
+        (code-arrow 'base-N ct-find 'o2-S cb-find the-angle the-angle the-pull the-pull the-style)
+        (code-arrow 'base-N rt-find 'o3-S cb-find the-angle the-angle the-pull the-pull the-style)))))
+
+(define (type-aware-src)
+           (ptable
+                  #:ncols 2
+                  #:col-sep 2 #:row-sep 0
+                  (list @tcoderm{1.} (node-append* dd ss)
+                        @tcoderm{2.} (hc-append (node-append (list dd uu)) @rm{ / } (node-append* ss uu)))))
+
+(define (greedy-src)
+  (hc-append (node-append* dd uu) @rm{ / } (node-append* ss uu) @rm{ / } (node-append* dd ss)))
+
+(define (once-again pp)
+  (ppict-do (pblank pp) #:go (coord 0 0 'lt) @rmlo{...}))
+
+(define (mkstrat name src tgt)
+  (mkstrat-plain name (do-migrate src tgt)))
+
+(define (mkstrat-plain name pp)
+  (vl-append
+    (- pico-y-sep)
+    name
+    (hc-append (xblank pico-x-sep) pp)))
+
+(define (make-swatch cc)
+  (define ww 20)
+  (bbox (blank ww ww)
+        #:x-margin 0
+        #:y-margin 0
+        #:color cc #:backup? #f #:frame-color cc))
+
+(define (bndswatch) (make-swatch (my->brush-color 1)))
+(define (totalswatch) (make-swatch (my->brush-color 2)))
+(define (selfswatch) (make-swatch (my->brush-color 3)))
+
+(define (strategies-pictx n)
+  (define greedy-deep
+    (let* ((name (hc-append
+                   @rmhi{Deep}
+                   @rmlo{ ( } (bndswatch) @rmlo{ } (totalswatch) @rmlo{ } (selfswatch) @rmlo{ ) } ))
+           (src (greedy-src))
+           (tgt (node-append (list dd dd))))
+      (mkstrat name src tgt)))
+  (define greedy-shallow
+    (let* ((name @rmhi{Shallow})
+           (src (once-again (greedy-src)))
+           (tgt (node-append (list ss ss))))
+      (mkstrat name src tgt)))
+  (define type-aware-deep
+    (let* ((name @rmhi{Type-Aware Deep})
+           (src (type-aware-src))
+           (tgt (node-append (list dd dd))))
+      (mkstrat name src tgt)))
+  (define type-aware-shallow
+    (let* ((name @rmhi{Type-Aware Shallow})
+           (src (once-again (type-aware-src)))
+           (tgt (node-append (list ss ss))))
+      (mkstrat name src tgt)))
+  (define lattice-aware
+    (let* ((name (rmhi "Lattice[S; D]"))
+           (txt @rmlo{ count #typed, choose Deep or Shallow}))
+      (word-append name txt)))
+  (define baselines
+    (word-append
+      @rmhi{null} @rmlo{, } @rmhi{pldi22} @rmlo{ = baselines}))
+  (bbox
+    (vl-append
+      tiny-y-sep
+      (ptable
+        #:ncols 2
+        #:col-sep tiny-x-sep
+        #:row-sep tiny-y-sep
+        (delay-list n
+          greedy-deep greedy-shallow
+          type-aware-deep type-aware-shallow))
+      ((if (< n 4) pblank values) lattice-aware)
+      ((if (< n 5) pblank values) baselines))))
+
+(define (delay-list n . pp*)
+  (delay-list* n pp*))
+
+(define (delay-list* n pp*)
+  (for/list ((pp (in-list pp*))
+             (ii (in-naturals)))
+    ((if (< n ii) pblank values) pp)))
+
+(define (three-lattice n #:num-module [num-mod 4] #:lattice-only? [lo? #false])
+  (define (my-above top bot) (vc-append pico-y-sep top bot))
+  (define -lhs
+    (bbox
+      (ht-append
+        smol-x-sep
+        (hc-append
+          (my-above
+            @rmlo{@~a[num-mod] modules}
+            (node-append (list uu uu)))
+          (xblank tiny-x-sep)
+          right-arrow-pict
+          (xblank tiny-x-sep)
+          (ht-append
+            (my-above
+              @rmlo{deep}
+              dd)
+            @rmlo{  or  }
+            (my-above
+              @rmlo{shallow}
+              ss))))))
+  (define lhs
+     (if (< n 2)
+       (ppict-do -lhs #:go (coord 1 1/2 'lc #:abs-x tiny-x-sep) (label-scale @bboxrm{(pldi'22)}))
+       -lhs))
+  (define node-sep (if (= num-mod 2) 12 6))
+  (define (mk2 b*)
+    (node-append
+      (for/list ((b (in-list b*)))
+        (if b dd uu))))
+  (define (mk3 b*)
+    (define num-typed (for/sum ((b (in-list b*)) #:when b) 1))
+    (values ;;scale-to-fit
+      (make-lattice
+        #:x-margin node-sep #:y-margin node-sep
+        num-typed
+        (lambda (bb*)
+          (node-append
+            (for/list ((b (in-list b*)))
+              (if b
+                (begin0
+                  (if (car bb*) dd ss)
+                  (set! bb* (cdr bb*)))
+                uu)))))))
+  (define rhs
+    (tag-pict
+      (bbox
+        (let ((the-lat (make-lattice num-mod mk3 #:x-margin node-sep #:y-margin node-sep)))
+          (if lo? the-lat (label-above the-lat @bodyrm{@~a[(expt 3 num-mod)] points}))))
+      'lattice-rhs))
+  (if lo?
+    rhs
+    (vc-append smol-y-sep lhs ((if (< n 1) pblank values) rhs))))
+
 (define (add-star txt)
    (ppict-do txt #:go (coord 0 65/100 'cc #:abs-x (- pico-x-sep)) @rmlo{*}))
 
@@ -1060,10 +1507,14 @@
 (define (title-pict) (bbox (rmhi the-title-str)))
 
 (define (sec:title)
+  (unless (*export*)
+    ;; TODO why no image??! unreliable
+    (pslide
+      #:go center-coord
+      (freeze (-bitmap (build-path img-dir "chess2.png")))))
   (pslide
     #:go center-coord
-    (bitmap "img/chess2.png")
-    #:next
+    (freeze (-bitmap (build-path img-dir "chess2.png")))
     #:go title-coord-m
     (let* ((top (title-pict))
            (bot (bbox @rmlo{oopsla'23}))
@@ -1086,14 +1537,18 @@
     #:go title-coord-m
     (title-pict)
     (yblank smol-y-sep)
+    #:next
     #:alt ( (casts-and-costs 0) )
     (casts-and-costs 1)
     )
   (pslide
-    ;; excited b/c dead paper since 2015,
-    ;;  problem: 10x slowdown common but fast points exist!
-    ;;  !!: nudge toward good points
-    ;;  ??: no way to address systematically
+    #:go heading-coord-m
+    @bboxrm{Old Problem, New Idea}
+    (yblank smol-y-sep)
+    #:next 
+    #:alt ( (popl-problem 0) )
+    #:alt ( (popl-problem 1) )
+    (popl-problem 2)
     )
   (pslide
     ;; gradual types, runtime costs
@@ -1105,27 +1560,48 @@
     ;;     => table mutable, even more expensive get wrapper check reads and writes
     ;;    transient = shallow checks at boundaries, and throughout typed code
     ;;     => mutable don't matter
-    ;; uu -> 20x // -> 4x -> 0.9x // 5x -> 0.9x
-    ;;  fortunately can mix and match!
-    ;; path, untyped to typed uu -> su -> dd
-    )
-  (pslide
-    ;; gradual types, runtime costs
-    ;; 3d space, 3^2
-    ;; some fast some slow **fast = at least as good as untyped**
+    #:go heading-coord-m
+    @bboxrm{Gradual Types + Costs}
+    (yblank smol-y-sep)
+    #:next
+    #:alt ( (pay-for-types 0) )
+    #:alt ( (pay-for-types 1) )
+    (pay-for-types 2)
+    #:next
+    (yblank tiny-y-sep)
+    (bbox (hc-append tiny-x-sep @rmlo{Type soundness} left-arrow-pict @rmlo{Runtime checks}))
+    #:next
+    (yblank tiny-y-sep)
+    #:alt ( (gt-costs 0) )
+    (gt-costs 1)
   )
   (pslide
-    ;; need off-shelf b/c huge search space ... example lattices
-    ;; programmer could wind up anywhere!
-    ;;  unrealistic to push workload on programmers
-    ;; can:
-    ;; - run profiler
-    ;; - add types
-    ;; - swap semantics (guarded <-> transient)
-    ;; cannot:
-    ;; - remove types (trivial)
-    ;; [[ add t questionable! really need auto migration ]]
-    ;; context = typed racket
+    #:go heading-coord-m
+    (pblank @bboxrm{Gradual Types + Costs})
+    (yblank smol-y-sep)
+    #:alt ( (pay-for-types 2) )
+    (pay-for-types 3)
+    #:next
+    (yblank tiny-y-sep)
+    (typed-costs 1)
+  )
+  (pslide
+    #:go center-coord
+    #:alt ( (three-lattice 0 #:num-module 2) )
+    (three-lattice 1 #:num-module 2)
+    #:next
+    #:go (at-find-pict 'lattice-rhs rc-find 'lc #:abs-x tiny-x-sep)
+    (where-to 1)
+    )
+  (pslide
+    #:go center-coord
+    #:alt ( (three-lattice 2 #:num-module 3) )
+    (three-lattice 2 #:num-module 4)
+    #:next
+    #:go (at-find-pict 'lattice-rhs ct-find 'ct #:abs-y (- pico-y-sep))
+    (where-to 1)
+    (yblank pico-y-sep)
+    @bboxrm{Can profilers help?}
     )
   (pslide
     ;; Profilers, Outputs
@@ -1133,31 +1609,80 @@
     ;; --> 3 outputs (colorize)
     ;; --> N questions: top suggestion? top untyped? // add types? swap semantics? 
     ;;     // better than random chance?
+    #:go heading-coord-m
+    (bbox (hc-append tiny-x-sep @rmlo{Profilers} (racket-pict 50)))
+    #:next
+    (yblank tiny-y-sep)
+    (sbox (node-append (list uu dd uu ss)))
+    (yblank smol-y-sep)
+    #:alt ( (sample-profile 0) )
+    #:alt ( (sample-profile 1) )
+    #:alt ( (sample-profile 2) )
+    #:alt ( (sample-profile 3) )
+    (sample-profile 4)
+    )
+  (pslide
+    #:go center-coord
+    (ctc-vs-profile 1)
     )
   (pslide
     ;; mountain of Q's -> 2015 problem, unclear how to proceed systematically
     ;; rational programmer, turn into _useful_ experiment
-    ;; from Q's, derive strategies + baselines
+    #:go center-coord
+    #:alt ( (enter-rp 1) )
+    (enter-rp 2)
     )
   (pslide
-    ;; Instantiation ( How to Compare Strategies )
-    ;; 1. consider EVERY configuration as a starting point ... show lattice!
-    ;; 2. apply every combination of profile output (show again!) and strategy
-    ;;    plus baselines = 15 + 2 = 17 total
-    ;; 3. compare: how many successes?
-    ;; ** many success:
-    ;;     - strict example
-    ;;     - 1 loose example
-    ;;     - ... 2 loose, ditto
-    ;;     - N loose generalize
+    #:go heading-coord-m
+    (bbox @rmhi{Rational Programmer})
+    (yblank tiny-y-sep)
+    #:next
+    (bbox @rmlo{Identify strategies, let them compete.})
+    #:next
+    (yblank tiny-y-sep)
+    #:alt ( (strategies-pictx 0) )
+    #:alt ( (strategies-pictx 1) )
+    #:alt ( (strategies-pictx 2) )
+    #:alt ( (strategies-pictx 3) )
+    #:alt ( (strategies-pictx 4) )
+    (strategies-pictx 5)
     )
-  ;; next up: experiment + results
+  (pslide
+    #:go heading-coord-m
+    (bbox @rmhi{Rational Programmer})
+    (yblank tiny-y-sep)
+    (bbox @rmlo{Identify strategies, let them compete.})
+    #:next
+    (yblank smol-y-sep)
+    (ht-append
+      smol-x-sep
+      (three-lattice 2 #:num-module 3 #:lattice-only? #true)
+      (bbox
+        (lc-append
+          @rmlo{For all starting points,}
+          (tag-pict (word-append @rmlo{Goal = } @rmhi{path} @rmlo{ to a fast config}) 'path))))
+    #:next
+    #:go (at-find-pict 'path cb-find 'ct #:abs-y tiny-y-sep)
+    (bbox
+      (vc-append
+        tiny-y-sep
+        (word-append @rmhi{strict} @rmlo{ = faster each step})
+        (word-append @rmlo{k } @rmhi{loose} @rmlo{ = k slower steps})))
+    (yblank tiny-y-sep)
+    (bbox
+      (vl-append
+        tiny-y-sep
+        (path-append
+          @coderm{99x} @coderm{99x} @coderm{3x} @greenrm{1x})
+        (path-append
+          @coderm{ 3x} @redrm{99x} @greenrm{1x})))
+    )
   (void))
 
 (define (sec:results)
   (pslide
     #:go heading-coord-m
-    (bbox @rmhi{Experiment})
+    (bbox @rmlo{Dataset})
     (yblank med-y-sep)
     (hb-append
       pico-x-sep
@@ -1168,11 +1693,11 @@
           #:row-sep pico-y-sep
           #:col-align (list rc-superimpose lc-superimpose)
           (list @rmlo{16} @rmlo{GTP Benchmarks}
-                @rmlo{116 K} @rmlo{programs}
+                @rmlo{116 K} @rmlo{starting points}
                 @rmhi{1.2 M} @rmlo{measurements}
                 @rmhi{5 GB} @rmlo{output}
                 @rmlo{10} @rmlo{months on CloudLab})))
-      (freeze (scale-to-square (bitmap "img/cloudlab.png") 111)))
+      (freeze (scale-to-square (-bitmap "img/cloudlab.png") 111)))
     )
   (pslide
     #:go heading-coord-m
@@ -1180,7 +1705,7 @@
     #:next
     (yblank tiny-y-sep)
     (parameterize ((bbox-x-margin (bbox-y-margin)))
-      (bbox (tag-pict (freeze (scale-to-fit (bitmap "img/nyc.png") (w%->pixels 6/10) (h%->pixels 6/10))) 'empire)))
+      (bbox (tag-pict (freeze (scale-to-fit (-bitmap "img/nyc.png") (w%->pixels 6/10) (h%->pixels 6/10))) 'empire)))
     #:next
     #:go (at-find-pict 'empire cc-find 'lc #:abs-x (+ -8 smol-x-sep) #:abs-y (- big-y-sep))
     (hc-append 4 (sky-arrow) (wbox (label-scale (rmlo "loose"))))
@@ -1193,12 +1718,32 @@
     (yblank tiny-y-sep)
     #:alt ( (pre-skylines -2) )
     #:alt ( (pre-skylines -1) )
-    #:alt ( (skylines 0) )
+    #:alt ( (skylines 0)
+            #:next
+            #:go center-coord
+            (comment-scale @wboxrm{Contract > Statistical [total or self]})
+            (yblank pico-y-sep)
+            #:next
+            (comment-scale @wboxrm{Total ~= Self})
+            (yblank pico-y-sep)
+            #:next
+            (comment-scale @wboxrm{Deep >> Shallow})
+            (yblank pico-y-sep)
+            #:next
+            (comment-scale @wboxrm{type-aware, lattice-aware make little difference})
+           )
     #:alt ( (skylines 1) )
     #:alt ( (skylines 2) )
     #:alt ( (skylines 3) )
-    #:alt ( (skylines 'N) )
+    #:alt ( (skylines 'N)
+            #:next
+            #:go center-coord
+            (comment-scale @wboxrm{Looseness helps a bit})
+           )
     (skylines #f)
+    #:next
+    #:go center-coord
+    (comment-scale @wboxrm{3x success helps Shallow})
   )
   #;(pslide
     #:go center-coord
@@ -1212,14 +1757,14 @@
 (define (sec:takeaways)
   (pslide
     #:go heading-coord-m
-    (bbox @rmhi{Takeaways})
+    (bbox @rmlo{Takeaways})
     #:next
     (yblank medd-y-sep)
     #:alt ( (make-takeaways 0) )
     #:alt ( (make-takeaways 1)
             #:next
             #:go (at-find-pict 'nohelp rc-find 'lc #:abs-x tiny-x-sep #:abs-y smol-y-sep)
-            (wbox (future-scale @rmlo{Q. better strategies, profilers?}))
+            (wbox (future-scale @rmlo{Q. hybrid strategies, shallow profilers?}))
           )
     (make-takeaways 2)
     #:next
@@ -1228,7 +1773,7 @@
       (future-scale
         (ptable
           #:ncols 2
-          #:col-sep pico-x-sep
+          #:col-sep tiny-x-sep
           #:row-sep pico-y-sep
           #:col-align cc-superimpose
           (list @rmlo{errors} @rmlo{testing?} @rmlo{perf} @rmlo{debugging?}))))
@@ -1267,7 +1812,7 @@
     @bboxrm{Skylines per Benchmark}
     (yblank pico-x-sep)
     (bbox
-      (let ((bbmap (lambda (x) (freeze (scale-to-fit (bitmap x) (w%->pixels 43/100) (h%->pixels 75/100))))))
+      (let ((bbmap (lambda (x) (freeze (scale-to-fit (-bitmap x) (w%->pixels 43/100) (h%->pixels 75/100))))))
         (ht-append
           tiny-x-sep
           (bbmap "img/skybench-0.png")
@@ -1278,7 +1823,7 @@
     @bboxrm{Hopeful Scenarios}
     (yblank pico-x-sep)
     (bbox
-      (let ((bbmap (lambda (x) (freeze (scale-to-fit (bitmap x) (w%->pixels 80/100) (h%->pixels 75/100))))))
+      (let ((bbmap (lambda (x) (freeze (scale-to-fit (-bitmap x) (w%->pixels 80/100) (h%->pixels 75/100))))))
         (bbmap "img/hopeful.png")))
     )
   (pslide
@@ -1286,7 +1831,7 @@
     @bboxrm{Opt-Boundary vs. the others}
     (yblank pico-x-sep)
     (bbox
-      (let ((bbmap (lambda (x) (freeze (scale-to-fit (bitmap x) (w%->pixels 80/100) (h%->pixels 75/100))))))
+      (let ((bbmap (lambda (x) (freeze (scale-to-fit (-bitmap x) (w%->pixels 80/100) (h%->pixels 75/100))))))
         (bbmap "img/h2h.png")))
     )
   (pslide
@@ -1294,7 +1839,7 @@
     @bboxrm{Where are the Fast Configs?}
     (yblank pico-x-sep)
     (bbox
-      (let ((bbmap (lambda (x) (freeze (scale-to-fit (bitmap x) (w%->pixels 80/100) (h%->pixels 75/100))))))
+      (let ((bbmap (lambda (x) (freeze (scale-to-fit (-bitmap x) (w%->pixels 80/100) (h%->pixels 75/100))))))
         (bbmap "img/pyramid.png")))
     )
   (void))
@@ -1307,7 +1852,8 @@
   ;; [current-page-number-font page-font]
   ;; [current-page-number-color white]
   ;; --
-  (parameterize ((current-slide-assembler bg-bg))
+  (parameterize ((*export* (and (member "-x" (vector->list (current-command-line-arguments))) #true))
+                 (current-slide-assembler bg-bg))
     (sec:title)
     (sec:take2)
     (sec:results)
@@ -1315,9 +1861,10 @@
     (sec:extra)
     (pslide
       #:go heading-coord-m
-      (bbox @rmhi{Takeaways})
+      (bbox @rmlo{Takeaways})
       (yblank medd-y-sep)
       (make-takeaways 2))
+    (when (*export*) (pslide))
     (void))
   (void))
 
@@ -1333,7 +1880,23 @@
   (ppict-do
     (make-bg client-w client-h)
 
-    ;; TODO from the top!!!
+    #:go center-coord
+    (freeze (-bitmap (build-path img-dir "chess2.png")))
+    #:go title-coord-m
+    (let* ((top (title-pict))
+           (bot (bbox @rmlo{oopsla'23}))
+           (low (bbox (freeze (scale-to-square (bitmap (build-path src-dir "cra.png")) 140))))
+           (xgap (xblank smol-x-sep))
+           (mid (bbox
+                  (author-append
+                    (add-star @rmlo{Ben Greenman})
+                    @rmlo{Matthias Felleisen}
+                    @rmlo{Christos Dimoulas})))
+           )
+      (vr-append
+        pico-y-sep
+        (hc-append xgap top xgap)
+        (vc-append pico-y-sep mid bot low)))
 
 
 
