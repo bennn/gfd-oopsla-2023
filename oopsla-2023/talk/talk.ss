@@ -207,6 +207,13 @@
 (define bg-color utah-granite)
 
 (define *export* (make-parameter #false))
+(define *venue* (make-parameter '|oopsla'23|))
+
+(define (oopsla23?)
+  (eq? (*venue*) '|oopsla'23|))
+
+(define (byu?)
+  (eq? (*venue*) '|BYU PL Seminar|))
 
 (define bbox-frame-color (make-parameter utah-crimson))
 (define bbox-radius (make-parameter 1))
@@ -1517,7 +1524,8 @@
     (freeze (-bitmap (build-path img-dir "chess2.png")))
     #:go title-coord-m
     (let* ((top (title-pict))
-           (bot (bbox @rmlo{oopsla'23}))
+           (bot (bbox (rmlo (symbol->string (*venue*)))))
+           (low (bbox (freeze (scale-to-square (bitmap (build-path src-dir "cra.png")) 140))))
            (xgap (xblank smol-x-sep))
            (mid (bbox
                   (author-append
@@ -1528,7 +1536,7 @@
       (vr-append
         pico-y-sep
         (hc-append xgap top xgap)
-        (vc-append pico-y-sep mid bot)))
+        (vc-append pico-y-sep mid bot low)))
     )
   (void))
 
@@ -1735,10 +1743,10 @@
     #:alt ( (skylines 1) )
     #:alt ( (skylines 2) )
     #:alt ( (skylines 3) )
-    #:alt ( (skylines 'N)
+    #:alt ( (tag-pict (skylines 'N) 'sky)
             #:next
-            #:go center-coord
-            (comment-scale @wboxrm{Looseness helps a bit})
+            #:go (at-find-pict 'sky cc-find 'cb #:abs-y (- medd-y-sep))
+            (comment-scale (wbox (lc-append @rmlo{Looseness helps a bit} @rmlo{(profilers rarely benefit from a wrong turn)})))
            )
     (skylines #f)
     #:next
@@ -1847,12 +1855,13 @@
 ;; -----------------------------------------------------------------------------
 
 (define (do-show)
-  ;; (set-page-numbers-visible! #true)
-  (set-spotlight-style! #:size 60 #:color (color%-update-alpha highlight-brush-color 0.6))
-  ;; [current-page-number-font page-font]
-  ;; [current-page-number-color white]
+  [set-spotlight-style! #:size 60 #:color (color%-update-alpha highlight-brush-color 0.6)]
+  [set-page-numbers-visible! #false]
+  [current-page-number-font page-font]
+  [current-page-number-color white]
   ;; --
   (parameterize ((*export* (and (member "-x" (vector->list (current-command-line-arguments))) #true))
+                 (*venue* '|BYU PL Seminar|)
                  (current-slide-assembler bg-bg))
     (sec:title)
     (sec:take2)
@@ -1880,23 +1889,12 @@
   (ppict-do
     (make-bg client-w client-h)
 
-    #:go center-coord
-    (freeze (-bitmap (build-path img-dir "chess2.png")))
-    #:go title-coord-m
-    (let* ((top (title-pict))
-           (bot (bbox @rmlo{oopsla'23}))
-           (low (bbox (freeze (scale-to-square (bitmap (build-path src-dir "cra.png")) 140))))
-           (xgap (xblank smol-x-sep))
-           (mid (bbox
-                  (author-append
-                    (add-star @rmlo{Ben Greenman})
-                    @rmlo{Matthias Felleisen}
-                    @rmlo{Christos Dimoulas})))
-           )
-      (vr-append
-        pico-y-sep
-        (hc-append xgap top xgap)
-        (vc-append pico-y-sep mid bot low)))
+    #:go heading-coord-m
+    @bboxrm{How often do the strategies succeed?}
+    (yblank tiny-y-sep)
+            (tag-pict (skylines 'N) 'sky)
+            #:go (at-find-pict 'sky cc-find 'cb #:abs-y (- medd-y-sep))
+            (comment-scale (wbox (lc-append @rmlo{Looseness helps a bit} @rmlo{(profilers rarely benefit from a wrong turn)})))
 
 
 
