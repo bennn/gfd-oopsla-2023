@@ -10,6 +10,8 @@
 ;; [X] practice talk thursday 11am GOLLY
 ;; [X] nice draft
 
+;; [ ] more data / backups for BYU
+
 (require
   "../code/color.rkt"
   (only-in "lightbulb.rkt" lightbulb)
