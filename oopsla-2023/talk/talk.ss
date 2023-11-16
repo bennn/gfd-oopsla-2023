@@ -1312,7 +1312,12 @@
   (string->symbol (bit*->str bb)))
 
 (define (kate-lattice bm-name)
-  ;; TODO cache
+  (define ps (build-path img-dir (format "kate-~a.png" bm-name)))
+  (unless (file-exists? ps)
+    (save-pict ps (-kate-lattice bm-name)))
+  (bitmap ps))
+
+(define (-kate-lattice bm-name)
   (define perf# (benchmark->perf# bm-name))
   (define (fmt vv #:hope? [hope? #f])
     (define ff (if (good-overhead? vv) greenrm redrm))
@@ -1949,42 +1954,11 @@
       (let ((bbmap (lambda (x) (freeze (scale-to-fit (-bitmap x) (w%->pixels 80/100) (h%->pixels 75/100))))))
         (bbmap "img/pyramid.png")))
     )
-  (pslide
-    #:go heading-coord-m @bboxrm{Best-Case Lattice}
-    #:go center-coord
-    (scale-within (kate-lattice 'fsm) client-w client-h))
-  (pslide
-    #:go heading-coord-m @bboxrm{Best-Case Lattice}
-    #:go center-coord
-    (scale-within (kate-lattice 'fsmoo) client-w client-h))
-  (pslide
-    #:go heading-coord-m @bboxrm{Best-Case Lattice}
-    #:go center-coord
-    (scale-within (kate-lattice 'mbta) client-w client-h))
-  (pslide
-    #:go heading-coord-m @bboxrm{Best-Case Lattice}
-    #:go center-coord
-    (scale-within (kate-lattice 'zombie) client-w client-h))
-  (pslide
-    #:go heading-coord-m @bboxrm{Best-Case Lattice}
-    #:go center-coord
-    (scale-within (kate-lattice 'dungeon) client-w client-h))
-;;  (pslide
-;;    #:go heading-coord-m @bboxrm{Best-Case Lattice}
-;;    #:go center-coord
-;;    (scale-within (kate-lattice 'tetris) client-w client-h))
-;;  (pslide
-;;    #:go heading-coord-m @bboxrm{Best-Case Lattice}
-;;    #:go center-coord
-;;    (scale-within (kate-lattice 'suffixtree) client-w client-h))
-;;  (pslide
-;;    #:go heading-coord-m @bboxrm{Best-Case Lattice}
-;;    #:go center-coord
-;;    (scale-within (kate-lattice 'kcfa) client-w client-h))
-;;  (pslide
-;;    #:go heading-coord-m @bboxrm{Best-Case Lattice}
-;;    #:go center-coord
-;;    (scale-within (kate-lattice 'lnm) client-w client-h))
+  (for ((xx (in-list '(fsm fsmoo forth mbta zombie dungeon jpeg lnm suffixtree kcfa))))
+    (pslide
+      #:go heading-coord-m @bboxrm{Best-Case Lattice}
+      #:go center-coord
+      (scale-within (kate-lattice xx) client-w client-h)))
   (void))
 
 ;; -----------------------------------------------------------------------------
@@ -2025,7 +1999,9 @@
     (make-bg client-w client-h)
 
     #:go center-coord
-    (scale-within (kate-lattice 'kcfa) client-w client-h)
+    (scale-within 
+      (for/last ((xx (in-list '(zombie))))
+                (kate-lattice xx)) client-w client-h)
     ;;(scale-within (kate-lattice 'suffixtree) client-w client-h)
 
 
