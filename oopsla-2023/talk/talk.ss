@@ -13,7 +13,9 @@
 ;; [ ] more data / backups for BYU
 
 (require
+  "../code/base.rkt"
   "../code/color.rkt"
+  "../code/runtime.rkt"
   (only-in "lightbulb.rkt" lightbulb)
   racket/class
   racket/draw
@@ -252,7 +254,7 @@
 (define body-font-md (make-object font% body-size body-font 'default 'normal 'medium))
 (define body-font-hi (make-object font% body-size body-font 'default 'normal 'semibold))
 (define utah-web-headline-font (make-object font% title-size title-font 'default 'normal 'semibold))
-(define page-font (make-font #:face code-font #:size tcode-size))
+(define page-font (make-font #:face code-font #:size code-size))
 
 (define titlerm (make-string->text #:font utah-web-headline-font #:size title-size #:color black))
 (define titlerm2 (make-string->text #:font utah-web-headline-font #:size (- title-size 8) #:color black))
@@ -925,7 +927,7 @@
     (if (< n 1)
       (lc-append
         @rmlo{Guarded semantics}
-        (word-append @rmlo{(} @rmhi{deep} @rmlo{ types)})
+        (word-append @rmhi{deep} @rmlo{ types})
         (yblank pico-y-sep)
         (ctc-bnd-pict))
       (lc-append
@@ -937,7 +939,7 @@
     (if (< n 1)
       (lc-append
         @rmlo{Transient semantics}
-        (word-append @rmlo{(} @rmhi{shallow} @rmlo{ types)})
+        (word-append @rmhi{shallow} @rmlo{ types})
         (yblank pico-y-sep)
         (typed-assert-pict))
       (lc-append
@@ -1248,8 +1250,6 @@
   (freeze (scale-to-fit (bitmap (build-path src-dir (format "~a-example.png" sym))) (w%->pixels 44/100) (h%->pixels 60/100))))
 
 (define (stat-profile-pict)
-  (define cc-total (my->brush-color 2))
-  (define cc-self (my->brush-color 2))
   (ppict-do
     (profile-pict 'stat)
     #:go (coord 21/100 22/100 'cc)
@@ -1257,9 +1257,14 @@
     #:go (coord 43/100 22/100 'cc)
     (selfswatch)))
 
+(define (bnd-profile-pict)
+  (ppict-do
+    (profile-pict 'bnd)
+    #:go (coord 23/100 28/100 'lc) (bndswatch)))
+
 (define (sample-profile n)
   (define profile-bitmap (stat-profile-pict))
-  (define bnd-bitmap (profile-pict 'bnd))
+  (define bnd-bitmap (bnd-profile-pict))
   (define xshim (xblank (max (pict-width profile-bitmap) (pict-width bnd-bitmap))))
   (define stat-pp
     (case n
@@ -1293,6 +1298,89 @@
     hc-append
     tiny-x-sep
     (add-between pp* right-arrow-pict)))
+
+(define (rnd n)
+  (~r n #:precision '(= 2)))
+
+(define (bit*->str bb)
+  (apply
+    string
+    (for/list ((xx (in-list bb)))
+      (if xx #\1 #\0))))
+
+(define (bit*->sym bb)
+  (string->symbol (bit*->str bb)))
+
+(define (kate-lattice bm-name)
+  ;; TODO cache
+  (define perf# (benchmark->perf# bm-name))
+  (define (fmt vv #:hope? [hope? #f])
+    (define ff (if (good-overhead? vv) greenrm redrm))
+    (define str (format "~ax" (rnd (car vv))))
+    ((if hope? values bblur) (ff str)))
+  (define (str->key str)
+    (for/list ((cc (in-string str)))
+      (not (eq? cc #\0))))
+  (define (str->tag str)
+    (string->symbol (bit*->str (str->key str))))
+  (define lattice#
+    (for/fold ((acc (hash)))
+              (((kk vv) (in-hash perf#)))
+      (define node* (str->key kk))
+      (hash-update acc node* (lambda (prev) (if (overhead>? prev vv) vv prev)) (lambda () vv))))
+  (define num-mod (string-length (for/first ((kk (in-hash-keys perf#))) kk)))
+  (define (neighbor* n*)
+    (for/list ((bb (in-list n*))
+               (ii (in-naturals))
+               #:when bb)
+      (list-set n* ii #false)))
+  (define line*
+    (let loop ((acc '())
+               (next* (for/list (((node* vv) (in-hash lattice#)) #:when (good-overhead? vv)) node*)))
+      (if (null? next*)
+        acc
+        (let* ((n++ (cdr next*))
+               (curr (car next*))
+               (curr-vv (hash-ref lattice# curr))
+               (nn* (filter (lambda (nn)
+                              (define nn-vv (hash-ref lattice# nn))
+                              (overhead<=? curr-vv nn-vv))
+                            (neighbor* curr)))
+               (k0 (bit*->sym curr))
+               (line* (for/list ((nn (in-list nn*))
+                                 #:unless (good-overhead? (hash-ref lattice# nn)))
+                        (list k0 (bit*->sym nn)))))
+          (loop (append line* acc) (append n++ nn*))))))
+  (define (has-line? node*)
+    (define kk (bit*->sym node*))
+    (for/or ((edge (in-list line*)))
+      (or (eq? kk (car edge))
+          (eq? kk (cadr edge)))))
+  (define (mk node*)
+    (add-hubs (fmt (hash-ref lattice# node*) #:hope? (or (good-overhead? (hash-ref lattice# node*))
+                                                         (has-line? node*)))
+              (bit*->sym node*)))
+  (define latt
+    (let* ((pp (make-lattice num-mod mk #:x-margin smol-y-sep #:y-margin smol-y-sep))
+           (pp (for/fold ((pp pp))
+                         ((ll (in-list line*)))
+                 (define src-tag (car ll))
+                 (define tgt-tag (cadr ll))
+                 (add-code-line
+                   pp
+                   (code-arrow src-tag cb-find tgt-tag ct-find 0 0 0 0 'solid)))))
+      pp))
+  (bbox
+    (vc-append
+      pico-y-sep
+      (rmlo (~a bm-name))
+      latt)))
+
+(define (scale-within pp ww hh)
+  (if (and (<= (pict-width pp) ww)
+           (<= (pict-height pp) hh))
+    pp
+    (scale-to-fit pp ww hh)))
 
 (define (two-lattice-pict [n 0] #:num-module [num-mod 4])
   (define (bscale pp) (scale pp 1/2))
@@ -1430,7 +1518,7 @@
       (word-append name txt)))
   (define baselines
     (word-append
-      @rmhi{null} @rmlo{, } @rmhi{pldi22} @rmlo{ = baselines}))
+      @rmhi{null} @rmlo{, } @rmhi{pldi22} @rmlo{ baselines}))
   (bbox
     (vl-append
       tiny-y-sep
@@ -1556,7 +1644,6 @@
     @bboxrm{Old Problem, New Idea}
     (yblank smol-y-sep)
     #:next 
-    #:alt ( (popl-problem 0) )
     #:alt ( (popl-problem 1) )
     (popl-problem 2)
     )
@@ -1579,7 +1666,7 @@
     (pay-for-types 2)
     #:next
     (yblank tiny-y-sep)
-    (bbox (hc-append tiny-x-sep @rmlo{Type soundness} left-arrow-pict @rmlo{Runtime checks}))
+    (bbox (hc-append tiny-x-sep @rmlo{Type soundness needs Runtime checks}))
     #:next
     (yblank tiny-y-sep)
     #:alt ( (gt-costs 0) )
@@ -1622,9 +1709,9 @@
     #:go heading-coord-m
     (bbox (hc-append tiny-x-sep @rmlo{Profilers} (racket-pict 50)))
     #:next
-    (yblank tiny-y-sep)
+    (yblank big-y-sep)
     (sbox (node-append (list uu dd uu ss)))
-    (yblank smol-y-sep)
+    (yblank (- smol-y-sep))
     #:alt ( (sample-profile 0) )
     #:alt ( (sample-profile 1) )
     #:alt ( (sample-profile 2) )
@@ -1638,6 +1725,8 @@
   (pslide
     ;; mountain of Q's -> 2015 problem, unclear how to proceed systematically
     ;; rational programmer, turn into _useful_ experiment
+    #:go heading-coord-m
+    @bboxrm{The Problem}
     #:go center-coord
     #:alt ( (enter-rp 1) )
     (enter-rp 2)
@@ -1674,9 +1763,8 @@
     #:next
     #:go (at-find-pict 'path cb-find 'ct #:abs-y tiny-y-sep)
     (bbox
-      (vc-append
-        tiny-y-sep
-        (word-append @rmhi{strict} @rmlo{ = faster each step})
+      (lc-append
+        (word-append @rmhi{strict} @rmlo{ = never slow down})
         (word-append @rmlo{k } @rmhi{loose} @rmlo{ = k slower steps})))
     (yblank tiny-y-sep)
     (bbox
@@ -1716,7 +1804,6 @@
     (yblank tiny-y-sep)
     (parameterize ((bbox-x-margin (bbox-y-margin)))
       (bbox (tag-pict (freeze (scale-to-fit (-bitmap "img/nyc.png") (w%->pixels 6/10) (h%->pixels 6/10))) 'empire)))
-    #:next
     #:go (at-find-pict 'empire cc-find 'lc #:abs-x (+ -8 smol-x-sep) #:abs-y (- big-y-sep))
     (hc-append 4 (sky-arrow) (wbox (label-scale (rmlo "loose"))))
     #:go (at-find-pict 'empire cc-find 'lc #:abs-x (+ -8 smol-x-sep) #:abs-y (+ smol-y-sep))
@@ -1748,7 +1835,8 @@
     #:alt ( (tag-pict (skylines 'N) 'sky)
             #:next
             #:go (at-find-pict 'sky cc-find 'cb #:abs-y (- medd-y-sep))
-            (comment-scale (wbox (lc-append @rmlo{Looseness helps a bit} @rmlo{(profilers rarely benefit from a wrong turn)})))
+            (comment-scale (wbox (lc-append @rmlo{Looseness helps a bit,}
+                                            @rmlo{profilers rarely benefit from a wrong turn})))
            )
     (skylines #f)
     #:next
@@ -1770,13 +1858,14 @@
     (bbox @rmlo{Takeaways})
     #:next
     (yblank medd-y-sep)
-    #:alt ( (make-takeaways 0) )
     #:alt ( (make-takeaways 1)
             #:next
             #:go (at-find-pict 'nohelp rc-find 'lc #:abs-x tiny-x-sep #:abs-y smol-y-sep)
             (wbox (future-scale @rmlo{Q. hybrid strategies, shallow profilers?}))
           )
     (make-takeaways 2)
+            #:go (at-find-pict 'nohelp rc-find 'lc #:abs-x tiny-x-sep #:abs-y smol-y-sep)
+            (wbox (future-scale @rmlo{Q. hybrid strategies, shallow profilers?}))
     #:next
     #:go (at-find-pict 'rational rc-find 'lc #:abs-x tiny-x-sep)
     (wbox
@@ -1793,11 +1882,11 @@
 (define (sec:extra)
   (pslide
     #:go center-coord
-    (bbox @coderm{https://github.com/bennn/rational-deep-shallow})
+    (bbox @coderm{https://github.com/bennn/gfd-oopsla-2023})
     )
   (pslide
     #:go heading-coord-m
-    @bboxrm{Translation: talk -> paper}
+    @bboxrm{Translation: talk to paper}
     (yblank tiny-y-sep)
     (skylines #f)
     #:go center-coord
@@ -1838,11 +1927,19 @@
     )
   (pslide
     #:go center-coord
-    @bboxrm{Opt-Boundary vs. the others}
+    @bboxrm{Opt Boundary vs. the others}
     (yblank pico-x-sep)
     (bbox
       (let ((bbmap (lambda (x) (freeze (scale-to-fit (-bitmap x) (w%->pixels 80/100) (h%->pixels 75/100))))))
-        (bbmap "img/h2h.png")))
+        (bbmap "src/h2h.png")))
+    )
+  (pslide
+    #:go center-coord
+    @bboxrm{Type-Aware Boundary vs. the others}
+    (yblank pico-x-sep)
+    (bbox
+      (let ((bbmap (lambda (x) (freeze (scale-to-fit (-bitmap x) (w%->pixels 80/100) (h%->pixels 75/100))))))
+        (bbmap "src/h2h_costaware.png")))
     )
   (pslide
     #:go center-coord
@@ -1852,13 +1949,49 @@
       (let ((bbmap (lambda (x) (freeze (scale-to-fit (-bitmap x) (w%->pixels 80/100) (h%->pixels 75/100))))))
         (bbmap "img/pyramid.png")))
     )
+  (pslide
+    #:go heading-coord-m @bboxrm{Best-Case Lattice}
+    #:go center-coord
+    (scale-within (kate-lattice 'fsm) client-w client-h))
+  (pslide
+    #:go heading-coord-m @bboxrm{Best-Case Lattice}
+    #:go center-coord
+    (scale-within (kate-lattice 'fsmoo) client-w client-h))
+  (pslide
+    #:go heading-coord-m @bboxrm{Best-Case Lattice}
+    #:go center-coord
+    (scale-within (kate-lattice 'mbta) client-w client-h))
+  (pslide
+    #:go heading-coord-m @bboxrm{Best-Case Lattice}
+    #:go center-coord
+    (scale-within (kate-lattice 'zombie) client-w client-h))
+  (pslide
+    #:go heading-coord-m @bboxrm{Best-Case Lattice}
+    #:go center-coord
+    (scale-within (kate-lattice 'dungeon) client-w client-h))
+;;  (pslide
+;;    #:go heading-coord-m @bboxrm{Best-Case Lattice}
+;;    #:go center-coord
+;;    (scale-within (kate-lattice 'tetris) client-w client-h))
+;;  (pslide
+;;    #:go heading-coord-m @bboxrm{Best-Case Lattice}
+;;    #:go center-coord
+;;    (scale-within (kate-lattice 'suffixtree) client-w client-h))
+;;  (pslide
+;;    #:go heading-coord-m @bboxrm{Best-Case Lattice}
+;;    #:go center-coord
+;;    (scale-within (kate-lattice 'kcfa) client-w client-h))
+;;  (pslide
+;;    #:go heading-coord-m @bboxrm{Best-Case Lattice}
+;;    #:go center-coord
+;;    (scale-within (kate-lattice 'lnm) client-w client-h))
   (void))
 
 ;; -----------------------------------------------------------------------------
 
 (define (do-show)
   [set-spotlight-style! #:size 60 #:color (color%-update-alpha highlight-brush-color 0.6)]
-  [set-page-numbers-visible! #false]
+  [set-page-numbers-visible! (if (byu?) #true #false)]
   [current-page-number-font page-font]
   [current-page-number-color white]
   ;; --
@@ -1891,13 +2024,9 @@
   (ppict-do
     (make-bg client-w client-h)
 
-    #:go heading-coord-m
-    @bboxrm{How often do the strategies succeed?}
-    (yblank tiny-y-sep)
-            (tag-pict (skylines 'N) 'sky)
-            #:go (at-find-pict 'sky cc-find 'cb #:abs-y (- medd-y-sep))
-            (comment-scale (wbox (lc-append @rmlo{Looseness helps a bit} @rmlo{(profilers rarely benefit from a wrong turn)})))
-
+    #:go center-coord
+    (scale-within (kate-lattice 'kcfa) client-w client-h)
+    ;;(scale-within (kate-lattice 'suffixtree) client-w client-h)
 
 
   )))

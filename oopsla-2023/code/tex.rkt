@@ -341,10 +341,12 @@
     (index-of (append (all-mode-name*) (list "")) (string-replace str "profile" "prf"))
     (raise-argument-error 'h2h-key "key" str)))
 
-(define (f:head2head #:all? [all? #f] #:split-bm? [split-bm? #f])
+(define (f:head2head #:favorite [-favorite #f] #:all? [all? #f] #:split-bm? [split-bm? #f])
   (define num-sm (length all-sm-name*))
   (define fave*
-    (if all? (drop-right all-sm-name* 4) '("opt_boundary")))
+    (if all?
+      (drop-right all-sm-name* 4)
+      (list (or -favorite "opt_boundary"))))
   (define vv (file->value (build-path data-dir "h2h.rktd")))
   (define out-dir
     (if split-bm?
@@ -486,7 +488,9 @@
     (define out-name
       (if split-bm?
         (format "~a.~a" tgt-bm (*out-kind*))
-        (format "head-to-head.~a" (*out-kind*))))
+        (format "head-to-head~a.~a"
+                (if -favorite (string-append "_" (car fave*)) "")
+                (*out-kind*))))
     (printf "save-pict ~a~n" out-name)
     (save-pict
       (build-path out-dir out-name)
@@ -754,11 +758,12 @@
     #;(t:blackhole)
     #;(f:strategy-overall #:ss #true)
     #;(f:legend-so)
-    (for ((kk (in-list '(-2 -1 0 1 2 3 N #f))))
+    #;(for ((kk (in-list '(-2 -1 0 1 2 3 N #f))))
       (f:strategy-overall #:ss #true #:loose kk #:legend-off? #true))
     #;(f:strategy-overall #:hope? #true)
     #;(app:strategy-overall)
     #;(f:head2head)
+    (f:head2head #:favorite "cost-opt_boundary")
     #;(app:head2head)
     #;(f:deathplot)
     (void)))
