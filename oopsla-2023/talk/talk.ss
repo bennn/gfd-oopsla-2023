@@ -10,7 +10,7 @@
 ;; [X] practice talk thursday 11am GOLLY
 ;; [X] nice draft
 
-;; [ ] more data / backups for BYU
+;; [X] more data / backups for BYU
 
 (require
   "../code/base.rkt"
@@ -1313,7 +1313,7 @@
 
 (define (kate-lattice bm-name)
   (define ps (build-path img-dir (format "kate-~a.png" bm-name)))
-  (unless (file-exists? ps)
+  (void ;; unless (file-exists? ps)
     (save-pict ps (-kate-lattice bm-name)))
   (bitmap ps))
 
@@ -1333,6 +1333,10 @@
               (((kk vv) (in-hash perf#)))
       (define node* (str->key kk))
       (hash-update acc node* (lambda (prev) (if (overhead>? prev vv) vv prev)) (lambda () vv))))
+  (void
+    (for (((k v) (in-hash lattice#))
+          #:when (< 300 (car v)))
+         (printf "slow ~a ~a~n" k (rnd (car v)))))
   (define num-mod (string-length (for/first ((kk (in-hash-keys perf#))) kk)))
   (define (neighbor* n*)
     (for/list ((bb (in-list n*))
@@ -1999,10 +2003,10 @@
     (make-bg client-w client-h)
 
     #:go center-coord
-    (scale-within 
+    #;(scale-within 
       (for/last ((xx (in-list '(zombie))))
                 (kate-lattice xx)) client-w client-h)
-    ;;(scale-within (kate-lattice 'suffixtree) client-w client-h)
+    (scale-within (kate-lattice 'fsmoo) client-w client-h)
 
 
   )))
