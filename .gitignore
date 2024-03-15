@@ -14,3 +14,9 @@ img/
 compiled/
 
 raco-pict.png
+
+oopsla-2023/data/h2h.rktd
+oopsla-2023/data/success-tbl-feasible.rktd
+oopsla-2023/data/success-tbl-hopeful.rktd
+oopsla-2023/t1-img/
+oopsla-2023/talk/trash
